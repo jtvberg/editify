@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { cmsStore, cms } from '$lib';
+    import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 </script>
 
+<Header />
 <main class="container">
 	<section class="hero">
 		<h1 data-cms-ref="home.hero.title" data-cms-type="text" use:cms>
@@ -50,15 +52,6 @@
 					{$cmsStore['home.features.realtime.description']?.content || 'Changes sync instantly across all open sessions'}
 				</p>
 			</div>
-
-			<div class="feature-card">
-				<h3 data-cms-ref="home.features.test.title" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.test.title']?.content || '⚡ Test thing'}
-				</h3>
-				<p data-cms-ref="home.features.test.description" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.test.description']?.content || 'Tests are tests'}
-				</p>
-			</div>
 		</div>
 	</section>
 
@@ -91,42 +84,64 @@
 
 	.hero {
 		text-align: center;
-		padding: 4rem 0;
+		padding: 6rem 0 5rem;
+		animation: fadeInUp 0.8s ease-out;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.hero h1 {
-		font-size: 3.5rem;
-		font-weight: 800;
-		margin-bottom: 1rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		font-size: 4rem;
+		font-weight: 900;
+		margin-bottom: 1.5rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
 	}
 
 	.subtitle {
-		font-size: 1.5rem;
-		color: #6b7280;
+		font-size: 1.625rem;
+		color: #9ca3af;
 		margin-bottom: 2rem;
+		font-weight: 400;
+		letter-spacing: -0.01em;
 	}
 
 	.description {
 		font-size: 1.125rem;
-		color: #374151;
+		color: #d1d5db;
 		max-width: 800px;
 		margin: 0 auto;
-		line-height: 1.75;
+		line-height: 1.8;
+	}
+
+	.description :global(p) {
+		margin: 0;
 	}
 
 	.features {
-		padding: 4rem 0;
+		padding: 5rem 0;
 	}
 
 	.features h2 {
-		font-size: 2.5rem;
-		font-weight: 700;
+		font-size: 2.75rem;
+		font-weight: 800;
 		text-align: center;
-		margin-bottom: 3rem;
+		margin-bottom: 4rem;
+		color: #f9fafb;
+		letter-spacing: -0.02em;
 	}
 
 	.feature-grid {
@@ -136,78 +151,124 @@
 	}
 
 	.feature-card {
-		background: white;
-		padding: 2rem;
-		border-radius: 12px;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-		transition: transform 0.2s, box-shadow 0.2s;
+		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+		backdrop-filter: blur(10px);
+		padding: 2.5rem;
+		border-radius: 16px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.feature-card:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+		transform: translateY(-8px);
+		box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+		border-color: rgba(102, 126, 234, 0.3);
+		background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
 	}
 
 	.feature-card h3 {
-		font-size: 1.5rem;
-		font-weight: 600;
+		font-size: 1.625rem;
+		font-weight: 700;
 		margin-bottom: 1rem;
+		color: #f9fafb;
+		letter-spacing: -0.01em;
 	}
 
 	.feature-card p {
-		color: #6b7280;
-		line-height: 1.6;
+		color: #d1d5db;
+		line-height: 1.7;
+		font-size: 1.05rem;
 	}
 
 	.demo {
-		padding: 4rem 0;
-		background: #f9fafb;
-		border-radius: 12px;
-		margin: 2rem 0;
-		padding: 3rem;
+		padding: 4rem 3rem;
+		background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+		border-radius: 20px;
+		margin: 3rem 0;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 	}
 
 	.demo h2 {
-		font-size: 2.5rem;
-		font-weight: 700;
+		font-size: 2.75rem;
+		font-weight: 800;
 		text-align: center;
-		margin-bottom: 2rem;
+		margin-bottom: 3rem;
+		color: #f9fafb;
+		letter-spacing: -0.02em;
 	}
 
 	.instructions {
 		max-width: 700px;
 		margin: 0 auto;
 		font-size: 1.125rem;
-		line-height: 1.75;
+		line-height: 1.8;
+		color: #d1d5db;
 	}
 
 	.instructions :global(ol) {
-		padding-left: 1.5rem;
+		padding-left: 1.75rem;
+		counter-reset: list-counter;
 	}
 
 	.instructions :global(li) {
-		margin-bottom: 1rem;
+		margin-bottom: 1.25rem;
+		position: relative;
 	}
 
 	.instructions :global(code) {
-		background: #e5e7eb;
-		padding: 0.25rem 0.5rem;
-		border-radius: 4px;
-		font-family: monospace;
+		background: rgba(102, 126, 234, 0.2);
+		padding: 0.35rem 0.65rem;
+		border-radius: 6px;
+		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 		font-size: 0.95em;
+		color: #a5b4fc;
+		border: 1px solid rgba(102, 126, 234, 0.3);
 	}
 
 	@media (max-width: 768px) {
+		.hero {
+			padding: 4rem 0 3rem;
+		}
+
 		.hero h1 {
-			font-size: 2.5rem;
+			font-size: 2.75rem;
 		}
 
 		.subtitle {
-			font-size: 1.25rem;
+			font-size: 1.375rem;
+		}
+
+		.features h2,
+		.demo h2 {
+			font-size: 2.25rem;
 		}
 
 		.feature-grid {
 			grid-template-columns: 1fr;
+		}
+
+		.demo {
+			padding: 3rem 2rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.container {
+			padding: 1rem;
+		}
+
+		.hero h1 {
+			font-size: 2.25rem;
+		}
+
+		.subtitle {
+			font-size: 1.125rem;
+		}
+
+		.feature-card {
+			padding: 2rem;
 		}
 	}
 </style>
