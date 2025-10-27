@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { cmsStore, cms } from '$lib';
+	import Footer from '$lib/components/Footer.svelte';
 </script>
 
 <main class="container">
@@ -49,6 +50,15 @@
 					{$cmsStore['home.features.realtime.description']?.content || 'Changes sync instantly across all open sessions'}
 				</p>
 			</div>
+
+			<div class="feature-card">
+				<h3 data-cms-ref="home.features.test.title" data-cms-type="text" use:cms>
+					{$cmsStore['home.features.test.title']?.content || '⚡ Test thing'}
+				</h3>
+				<p data-cms-ref="home.features.test.description" data-cms-type="text" use:cms>
+					{$cmsStore['home.features.test.description']?.content || 'Tests are tests'}
+				</p>
+			</div>
 		</div>
 	</section>
 
@@ -69,13 +79,8 @@
 			`}
 		</div>
 	</section>
-
-	<footer class="footer">
-		<p data-cms-ref="global.footer.copyright" data-cms-type="text" use:cms>
-			{$cmsStore['global.footer.copyright']?.content || '© 2025 Editify. Built with SvelteKit.'}
-		</p>
-	</footer>
 </main>
+<Footer />
 
 <style>
 	.container {
@@ -190,17 +195,6 @@
 		border-radius: 4px;
 		font-family: monospace;
 		font-size: 0.95em;
-	}
-
-	.footer {
-		text-align: center;
-		padding: 3rem 0;
-		border-top: 1px solid #e5e7eb;
-		margin-top: 4rem;
-	}
-
-	.footer p {
-		color: #6b7280;
 	}
 
 	@media (max-width: 768px) {

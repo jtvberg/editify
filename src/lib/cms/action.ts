@@ -75,18 +75,9 @@ export function cms(node: HTMLElement) {
 		if (get(editMode) && ref) {
 			const newContent = type === 'rich-text' ? node.innerHTML : (node.textContent || '');
 			
-			console.log('[CMS Action] Blur event:', {
-				ref,
-				initialContent,
-				newContent,
-				changed: newContent !== initialContent
-			});
-			
 			// Save if content changed
 			if (newContent !== initialContent) {
-				console.log('[CMS Action] Saving content...');
 				const success = await saveContent(ref, newContent);
-				console.log('[CMS Action] Save result:', success);
 				if (success) {
 					initialContent = newContent;
 					hasBeenEdited = true;

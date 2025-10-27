@@ -1,6 +1,6 @@
-# Quick Setup Guide
+# Complete Setup Guide
 
-Follow these steps to get your CMS up and running.
+Follow these steps to get your CMS up and running from scratch.
 
 ## Step 1: Create Supabase Project
 
@@ -12,19 +12,31 @@ Follow these steps to get your CMS up and running.
    - Region: Choose closest to your users
 4. Wait for project to be created (~2 minutes)
 
-## Step 2: Set Up Database
+## Step 2: Set Up Database Schema
 
 1. In your Supabase dashboard, go to **SQL Editor**
 2. Click **New Query**
-3. Copy the entire contents of `supabase-schema.sql` from this project
+3. Copy the entire contents of `sql/supabase-schema.sql` from this project
 4. Paste into the query editor
 5. Click **Run** (or press Cmd/Ctrl + Enter)
 6. Verify success - you should see:
    - ✅ 2 tables created (`cms_content`, `cms_content_history`)
-   - ✅ RLS policies enabled
-   - ✅ Triggers created
+   - ✅ RLS enabled on both tables
+   - ✅ Triggers created for history and timestamps
 
-## Step 3: Get API Keys
+## Step 3: Set Up RLS Policies
+
+1. In Supabase SQL Editor, click **New Query**
+2. Copy the entire contents of `sql/supabase-rls-policies.sql`
+3. Paste and click **Run**
+4. This creates:
+   - ✅ `is_editor()` security definer function
+   - ✅ Read policy (everyone can read)
+   - ✅ Update policy (editors only)
+   - ✅ Insert policy (editors only)
+   - ✅ History insert policy (system)
+
+## Step 4: Get API Keys
 
 1. In Supabase dashboard, go to **Project Settings** (gear icon)
 2. Click **API** in the left sidebar
