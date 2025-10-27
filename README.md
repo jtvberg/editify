@@ -55,6 +55,7 @@ Visit [http://localhost:5173](http://localhost:5173) and log in to see inline ed
 ## 📚 Documentation
 
 - **[docs/SETUP.md](./docs/SETUP.md)** - Complete step-by-step setup instructions
+- **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Deploying to Netlify (and other platforms)
 - **[docs/QUICK-REFERENCE.md](./docs/QUICK-REFERENCE.md)** - Commands and patterns cheat sheet
 - **[docs/COMPONENT-EXAMPLES.md](./docs/COMPONENT-EXAMPLES.md)** - Usage examples and patterns
 - **[docs/AUTH-SETUP.md](./docs/AUTH-SETUP.md)** - Authentication and editor role setup
@@ -130,6 +131,32 @@ npm run build        # Build for production
 npm run preview      # Preview production build
 npm run check        # Type checking
 ```
+
+## 🚀 Deployment to Netlify
+
+This project is configured for easy deployment to Netlify:
+
+1. **Push to GitHub** (or your preferred Git provider)
+
+2. **Connect to Netlify**
+   - Go to [Netlify](https://app.netlify.com/)
+   - Click "Add new site" → "Import an existing project"
+   - Connect your Git repository
+
+3. **Configure Environment Variables**
+
+   In Netlify's site settings, add these environment variables:
+
+   ```
+   PUBLIC_SUPABASE_URL=your_supabase_project_url
+   PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Deploy**
+
+   Netlify will automatically detect the `netlify.toml` configuration and deploy your site!
+
+**Note:** The build command and publish directory are already configured in `netlify.toml`. The adapter will automatically handle serverless functions for server-side routes.
 
 ## 🎯 Use Cases
 
