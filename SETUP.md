@@ -31,6 +31,8 @@ Follow these steps to get your CMS up and running.
 3. Copy these values:
    - **Project URL** (starts with `https://`)
    - **anon public** key (under "Project API keys")
+   - **service_role** key (under "Project API keys" - click to reveal)
+     - ⚠️ **Keep this secret!** Never commit it to git or expose it client-side
 
 ## Step 4: Configure Environment
 
@@ -41,10 +43,17 @@ Follow these steps to get your CMS up and running.
    ```
 
 2. Edit `.env` and add your credentials:
+
    ```bash
    PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
    ```
+
+   **Important:**
+   - `PUBLIC_SUPABASE_ANON_KEY` - Used by the website (safe to expose)
+   - `SUPABASE_SERVICE_ROLE_KEY` - Used by `cms:sync` script (must stay secret!)
+   - The `.env` file is already in `.gitignore` to keep secrets safe
 
 ## Step 5: Install Dependencies
 
@@ -59,6 +68,8 @@ This scans your Svelte files and creates database entries for all `data-cms-ref`
 ```bash
 npm run cms:sync
 ```
+
+**Note:** The sync script uses the service role key to bypass RLS policies and create content entries.
 
 You should see output like:
 

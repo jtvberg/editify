@@ -10,15 +10,17 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.PUBLIC_SUPABASE_ANON_KEY;
+// Use service role key for sync script (bypasses RLS)
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 	console.error('❌ Missing Supabase credentials in environment variables');
-	console.error('   Please set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY');
+	console.error('   Please set PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+	console.error('   (Or PUBLIC_SUPABASE_ANON_KEY as fallback, but you may need to adjust RLS policies)');
 	process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 async function extractCMSRefs() {
 	console.log('🔍 Scanning Svelte files for CMS refs...\n');
@@ -63,14 +65,10 @@ async function extractCMSRefs() {
 }
 
 function extractDefaultContent(content, ref) {
-	// Try to extract the content between the opening and closing tags
-	// This is a simple implementation - could be improved
-	const refPattern = new RegExp(
-		`data-cms-ref=["']${ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^>]*>([^<]+)<`,
-		'i'
-	);
-	const match = content.match(refPattern);
-	return match ? match[1].trim() : '';
+	// Don't try to extract default content from Svelte expressions
+	// The content should be added through the CMS UI or manually in the database
+	// This avoids storing Svelte code as content
+	return '';
 }
 
 async function syncToDatabase(refs, refDetails) {

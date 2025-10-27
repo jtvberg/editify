@@ -24,14 +24,14 @@ This project serves as a **test bed** for a lightweight CMS architecture where:
 
    ```bash
    cp .env.example .env
-   # Add your Supabase URL and anon key to .env
+   # Add your Supabase URL, anon key, and service role key to .env
    ```
 
 3. **Install & Sync**
 
    ```bash
    npm install
-   npm run cms:sync
+   npm run cms:sync  # Requires SUPABASE_SERVICE_ROLE_KEY in .env
    ```
 
 4. **Run Development Server**
@@ -48,6 +48,7 @@ Visit [http://localhost:5173](http://localhost:5173) to see it in action!
 - **[QUICK-REFERENCE.md](./QUICK-REFERENCE.md)** - Command and pattern reference
 - **[COMPONENT-EXAMPLES.md](./COMPONENT-EXAMPLES.md)** - Usage examples
 - **[AUTH-EXAMPLES.md](./AUTH-EXAMPLES.md)** - Authentication setup options
+- **[CMS-SYNC-AUTH.md](./CMS-SYNC-AUTH.md)** - How to authenticate the sync script
 - **[IMPLEMENTATION-SUMMARY.md](./IMPLEMENTATION-SUMMARY.md)** - What's been built
 
 ## ✨ Features
