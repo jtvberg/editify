@@ -1,51 +1,51 @@
 <script lang="ts">
-	import { cmsStore } from '$lib/cms';
+	import { cmsStore, cms } from '$lib';
 </script>
 
 <main class="container">
 	<section class="hero">
-		<h1 data-cms-ref="home.hero.title" data-cms-type="text">
+		<h1 data-cms-ref="home.hero.title" data-cms-type="text" use:cms>
 			{$cmsStore['home.hero.title']?.content || 'Welcome to Editify'}
 		</h1>
 		
-		<p data-cms-ref="home.hero.subtitle" data-cms-type="text" class="subtitle">
+		<p data-cms-ref="home.hero.subtitle" data-cms-type="text" class="subtitle" use:cms>
 			{$cmsStore['home.hero.subtitle']?.content || 'A lightweight CMS built with SvelteKit and Supabase'}
 		</p>
 
-		<div data-cms-ref="home.hero.description" data-cms-type="rich-text" class="description">
+		<div data-cms-ref="home.hero.description" data-cms-type="rich-text" class="description" use:cms>
 			{@html $cmsStore['home.hero.description']?.content || '<p>Click Edit Mode to start editing content inline. No complex admin panels, just direct editing where content lives.</p>'}
 		</div>
 	</section>
 
 	<section class="features">
-		<h2 data-cms-ref="home.features.title" data-cms-type="text">
+		<h2 data-cms-ref="home.features.title" data-cms-type="text" use:cms>
 			{$cmsStore['home.features.title']?.content || 'Key Features'}
 		</h2>
 
 		<div class="feature-grid">
 			<div class="feature-card">
-				<h3 data-cms-ref="home.features.inline.title" data-cms-type="text">
+				<h3 data-cms-ref="home.features.inline.title" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.inline.title']?.content || '✏️ Inline Editing'}
 				</h3>
-				<p data-cms-ref="home.features.inline.description" data-cms-type="text">
+				<p data-cms-ref="home.features.inline.description" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.inline.description']?.content || 'Edit content directly where it appears on your site'}
 				</p>
 			</div>
 
 			<div class="feature-card">
-				<h3 data-cms-ref="home.features.refs.title" data-cms-type="text">
+				<h3 data-cms-ref="home.features.refs.title" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.refs.title']?.content || '🔗 Content References'}
 				</h3>
-				<p data-cms-ref="home.features.refs.description" data-cms-type="text">
+				<p data-cms-ref="home.features.refs.description" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.refs.description']?.content || 'Reuse content across multiple pages with shared refs'}
 				</p>
 			</div>
 
 			<div class="feature-card">
-				<h3 data-cms-ref="home.features.realtime.title" data-cms-type="text">
+				<h3 data-cms-ref="home.features.realtime.title" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.realtime.title']?.content || '⚡ Real-time Updates'}
 				</h3>
-				<p data-cms-ref="home.features.realtime.description" data-cms-type="text">
+				<p data-cms-ref="home.features.realtime.description" data-cms-type="text" use:cms>
 					{$cmsStore['home.features.realtime.description']?.content || 'Changes sync instantly across all open sessions'}
 				</p>
 			</div>
@@ -53,11 +53,11 @@
 	</section>
 
 	<section class="demo">
-		<h2 data-cms-ref="home.demo.title" data-cms-type="text">
+		<h2 data-cms-ref="home.demo.title" data-cms-type="text" use:cms>
 			{$cmsStore['home.demo.title']?.content || 'Try It Out'}
 		</h2>
 
-		<div data-cms-ref="home.demo.instructions" data-cms-type="rich-text" class="instructions">
+		<div data-cms-ref="home.demo.instructions" data-cms-type="rich-text" class="instructions" use:cms>
 			{@html $cmsStore['home.demo.instructions']?.content || `
 				<ol>
 					<li>Set up your Supabase project and run the schema SQL</li>
@@ -71,7 +71,7 @@
 	</section>
 
 	<footer class="footer">
-		<p data-cms-ref="global.footer.copyright" data-cms-type="text">
+		<p data-cms-ref="global.footer.copyright" data-cms-type="text" use:cms>
 			{$cmsStore['global.footer.copyright']?.content || '© 2025 Editify. Built with SvelteKit.'}
 		</p>
 	</footer>

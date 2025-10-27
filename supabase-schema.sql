@@ -1,5 +1,6 @@
 -- CMS Content Schema for Supabase
 -- Run this in your Supabase SQL Editor
+-- Note: RLS policies are handled separately in update-rls-policies.sql
 
 -- Main content table
 CREATE TABLE IF NOT EXISTS cms_content (
@@ -25,40 +26,8 @@ CREATE INDEX IF NOT EXISTS idx_cms_content_updated_at ON cms_content(updated_at 
 ALTER TABLE cms_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cms_content_history ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
--- Everyone can read content
-CREATE POLICY "Everyone can read content"
-ON cms_content FOR SELECT
-USING (true);
-
--- Editors can update content
--- Note: You'll need to set up custom claims or use user metadata for the 'editor' role
-CREATE POLICY "Editors can update content"
-ON cms_content FOR UPDATE
-USING (
-    auth.jwt() ->> 'role' = 'editor' OR
-    auth.jwt() -> 'user_metadata' ->> 'role' = 'editor'
-);
-
--- Editors can insert content
-CREATE POLICY "Editors can insert content"
-ON cms_content FOR INSERT
-WITH CHECK (
-    auth.jwt() ->> 'role' = 'editor' OR
-    auth.jwt() -> 'user_metadata' ->> 'role' = 'editor'
-);
-
--- History policies
-CREATE POLICY "Everyone can read history"
-ON cms_content_history FOR SELECT
-USING (true);
-
-CREATE POLICY "Editors can insert history"
-ON cms_content_history FOR INSERT
-WITH CHECK (
-    auth.jwt() ->> 'role' = 'editor' OR
-    auth.jwt() -> 'user_metadata' ->> 'role' = 'editor'
-);
+-- Note: RLS Policies are defined in update-rls-policies.sql
+-- Run that file after creating these tables to set up proper access control
 
 -- Function to automatically create history on update
 CREATE OR REPLACE FUNCTION create_content_history()

@@ -91,7 +91,15 @@ Examples:
 
 ## 🔐 Editor Role Setup
 
-In Supabase → Authentication → Users → User Metadata:
+**Quick SQL method** (run in Supabase SQL Editor):
+
+```sql
+UPDATE auth.users
+SET raw_user_meta_data = raw_user_meta_data || '{"role": "editor"}'::jsonb
+WHERE email = 'your-email@example.com';
+```
+
+Or via UI: Authentication → Users → [User] → Raw User Meta Data:
 
 ```json
 {

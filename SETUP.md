@@ -98,20 +98,51 @@ You should see output like:
 
 ## Step 7: Create Editor User
 
+### Create the User
+
 1. In Supabase dashboard, go to **Authentication** → **Users**
 2. Click **Add user** → **Create new user**
 3. Enter email and password
 4. Click **Create user**
-5. Find the user in the list and click on them
-6. Scroll to **User Metadata** section
-7. Click **Edit**
-8. Add this JSON:
+
+### Add Editor Role (Choose ONE method)
+
+**Method A: Using SQL (Recommended - Quick & Reliable)**
+
+Go to **SQL Editor** and run:
+
+```sql
+-- Replace with your user's email
+UPDATE auth.users
+SET raw_user_meta_data = raw_user_meta_data || '{"role": "editor"}'::jsonb
+WHERE email = 'your-email@example.com';
+```
+
+**Method B: Using Supabase UI**
+
+1. Go to **Authentication** → **Users**
+2. Click on the user you just created
+3. Scroll down to **Raw User Meta Data** section
+4. Click **Edit**
+5. Add or merge this JSON:
    ```json
    {
    	"role": "editor"
    }
    ```
-9. Click **Save**
+6. Click **Save**
+
+### Verify It Worked
+
+Run this SQL query:
+
+```sql
+SELECT email, raw_user_meta_data->>'role' as role
+FROM auth.users
+WHERE email = 'your-email@example.com';
+```
+
+You should see `editor` in the role column.
 
 ## Step 8: Run Development Server
 

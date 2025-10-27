@@ -35,19 +35,38 @@ export function getContent(ref: string): string {
 // Save content to database
 export async function saveContent(ref: string, content: string): Promise<boolean> {
 	try {
+		console.log('[CMS saveContent] Attempting to save:', { ref, content });
+		
+		// Check current user and session
+		const { data: { user } } = await supabase.auth.getUser();
+		console.log('[CMS saveContent] Current user:', user?.email, 'metadata:', user?.user_metadata);
+		
 		// Type assertion needed due to Supabase type inference limitations
-		const { error } = await (supabase.from('cms_content') as any)
+		const { data, error } = await (supabase.from('cms_content') as any)
 			.update({
 				content,
 				updated_at: new Date().toISOString()
 			})
-			.eq('id', ref);
+			.eq('id', ref)
+			.select();
 
 		if (error) {
-			console.error('Error saving content:', error);
+			console.error('[CMS saveContent] Error saving content:', error);
 			return false;
 		}
 
+		console.log('[CMS saveContent] Save response:', { data, rowsAffected: data?.length });
+		
+		if (!data || data.length === 0) {
+			console.warn('[CMS saveContent] No rows updated - row may not exist with id:', ref);
+			// Let's check if the row exists
+			const { data: checkData } = await supabase.from('cms_content').select('id').eq('id', ref);
+			console.log('[CMS saveContent] Row exists check:', checkData);
+			return false;
+		}
+		
+		console.log('[CMS saveContent] Save successful, updating local store');
+		
 		// Update local store
 		cmsStore.update((store) => ({
 			...store,
