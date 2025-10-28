@@ -150,7 +150,7 @@
 	.feature-item {
 		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
 		backdrop-filter: blur(10px);
-		padding: 2.5rem;
+		padding: 2rem;
 		border-radius: 16px;
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);

@@ -12,7 +12,6 @@
 	.footer {
 		text-align: center;
 		padding: 3rem 0;
-		border-top: 1px solid #e5e7eb;
 		margin-top: 4rem;
 	}
 

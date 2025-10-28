@@ -95,9 +95,7 @@
 		position: sticky;
 		top: 0;
 		z-index: 50;
-		background: rgba(17, 24, 39, 0.8);
 		backdrop-filter: blur(12px);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 	}
 
@@ -166,7 +164,6 @@
 
 	.nav-link.active {
 		color: #f9fafb;
-		background: rgba(102, 126, 234, 0.15);
 	}
 
 	.nav-link.active::after {

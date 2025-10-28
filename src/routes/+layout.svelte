@@ -61,4 +61,14 @@
 		color: #9ca3af;
 		font-style: italic;
 	}
+
+    :global(body) {
+        color: #f9fafb;
+		background-color: #0f172a;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	}
+
+	:global(h1, h2, h3) {
+		margin-block: 1rem;
+	}
 </style>

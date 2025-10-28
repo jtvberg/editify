@@ -153,7 +153,7 @@
 	.feature-card {
 		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
 		backdrop-filter: blur(10px);
-		padding: 2.5rem;
+		padding: 2rem;
 		border-radius: 16px;
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -182,7 +182,7 @@
 	}
 
 	.demo {
-		padding: 4rem 3rem;
+		padding: 2rem 1rem;
 		background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
 		border-radius: 20px;
 		margin: 3rem 0;
