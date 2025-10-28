@@ -36,6 +36,15 @@
 
 	function handleClick(e: MouseEvent) {
 		if ($editMode) {
+			// Stop propagation to prevent backdrop from closing overlay
+			e.stopPropagation();
+			
+			// Check if this element is already active
+			if ($activeElement && $activeElement.element === e.currentTarget) {
+				// Already active, don't do anything - let user keep editing
+				return;
+			}
+			
 			e.preventDefault();
 			const target = e.currentTarget as HTMLElement;
 			const rect = target.getBoundingClientRect();
@@ -52,17 +61,7 @@
 	}
 
 	async function handleBlur(e: FocusEvent) {
-		if ($editMode && (type === 'text' || type === 'rich-text')) {
-			const target = e.target as HTMLElement;
-			const newContent = type === 'rich-text' ? target.innerHTML : (target.textContent || '');
-			
-			if (newContent !== content) {
-				const success = await saveContent(ref, newContent);
-				if (success) {
-					content = newContent;
-				}
-			}
-		}
+		// Don't auto-save on blur anymore - save/cancel buttons will handle this
 	}
 
 	async function handleInput(e: Event) {

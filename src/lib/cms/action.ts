@@ -69,6 +69,16 @@ export function cms(node: HTMLElement) {
 
 	function handleClick(e: MouseEvent) {
 		if (get(editMode) && ref) {
+			// Stop propagation to prevent backdrop from closing overlay
+			e.stopPropagation();
+			
+			// Check if this element is already active
+			const currentActive = get(activeElement);
+			if (currentActive && currentActive.element === node) {
+				// Already active, don't do anything - let user keep editing
+				return;
+			}
+			
 			const rect = node.getBoundingClientRect();
 			
 			activeElement.set({
@@ -83,18 +93,8 @@ export function cms(node: HTMLElement) {
 	}
 
 	async function handleBlur() {
-		if (get(editMode) && ref) {
-			const newContent = type === 'rich-text' ? node.innerHTML : (node.textContent || '');
-			
-			// Save if content changed
-			if (newContent !== initialContent) {
-				const success = await saveContent(ref, newContent);
-				if (success) {
-					initialContent = newContent;
-					hasBeenEdited = true;
-				}
-			}
-		}
+		// Don't auto-save on blur anymore - save/cancel buttons will handle this
+		// Just keep the content in memory for now
 	}
 
 	node.addEventListener('click', handleClick);

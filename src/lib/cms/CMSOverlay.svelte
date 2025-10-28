@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeElement, editMode, saveContent, getContentHistory, uploadImage } from '$lib/cms';
+	import { activeElement, editMode, saveContent, getContentHistory, uploadImage, cmsStore } from '$lib/cms';
 	import { onMount } from 'svelte';
 
 	let showHistory = $state(false);
@@ -7,6 +7,7 @@
 	let uploading = $state(false);
 	let uploadError = $state<string | null>(null);
 	let uploadSuccess = $state(false);
+	let saving = $state(false);
 
 	async function loadHistory() {
 		if ($activeElement) {
@@ -20,6 +21,68 @@
 		showHistory = false;
 		uploadError = null;
 		uploadSuccess = false;
+	}
+
+	async function handleSave() {
+		if (!$activeElement) return;
+		
+		saving = true;
+		
+		try {
+			const element = $activeElement.element;
+			const type = $activeElement.type;
+			let newContent = '';
+			
+			if (type === 'text') {
+				newContent = element.textContent || '';
+			} else if (type === 'rich-text') {
+				newContent = element.innerHTML;
+			} else if (type === 'image') {
+				const img = element.querySelector('img');
+				newContent = img?.src || '';
+			}
+			
+			const success = await saveContent($activeElement.ref, newContent);
+			
+			if (success) {
+				// Success! Close the overlay
+				closeOverlay();
+			} else {
+				uploadError = 'Failed to save changes';
+			}
+		} catch (err) {
+			console.error('Save error:', err);
+			uploadError = 'An error occurred while saving';
+		} finally {
+			saving = false;
+		}
+	}
+
+	function handleCancel() {
+		if (!$activeElement) return;
+		
+		// Revert changes by refreshing from store
+		const element = $activeElement.element;
+		const type = $activeElement.type;
+		const ref = $activeElement.ref;
+		
+		// Get the original content from the store
+		const storeContent = $cmsStore[ref]?.content;
+		
+		if (storeContent) {
+			if (type === 'text') {
+				element.textContent = storeContent;
+			} else if (type === 'rich-text') {
+				element.innerHTML = storeContent;
+			} else if (type === 'image') {
+				const img = element.querySelector('img');
+				if (img) {
+					img.src = storeContent;
+				}
+			}
+		}
+		
+		closeOverlay();
 	}
 
 	async function handleImageUpload(e: Event) {
@@ -59,7 +122,7 @@
 					}
 				});
 				
-				// Close overlay after a short delay to show success message
+				// Image upload auto-saves, so close overlay after a short delay
 				setTimeout(() => {
 					closeOverlay();
 				}, 1500);
@@ -78,22 +141,41 @@
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
-			closeOverlay();
+			handleCancel();
 		}
+	}
+
+	function handleDocumentClick(e: MouseEvent) {
+		if (!$activeElement) return;
+		
+		const target = e.target as HTMLElement;
+		
+		// Don't close if clicking on the overlay itself
+		if (target.closest('.cms-overlay')) {
+			return;
+		}
+		
+		// Don't close if clicking on the active element or its children
+		if ($activeElement.element.contains(target)) {
+			return;
+		}
+		
+		// Clicked outside - cancel editing
+		handleCancel();
 	}
 
 	onMount(() => {
 		document.addEventListener('keydown', handleKeydown);
+		document.addEventListener('click', handleDocumentClick, true); // Use capture phase
 		return () => {
 			document.removeEventListener('keydown', handleKeydown);
+			document.removeEventListener('click', handleDocumentClick, true);
 		};
 	});
 </script>
 
 {#if $editMode && $activeElement}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="cms-overlay-backdrop" onclick={closeOverlay}></div>
+	<div class="cms-overlay-backdrop"></div>
 	
 	<div 
 		class="cms-overlay"
@@ -111,6 +193,33 @@
 			
 			<div class="toolbar-actions">
 				<button
+					class="toolbar-button save"
+					onclick={handleSave}
+					disabled={saving}
+					title="Save changes"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+						<polyline points="17 21 17 13 7 13 7 21" />
+						<polyline points="7 3 7 8 15 8" />
+					</svg>
+					{saving ? 'Saving...' : 'Save'}
+				</button>
+				
+				<button
+					class="toolbar-button cancel"
+					onclick={handleCancel}
+					disabled={saving}
+					title="Cancel and discard changes"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M18 6 6 18" />
+						<path d="m6 6 12 12" />
+					</svg>
+					Cancel
+				</button>
+
+				<button
 					class="toolbar-button"
 					onclick={loadHistory}
 					title="View history"
@@ -121,17 +230,6 @@
 						<path d="M12 7v5l4 2" />
 					</svg>
 					History
-				</button>
-				
-				<button
-					class="toolbar-button close"
-					onclick={closeOverlay}
-					title="Close (Esc)"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M18 6 6 18" />
-						<path d="m6 6 12 12" />
-					</svg>
 				</button>
 			</div>
 		</div>
@@ -221,6 +319,7 @@
 		bottom: 0;
 		background-color: #0000001a;
 		z-index: 9998;
+		pointer-events: none;
 	}
 
 	.cms-overlay {
@@ -231,6 +330,7 @@
 		z-index: 9999;
 		min-width: 300px;
 		max-width: 500px;
+		pointer-events: auto;
 	}
 
 	.cms-toolbar {
@@ -288,8 +388,31 @@
 		border-color: #d1d5dbff;
 	}
 
-	.toolbar-button.close {
-		margin-left: auto;
+	.toolbar-button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.toolbar-button.save {
+		background-color: #3b82f6ff;
+		color: white;
+		border-color: #3b82f6ff;
+	}
+
+	.toolbar-button.save:hover:not(:disabled) {
+		background-color: #2563ebff;
+		border-color: #2563ebff;
+	}
+
+	.toolbar-button.cancel {
+		background-color: #ef4444ff;
+		color: white;
+		border-color: #ef4444ff;
+	}
+
+	.toolbar-button.cancel:hover:not(:disabled) {
+		background-color: #dc2626ff;
+		border-color: #dc2626ff;
 	}
 
 	.image-uploader, .rich-text-toolbar {
