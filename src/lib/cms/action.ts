@@ -15,13 +15,21 @@ export function cms(node: HTMLElement) {
 	let initialContent = type === 'rich-text' ? node.innerHTML : node.textContent || '';
 	let hasBeenEdited = false;
 	
+	// For images, get the img element
+	const imgElement = type === 'image' ? node.querySelector('img') : null;
+	if (imgElement && type === 'image') {
+		initialContent = imgElement.src;
+	}
+	
 	// Check if we have content in the store
 	const storeContent = get(cmsStore)[ref]?.content;
 	if (storeContent) {
 		// Use store content if available
 		if (type === 'rich-text') {
 			node.innerHTML = storeContent;
-		} else {
+		} else if (type === 'image' && imgElement) {
+			imgElement.src = storeContent;
+		} else if (type === 'text') {
 			node.textContent = storeContent;
 		}
 		initialContent = storeContent;
@@ -37,6 +45,9 @@ export function cms(node: HTMLElement) {
 		if (content && document.activeElement !== node) {
 			if (type === 'rich-text' && content !== node.innerHTML) {
 				node.innerHTML = content;
+				initialContent = content;
+			} else if (type === 'image' && imgElement && content !== imgElement.src) {
+				imgElement.src = content;
 				initialContent = content;
 			} else if (type === 'text' && content !== node.textContent) {
 				node.textContent = content;

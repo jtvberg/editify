@@ -34,8 +34,8 @@
 			return;
 		}
 
-		// Validate file size (e.g., 5MB limit)
-		const maxSize = 5 * 1024 * 1024; // 5MB
+		// Validate file size
+		const maxSize = 6 * 1024 * 1024; // 6MB
 		if (file.size > maxSize) {
 			uploadError = 'Image size must be less than 5MB';
 			return;
