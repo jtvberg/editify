@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { activeElement, editMode, saveContent, getContentHistory } from '$lib/cms';
+	import { activeElement, editMode, saveContent, getContentHistory, uploadImage } from '$lib/cms';
 	import { onMount } from 'svelte';
 
 	let showHistory = $state(false);
 	let history = $state<Array<{ id: string; content: string; created_at: string }>>([]);
 	let uploading = $state(false);
+	let uploadError = $state<string | null>(null);
+	let uploadSuccess = $state(false);
 
 	async function loadHistory() {
 		if ($activeElement) {
@@ -16,6 +18,8 @@
 	function closeOverlay() {
 		activeElement.set(null);
 		showHistory = false;
+		uploadError = null;
+		uploadSuccess = false;
 	}
 
 	async function handleImageUpload(e: Event) {
@@ -24,13 +28,52 @@
 		
 		if (!file || !$activeElement) return;
 		
+		// Validate file type
+		if (!file.type.startsWith('image/')) {
+			uploadError = 'Please select a valid image file';
+			return;
+		}
+
+		// Validate file size (e.g., 5MB limit)
+		const maxSize = 5 * 1024 * 1024; // 5MB
+		if (file.size > maxSize) {
+			uploadError = 'Image size must be less than 5MB';
+			return;
+		}
+		
 		uploading = true;
+		uploadError = null;
+		uploadSuccess = false;
 		
-		// TODO: Implement actual Supabase storage upload
-		// For now, just show a placeholder
-		console.log('Image upload:', file.name);
-		
-		uploading = false;
+		try {
+			const imageUrl = await uploadImage($activeElement.ref, file);
+			
+			if (imageUrl) {
+				uploadSuccess = true;
+				// Update all elements with this ref
+				const elements = document.querySelectorAll(`[data-cms-ref="${$activeElement.ref}"]`);
+				elements.forEach((el) => {
+					const img = el.querySelector('img');
+					if (img) {
+						img.src = imageUrl;
+					}
+				});
+				
+				// Close overlay after a short delay to show success message
+				setTimeout(() => {
+					closeOverlay();
+				}, 1500);
+			} else {
+				uploadError = 'Failed to upload image. Please try again.';
+			}
+		} catch (err) {
+			console.error('Upload error:', err);
+			uploadError = 'An unexpected error occurred during upload';
+		} finally {
+			uploading = false;
+			// Reset the input
+			input.value = '';
+		}
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
@@ -95,15 +138,45 @@
 
 		{#if $activeElement.type === 'image'}
 			<div class="image-uploader">
+				<label for="image-upload" class="upload-label">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+						<polyline points="17 8 12 3 7 8" />
+						<line x1="12" y1="3" x2="12" y2="15" />
+					</svg>
+					{uploading ? 'Uploading...' : 'Choose Image'}
+				</label>
 				<input
+					id="image-upload"
 					type="file"
 					accept="image/*"
 					onchange={handleImageUpload}
 					disabled={uploading}
+					class="file-input"
 				/>
-				{#if uploading}
-					<p>Uploading...</p>
+				
+				{#if uploadError}
+					<div class="upload-message error">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="10" />
+							<line x1="15" y1="9" x2="9" y2="15" />
+							<line x1="9" y1="9" x2="15" y2="15" />
+						</svg>
+						{uploadError}
+					</div>
 				{/if}
+				
+				{#if uploadSuccess}
+					<div class="upload-message success">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+							<polyline points="22 4 12 14.01 9 11.01" />
+						</svg>
+						Image uploaded successfully!
+					</div>
+				{/if}
+				
+				<p class="upload-info">Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP</p>
 			</div>
 		{:else if $activeElement.type === 'rich-text'}
 			<div class="rich-text-toolbar">
@@ -222,7 +295,73 @@
 	.image-uploader, .rich-text-toolbar {
 		padding: 1rem;
 		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.image-uploader {
+		border-top: 1px solid #e5e7ebff;
+	}
+
+	.upload-label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		background-color: #3b82f6ff;
+		color: white;
+		border-radius: 6px;
+		cursor: pointer;
+		font-weight: 500;
+		transition: all 0.15s;
+		text-align: center;
+	}
+
+	.upload-label:hover {
+		background-color: #2563ebff;
+	}
+
+	.upload-label:active {
+		transform: scale(0.98);
+	}
+
+	.file-input {
+		display: none;
+	}
+
+	.upload-message {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	.upload-message.error {
+		background-color: #fef2f2ff;
+		color: #991b1bff;
+		border: 1px solid #fecacaff;
+	}
+
+	.upload-message.success {
+		background-color: #f0fdf4ff;
+		color: #166534ff;
+		border: 1px solid #bbf7d0ff;
+	}
+
+	.upload-info {
+		font-size: 0.75rem;
+		color: #6b7280ff;
+		text-align: center;
+		margin: 0;
+	}
+
+	.rich-text-toolbar {
+		border-top: 1px solid #e5e7ebff;
+		flex-direction: row;
 	}
 
 	.format-button {

@@ -248,12 +248,13 @@ Make sure you have `data-cms-ref` attributes in your `.svelte` files:
 
 - Add more content refs to your pages
 - Customize the styling of edit mode overlays
-- Set up image uploads with Supabase Storage
+- **[Set up image uploads with Supabase Storage](./IMAGE-STORAGE-SETUP.md)**
 - Add more pages with editable content
 - Invite team members as editors
 
 ## Need Help?
 
-- Check the full documentation in `CMS-README.md`
+- Check the [Image Storage Setup Guide](./IMAGE-STORAGE-SETUP.md) for configuring image uploads
 - Review the example implementation in `src/routes/+page.svelte`
+- Check the full documentation in `CMS-README.md`
 - Open an issue on GitHub

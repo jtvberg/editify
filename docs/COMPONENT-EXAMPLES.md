@@ -151,24 +151,101 @@ Each list item should have a unique ref:
 </ul>
 ```
 
-## Images (Structure Ready for Future Implementation)
+## Images with Upload Support
+
+Images can be uploaded and managed directly through the CMS interface. The image URL is stored in the database.
+
+```svelte
+<script>
+	import { cmsStore, cms } from '$lib/cms';
+	import defaultHeroImage from '$lib/assets/default-hero.jpg';
+</script>
+
+<!-- Simple image -->
+<img
+	data-cms-ref="home.hero.image"
+	data-cms-type="image"
+	src={$cmsStore['home.hero.image']?.content || defaultHeroImage}
+	alt="Hero"
+	use:cms
+/>
+```
+
+### Image Within a Container
+
+For better control and styling, wrap the image in a div:
+
+```svelte
+<script>
+	import { cmsStore, cms } from '$lib/cms';
+	import defaultMissionImage from '$lib/assets/default_image.jpg';
+</script>
+
+<div data-cms-ref="about.mission.image" data-cms-type="image" class="image-container" use:cms>
+	<img src={$cmsStore['about.mission.image']?.content || defaultMissionImage} alt="Our Mission" />
+</div>
+
+<style>
+	.image-container {
+		max-width: 600px;
+		margin: 2rem auto;
+	}
+
+	.image-container img {
+		width: 100%;
+		height: auto;
+		border-radius: 8px;
+	}
+</style>
+```
+
+### Using CMSContent Component for Images
+
+You can also use the `CMSContent` component wrapper:
+
+```svelte
+<script>
+	import { CMSContent } from '$lib/cms';
+	import defaultImage from '$lib/assets/default.jpg';
+</script>
+
+<CMSContent ref="portfolio.project.thumbnail" type="image">
+	<img src={$cmsStore['portfolio.project.thumbnail']?.content || defaultImage} alt="Project" />
+</CMSContent>
+```
+
+**How image upload works:**
+
+1. In edit mode, click on an image element
+2. A file upload dialog appears in the overlay
+3. Select an image (max 5MB, formats: JPG, PNG, GIF, WebP)
+4. Image is uploaded to Supabase Storage
+5. The public URL is saved to the database
+6. All instances of that ref are updated automatically
+
+**Setup Required:** See [IMAGE-STORAGE-SETUP.md](./IMAGE-STORAGE-SETUP.md) for configuring Supabase Storage.
+
+### Image with Responsive Variants
 
 ```svelte
 <script>
 	import { cmsStore, cms } from '$lib/cms';
 </script>
 
-<img
-	data-cms-ref="home.hero.image"
-	data-cms-type="image"
-	src={$cmsStore['home.hero.image']?.content || '/default-hero.jpg'}
-	alt="Hero"
-	class="hero-image"
-	use:cms
-/>
+<picture>
+	<source
+		media="(min-width: 768px)"
+		srcset={$cmsStore['home.hero.image']?.content || '/default-hero.jpg'}
+	/>
+	<img
+		data-cms-ref="home.hero.image"
+		data-cms-type="image"
+		src={$cmsStore['home.hero.mobile']?.content || '/default-hero-mobile.jpg'}
+		alt="Hero"
+		use:cms
+	/>
+</picture>
 ```
-
-**Note:** Image upload functionality is planned for future versions. Currently, you can store image URLs.
 
 ## Reactive Content
 
@@ -403,4 +480,3 @@ This creates the database entries for your new refs.
 - Verify RLS policies are set up (run `sql/supabase-rls-policies.sql`)
 - Check browser console for 403 errors
 - Ensure editor role is properly set in user metadata
-

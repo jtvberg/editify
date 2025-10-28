@@ -132,3 +132,48 @@ export async function getContentHistory(ref: string) {
 export function countRefUsage(ref: string): number {
 	return document.querySelectorAll(`[data-cms-ref="${ref}"]`).length;
 }
+
+// Upload image to Supabase Storage
+export async function uploadImage(ref: string, file: File): Promise<string | null> {
+	try {
+		// Generate unique filename with timestamp
+		const fileExt = file.name.split('.').pop();
+		const fileName = `${ref}-${Date.now()}.${fileExt}`;
+		const filePath = `cms-images/${fileName}`;
+
+		// Upload to Supabase Storage
+		const { data: uploadData, error: uploadError } = await supabase.storage
+			.from('cms-content')
+			.upload(filePath, file, {
+				cacheControl: '3600',
+				upsert: false
+			});
+
+		if (uploadError) {
+			console.error('[CMS] Error uploading image:', uploadError);
+			return null;
+		}
+
+		// Get public URL
+		const { data: urlData } = supabase.storage
+			.from('cms-content')
+			.getPublicUrl(filePath);
+
+		if (!urlData.publicUrl) {
+			console.error('[CMS] Error getting public URL');
+			return null;
+		}
+
+		// Save the URL to the CMS content
+		const success = await saveContent(ref, urlData.publicUrl);
+		if (!success) {
+			console.error('[CMS] Error saving image URL to database');
+			return null;
+		}
+
+		return urlData.publicUrl;
+	} catch (err) {
+		console.error('[CMS] Error in uploadImage:', err);
+		return null;
+	}
+}
