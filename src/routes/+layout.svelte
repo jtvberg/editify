@@ -86,6 +86,13 @@
 		animation: gradientShift 4s ease infinite;
 	}
 
+	:global(img) {
+		width: 100%;
+		border-radius: 12px;
+		margin-bottom: 2rem;
+		box-shadow: 0 10px 30px #0000004d;
+	}
+
 	@keyframes gradientShift {
 		0%, 100% {
 			background-position: 0% 50%;

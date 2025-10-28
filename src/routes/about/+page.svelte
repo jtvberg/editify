@@ -2,6 +2,7 @@
 	import { cmsStore, cms } from '$lib';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import defaultMissionImage from '$lib/assets/default_image.jpg';
 </script>
 
 <Header />
@@ -20,6 +21,10 @@
 		<h2 data-cms-ref="about.mission.title" data-cms-type="text" use:cms>
 			{$cmsStore['about.mission.title']?.content || 'Our Mission'}
 		</h2>
+
+		<div data-cms-ref="about.mission.image" data-cms-type="image" class="image" use:cms>
+			<img src={$cmsStore['about.mission.image']?.content || defaultMissionImage} alt="Our Mission" />
+		</div>
 
 		<div data-cms-ref="about.mission.content" data-cms-type="rich-text" class="content" use:cms>
 			{@html $cmsStore['about.mission.content']?.content || '<p>We believe content management should be intuitive and seamless. Our mission is to make content editing as simple as clicking and typing, removing the barriers between content creators and their websites.</p>'}
@@ -95,6 +100,11 @@
 		max-width: 800px;
 		margin: 0 auto;
 		line-height: 1.8;
+	}
+
+	.image {
+		width: 50vw;
+		margin: auto;
 	}
 
 	.description :global(p),

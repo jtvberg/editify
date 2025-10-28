@@ -162,7 +162,6 @@
 
 	.cms-toolbar {
 		padding: 1rem;
-		border-bottom: 1px solid #e5e7ebff;
 	}
 
 	.toolbar-header {
@@ -220,10 +219,8 @@
 		margin-left: auto;
 	}
 
-	.image-uploader,
-	.rich-text-toolbar {
+	.image-uploader, .rich-text-toolbar {
 		padding: 1rem;
-		border-bottom: 1px solid #e5e7ebff;
 		display: flex;
 		gap: 0.5rem;
 	}
