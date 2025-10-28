@@ -44,26 +44,26 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1.25rem;
-		background: white;
-		border: 2px solid #e5e7eb;
+		background: #ffffffff;
+		border: 2px solid #e5e7ebff;
 		border-radius: 9999px;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
 		cursor: pointer;
 		font-weight: 600;
-		color: #374151;
+		color: #374151ff;
 		transition: all 0.2s;
 		z-index: 9999;
 	}
 
 	.edit-mode-toggle:hover {
-		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+		box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000f;
 		transform: translateY(-2px);
 	}
 
 	.edit-mode-toggle.active {
-		background: rgb(59, 130, 246);
-		border-color: rgb(59, 130, 246);
-		color: white;
+		background: #3b82f6ff;
+		border-color: #3b82f6ff;
+		color: #ffffffff;
 	}
 
 	.edit-mode-toggle svg {

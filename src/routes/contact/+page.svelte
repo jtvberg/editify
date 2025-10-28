@@ -161,7 +161,7 @@
 		font-size: 3.5rem;
 		font-weight: 900;
 		margin-bottom: 1.5rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -171,7 +171,7 @@
 
 	.subtitle {
 		font-size: 1.5rem;
-		color: #9ca3af;
+		color: #9ca3afff;
 		font-weight: 400;
 		letter-spacing: -0.01em;
 	}
@@ -190,14 +190,14 @@
 	.contact-info h2 {
 		font-size: 2.25rem;
 		font-weight: 800;
-		color: #f9fafb;
+		color: #f9fafbff;
 		margin-bottom: 1.5rem;
 		letter-spacing: -0.02em;
 	}
 
 	.info-description {
 		font-size: 1.125rem;
-		color: #d1d5db;
+		color: #d1d5dbff;
 		line-height: 1.8;
 		margin-bottom: 3rem;
 	}
@@ -226,23 +226,23 @@
 	.contact-method h3 {
 		font-size: 1.125rem;
 		font-weight: 700;
-		color: #f9fafb;
+		color: #f9fafbff;
 		margin-bottom: 0.25rem;
 	}
 
 	.contact-method p {
-		color: #9ca3af;
+		color: #9ca3afff;
 		font-size: 1rem;
 		margin: 0;
 	}
 
 	.contact-form-wrapper {
-		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
 		backdrop-filter: blur(10px);
 		padding: 2rem;
 		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		border: 1px solid #ffffff1a;
+		box-shadow: 0 8px 32px #0000004d;
 	}
 
 	.contact-form {
@@ -258,18 +258,18 @@
 	}
 
 	.form-group label {
-		color: #f9fafb;
+		color: #f9fafbff;
 		font-weight: 600;
 		font-size: 0.9375rem;
 	}
 
 	.form-group input,
 	.form-group textarea {
-		background: rgba(17, 24, 39, 0.5);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #11182780;
+		border: 1px solid #ffffff1a;
 		border-radius: 8px;
 		padding: 0.875rem 1rem;
-		color: #f9fafb;
+		color: #f9fafbff;
 		font-size: 1rem;
 		font-family: inherit;
 		transition: all 0.2s;
@@ -278,14 +278,14 @@
 	.form-group input:focus,
 	.form-group textarea:focus {
 		outline: none;
-		border-color: rgba(102, 126, 234, 0.5);
-		background: rgba(17, 24, 39, 0.7);
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		border-color: #667eea80;
+		background: #111827b3;
+		box-shadow: 0 0 0 3px #667eea1a;
 	}
 
 	.form-group input::placeholder,
 	.form-group textarea::placeholder {
-		color: #6b7280;
+		color: #6b7280ff;
 	}
 
 	.form-group textarea {
@@ -294,8 +294,8 @@
 	}
 
 	.submit-btn {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 100%);
+		color: #ffffffff;
 		border: none;
 		border-radius: 8px;
 		padding: 1rem 2rem;
@@ -303,12 +303,12 @@
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s;
-		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+		box-shadow: 0 4px 12px #667eea66;
 	}
 
 	.submit-btn:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+		box-shadow: 0 6px 20px #667eea80;
 	}
 
 	.submit-btn:active {
@@ -316,9 +316,9 @@
 	}
 
 	.success-message {
-		background: rgba(16, 185, 129, 0.2);
-		border: 1px solid rgba(16, 185, 129, 0.3);
-		color: #6ee7b7;
+		background: #10b98133;
+		border: 1px solid #10b9814d;
+		color: #6ee7b7ff;
 		padding: 1rem;
 		border-radius: 8px;
 		text-align: center;

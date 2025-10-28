@@ -204,15 +204,15 @@ Create `src/routes/login/+page.svelte`:
 	input {
 		width: 100%;
 		padding: 0.5rem;
-		border: 1px solid #ddd;
+		border: 1px solid #ddddddff;
 		border-radius: 4px;
 	}
 
 	button {
 		width: 100%;
 		padding: 0.75rem;
-		background: #3b82f6;
-		color: white;
+		background: #3b82f6ff;
+		color: #ddddddff;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
@@ -220,7 +220,7 @@ Create `src/routes/login/+page.svelte`:
 	}
 
 	button:hover:not(:disabled) {
-		background: #2563eb;
+		background: #2563ebff;
 	}
 
 	button:disabled {
@@ -231,8 +231,8 @@ Create `src/routes/login/+page.svelte`:
 	.error {
 		padding: 0.75rem;
 		margin-bottom: 1rem;
-		background: #fee;
-		color: #c00;
+		background: #ffeeeeff;
+		color: #cc0000ff;
 		border-radius: 4px;
 	}
 </style>
@@ -311,8 +311,8 @@ Create `src/routes/login/+page.svelte`:
 	/* Same styles as Option 2 */
 	.success {
 		padding: 0.75rem;
-		background: #efe;
-		color: #060;
+		background: #eeffeeff;
+		color: #006600ff;
 		border-radius: 4px;
 	}
 </style>

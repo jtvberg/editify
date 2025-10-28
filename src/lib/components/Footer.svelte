@@ -16,6 +16,6 @@
 	}
 
 	.footer p {
-		color: #6b7280;
+		color: #6b7280ff;
 	}
 </style>

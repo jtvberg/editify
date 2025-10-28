@@ -38,7 +38,7 @@
 <style>
 	:global(.cms-editable) {
 		position: relative;
-		outline: 2px dashed rgba(59, 130, 246, 0.5);
+		outline: 2px dashed #3b82f680;
 		outline-offset: 2px;
 		transition: outline 0.2s;
 		cursor: pointer;
@@ -46,25 +46,25 @@
 	}
 
 	:global(.cms-editable:hover) {
-		outline: 2px solid rgba(59, 130, 246, 0.8);
-		background-color: rgba(59, 130, 246, 0.05);
+		outline: 2px solid #3b82f6cc;
+		background-color: #3b82f60d;
 	}
 
 	:global(.cms-editable:focus) {
-		outline: 2px solid rgb(59, 130, 246);
-		background-color: rgba(59, 130, 246, 0.1);
+		outline: 2px solid #3b82f6ff;
+		background-color: #3b82f61a;
 		cursor: text;
 	}
 
 	:global(.cms-editable:empty::before) {
 		content: 'Click to edit...';
-		color: #9ca3af;
+		color: #9ca3afff;
 		font-style: italic;
 	}
 
     :global(body) {
-        color: #f9fafb;
-		background-color: #0f172a;
+        color: #f9fafbff;
+		background-color: #131720ff;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 	}
 

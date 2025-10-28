@@ -62,11 +62,11 @@
 		margin: 6rem auto;
 		padding: 3rem;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		border: 1px solid #ffffff1a;
+		box-shadow: 0 8px 32px #0000004d;
 		animation: fadeInUp 0.6s ease-out;
 	}
 
@@ -84,7 +84,7 @@
 	.login-container h1 {
 		font-size: 2rem;
 		font-weight: 800;
-		color: #f9fafb;
+		color: #f9fafbff;
 		margin-bottom: 2rem;
 		text-align: center;
 		letter-spacing: -0.02em;
@@ -98,51 +98,51 @@
 		display: block;
 		margin-bottom: 0.5rem;
 		font-weight: 600;
-		color: #f9fafb;
+		color: #f9fafbff;
 		font-size: 0.9375rem;
 	}
 
 	input {
 		width: 100%;
 		padding: 0.875rem 1rem;
-		background: rgba(17, 24, 39, 0.5);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #11182780;
+		border: 1px solid #ffffff1a;
 		border-radius: 8px;
 		font-size: 1rem;
-		color: #f9fafb;
+		color: #f9fafbff;
 		font-family: inherit;
 		transition: all 0.2s;
 	}
 
 	input:focus {
 		outline: none;
-		border-color: rgba(102, 126, 234, 0.5);
-		background: rgba(17, 24, 39, 0.7);
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		border-color: #667eea80;
+		background: #111827b3;
+		box-shadow: 0 0 0 3px #667eea1a;
 	}
 
 	input::placeholder {
-		color: #6b7280;
+		color: #6b7280ff;
 	}
 
 	button {
 		width: 100%;
 		padding: 0.875rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 100%);
+		color: #ffffffff;
 		border: none;
 		border-radius: 8px;
 		font-size: 1rem;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s;
-		box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+		box-shadow: 0 4px 12px #667eea66;
 		margin-top: 0.5rem;
 	}
 
 	button:hover:not(:disabled) {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+		box-shadow: 0 6px 20px #667eea80;
 	}
 
 	button:active:not(:disabled) {
@@ -156,9 +156,9 @@
 	}
 
 	.error {
-		background: rgba(239, 68, 68, 0.2);
-		border: 1px solid rgba(239, 68, 68, 0.3);
-		color: #fca5a5;
+		background: #ef444433;
+		border: 1px solid #ef444433;
+		color: #fca5a5ff;
 		padding: 0.875rem;
 		border-radius: 8px;
 		margin-bottom: 1rem;

@@ -103,20 +103,20 @@
 	}
 
 	.cms-editable {
-		outline: 2px dashed rgba(59, 130, 246, 0.5);
+		outline: 2px dashed #3b82f680;
 		outline-offset: 2px;
 		transition: outline 0.2s;
 		cursor: pointer;
 	}
 
 	.cms-editable:hover {
-		outline: 2px solid rgba(59, 130, 246, 0.8);
-		background-color: rgba(59, 130, 246, 0.05);
+		outline: 2px solid #3b82f6cc;
+		background-color: #3b82f60d;
 	}
 
 	.cms-editable:focus {
-		outline: 2px solid rgb(59, 130, 246);
-		background-color: rgba(59, 130, 246, 0.1);
+		outline: 2px solid #3b82f6ff;
+		background-color: #3b82f61a;
 		cursor: text;
 	}
 </style>

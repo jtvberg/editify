@@ -146,15 +146,15 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(0, 0, 0, 0.1);
+		background: #0000001a;
 		z-index: 9998;
 	}
 
 	.cms-overlay {
 		position: absolute;
-		background: white;
+		background: #ffffffff;
 		border-radius: 8px;
-		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 10px 25px -5px #0000001a, 0 10px 10px -5px #0000000a;
 		z-index: 9999;
 		min-width: 300px;
 		max-width: 500px;
@@ -162,7 +162,7 @@
 
 	.cms-toolbar {
 		padding: 1rem;
-		border-bottom: 1px solid #e5e7eb;
+		border-bottom: 1px solid #e5e7ebff;
 	}
 
 	.toolbar-header {
@@ -175,8 +175,8 @@
 	.ref-id {
 		font-family: monospace;
 		font-size: 0.875rem;
-		color: #6b7280;
-		background: #f3f4f6;
+		color: #6b7280ff;
+		background: #f3f4f6ff;
 		padding: 0.25rem 0.5rem;
 		border-radius: 4px;
 		flex-shrink: 0;
@@ -184,8 +184,8 @@
 
 	.usage-badge {
 		font-size: 0.75rem;
-		background: #dbeafe;
-		color: #1e40af;
+		background: #dbeafeff;
+		color: #1e40afff;
 		padding: 0.25rem 0.5rem;
 		border-radius: 9999px;
 		font-weight: 600;
@@ -201,19 +201,19 @@
 		align-items: center;
 		gap: 0.375rem;
 		padding: 0.5rem 0.75rem;
-		background: white;
-		border: 1px solid #e5e7eb;
+		background: #ffffffff;
+		border: 1px solid #e5e7ebff;
 		border-radius: 6px;
 		cursor: pointer;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #374151;
+		color: #374151ff;
 		transition: all 0.15s;
 	}
 
 	.toolbar-button:hover {
-		background: #f9fafb;
-		border-color: #d1d5db;
+		background: #f9fafbff;
+		border-color: #d1d5dbff;
 	}
 
 	.toolbar-button.close {
@@ -223,20 +223,20 @@
 	.image-uploader,
 	.rich-text-toolbar {
 		padding: 1rem;
-		border-bottom: 1px solid #e5e7eb;
+		border-bottom: 1px solid #e5e7ebff;
 	}
 
 	.format-button {
 		padding: 0.375rem 0.75rem;
-		background: white;
-		border: 1px solid #e5e7eb;
+		background: #ffffffff;
+		border: 1px solid #e5e7ebff;
 		border-radius: 4px;
 		cursor: pointer;
 		transition: all 0.15s;
 	}
 
 	.format-button:hover {
-		background: #f9fafb;
+		background: #f9fafbff;
 	}
 
 	.history-panel {
@@ -249,11 +249,11 @@
 		margin: 0 0 0.75rem 0;
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: #111827;
+		color: #111827ff;
 	}
 
 	.empty-state {
-		color: #6b7280;
+		color: #6b7280ff;
 		font-size: 0.875rem;
 		text-align: center;
 		padding: 2rem 1rem;
@@ -270,21 +270,21 @@
 
 	.history-item {
 		padding: 0.75rem;
-		background: #f9fafb;
+		background: #f9fafbff;
 		border-radius: 6px;
-		border: 1px solid #e5e7eb;
+		border: 1px solid #e5e7ebff;
 	}
 
 	.history-item time {
 		display: block;
 		font-size: 0.75rem;
-		color: #6b7280;
+		color: #6b7280ff;
 		margin-bottom: 0.5rem;
 	}
 
 	.history-content {
 		font-size: 0.875rem;
-		color: #374151;
+		color: #374151ff;
 		line-height: 1.5;
 	}
 </style>

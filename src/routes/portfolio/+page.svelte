@@ -127,7 +127,7 @@
 		font-size: 3.5rem;
 		font-weight: 900;
 		margin-bottom: 1.5rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -137,7 +137,7 @@
 
 	.subtitle {
 		font-size: 1.5rem;
-		color: #9ca3af;
+		color: #9ca3afff;
 		font-weight: 400;
 		letter-spacing: -0.01em;
 	}
@@ -153,29 +153,29 @@
 	}
 
 	.project-card {
-		background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		border: 1px solid #ffffff1a;
+		box-shadow: 0 8px 32px #0000004d;
 		overflow: hidden;
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.project-card:hover {
 		transform: translateY(-8px);
-		box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-		border-color: rgba(102, 126, 234, 0.3);
+		box-shadow: 0 20px 40px #667eea4d;
+		border-color: #667eea4d;
 	}
 
 	.project-image {
 		width: 100%;
 		height: 200px;
-		background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+		background: linear-gradient(135deg, #667eea33 0%, #764ba233 100%);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		border-bottom: 1px solid #ffffff1a;
 	}
 
 	.placeholder-image {
@@ -190,13 +190,13 @@
 	.project-content h3 {
 		font-size: 1.5rem;
 		font-weight: 700;
-		color: #f9fafb;
+		color: #f9fafbff;
 		margin-bottom: 1rem;
 		letter-spacing: -0.01em;
 	}
 
 	.project-description {
-		color: #d1d5db;
+		color: #d1d5dbff;
 		line-height: 1.7;
 		font-size: 1.05rem;
 		margin-bottom: 1.5rem;
@@ -213,13 +213,13 @@
 	}
 
 	.tag {
-		background: rgba(102, 126, 234, 0.2);
-		color: #a5b4fc;
+		background: #667eea33;
+		color: #a5b4fcff;
 		padding: 0.375rem 0.75rem;
 		border-radius: 6px;
 		font-size: 0.875rem;
 		font-weight: 500;
-		border: 1px solid rgba(102, 126, 234, 0.3);
+		border: 1px solid #667eea4d;
 	}
 
 	@media (max-width: 768px) {
