@@ -6,7 +6,7 @@
 
 <Header />
 <main class="container">
-	<section class="about-hero">
+	<section class="about-hero hero">
 		<h1 data-cms-ref="about.hero.title" data-cms-type="text" use:cms>
 			{$cmsStore['about.hero.title']?.content || 'About Editify'}
 		</h1>
@@ -88,18 +88,6 @@
 		}
 	}
 
-	.about-hero h1 {
-		font-size: 3.5rem;
-		font-weight: 900;
-		margin-bottom: 2rem;
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		letter-spacing: -0.02em;
-		line-height: 1.1;
-	}
-
 	.description,
 	.content {
 		font-size: 1.25rem;
@@ -158,9 +146,9 @@
 	}
 
 	.feature-item:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 20px 40px #667eea33;
-		border-color: #667eea4d;
+		transform: translateY(-8px);
+		box-shadow: 0 20px 40px #667eea4d;
+		border-color: #667eeaff;
 	}
 
 	.feature-item h3 {

@@ -146,13 +146,13 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: #0000001a;
+		background-color: #0000001a;
 		z-index: 9998;
 	}
 
 	.cms-overlay {
 		position: absolute;
-		background: #ffffffff;
+		background-color: #ffffffff;
 		border-radius: 8px;
 		box-shadow: 0 10px 25px -5px #0000001a, 0 10px 10px -5px #0000000a;
 		z-index: 9999;
@@ -176,7 +176,7 @@
 		font-family: monospace;
 		font-size: 0.875rem;
 		color: #6b7280ff;
-		background: #f3f4f6ff;
+		background-color: #f3f4f6ff;
 		padding: 0.25rem 0.5rem;
 		border-radius: 4px;
 		flex-shrink: 0;
@@ -184,7 +184,7 @@
 
 	.usage-badge {
 		font-size: 0.75rem;
-		background: #dbeafeff;
+		background-color: #dbeafeff;
 		color: #1e40afff;
 		padding: 0.25rem 0.5rem;
 		border-radius: 9999px;
@@ -201,7 +201,7 @@
 		align-items: center;
 		gap: 0.375rem;
 		padding: 0.5rem 0.75rem;
-		background: #ffffffff;
+		background-color: #ffffffff;
 		border: 1px solid #e5e7ebff;
 		border-radius: 6px;
 		cursor: pointer;
@@ -212,7 +212,7 @@
 	}
 
 	.toolbar-button:hover {
-		background: #f9fafbff;
+		background-color: #f9fafbff;
 		border-color: #d1d5dbff;
 	}
 
@@ -224,11 +224,13 @@
 	.rich-text-toolbar {
 		padding: 1rem;
 		border-bottom: 1px solid #e5e7ebff;
+		display: flex;
+		gap: 0.5rem;
 	}
 
 	.format-button {
 		padding: 0.375rem 0.75rem;
-		background: #ffffffff;
+		background-color: #ffffffff;
 		border: 1px solid #e5e7ebff;
 		border-radius: 4px;
 		cursor: pointer;
@@ -236,7 +238,7 @@
 	}
 
 	.format-button:hover {
-		background: #f9fafbff;
+		background-color: #f9fafbff;
 	}
 
 	.history-panel {
@@ -270,7 +272,7 @@
 
 	.history-item {
 		padding: 0.75rem;
-		background: #f9fafbff;
+		background-color: #f9fafbff;
 		border-radius: 6px;
 		border: 1px solid #e5e7ebff;
 	}

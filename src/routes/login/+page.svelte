@@ -105,7 +105,7 @@
 	input {
 		width: 100%;
 		padding: 0.875rem 1rem;
-		background: #11182780;
+		background-color: #11182780;
 		border: 1px solid #ffffff1a;
 		border-radius: 8px;
 		font-size: 1rem;
@@ -117,7 +117,7 @@
 	input:focus {
 		outline: none;
 		border-color: #667eea80;
-		background: #111827b3;
+		background-color: #111827b3;
 		box-shadow: 0 0 0 3px #667eea1a;
 	}
 
@@ -156,7 +156,7 @@
 	}
 
 	.error {
-		background: #ef444433;
+		background-color: #ef444433;
 		border: 1px solid #ef444433;
 		color: #fca5a5ff;
 		padding: 0.875rem;

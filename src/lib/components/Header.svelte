@@ -41,7 +41,6 @@
 						{item.label}
 					</a>
 				{/each}
-				<a href="/login" class="nav-link login-link">Login</a>
 			</div>
 
 			<!-- Mobile Menu Button -->
@@ -78,13 +77,6 @@
 						{item.label}
 					</a>
 				{/each}
-				<a 
-					href="/login" 
-					class="mobile-nav-link login-link"
-					on:click={closeMobileMenu}
-				>
-					Login
-				</a>
 			</div>
 		{/if}
 	</nav>
@@ -159,7 +151,7 @@
 
 	.nav-link:hover {
 		color: #f9fafbff;
-		background: #667eea1a;
+		background-color: #667eea1a;
 	}
 
 	.nav-link.active {
@@ -178,19 +170,6 @@
 		border-radius: 2px;
 	}
 
-	.login-link {
-		margin-left: 0.5rem;
-		background: linear-gradient(135deg, #667eea33, #764ba233);
-		border: 1px solid #667eea4d;
-		color: #a5b4fcff;
-	}
-
-	.login-link:hover {
-		background: linear-gradient(135deg, #667eea4d, #764ba24d);
-		border-color: #667eea80;
-		color: #c7d2feff;
-	}
-
 	.mobile-menu-btn {
 		display: none;
 		background: none;
@@ -203,7 +182,7 @@
 	}
 
 	.mobile-menu-btn:hover {
-		background: #667eea1a;
+		background-color: #667eea1a;
 	}
 
 	.mobile-nav {
@@ -239,21 +218,14 @@
 
 	.mobile-nav-link:hover {
 		color: #f9fafbff;
-		background: #667eea1a;
+		background-color: #667eea1a;
 	}
 
 	.mobile-nav-link.active {
 		color: #f9fafbff;
-		background: #667eea26;
+		background-color: #667eea26;
 		border-left: 3px solid #667eeaff;
 		padding-left: calc(1rem - 3px);
-	}
-
-	.mobile-nav-link.login-link {
-		background: linear-gradient(135deg, #667eea33, #764ba233);
-		border: 1px solid #667eea4d;
-		color: #a5b4fcff;
-		margin-top: 0.5rem;
 	}
 
 	@media (max-width: 768px) {

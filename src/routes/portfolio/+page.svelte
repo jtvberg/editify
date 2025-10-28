@@ -6,7 +6,7 @@
 
 <Header />
 <main class="container">
-	<section class="portfolio-hero">
+	<section class="portfolio-hero hero">
 		<h1 data-cms-ref="portfolio.hero.title" data-cms-type="text" use:cms>
 			{$cmsStore['portfolio.hero.title']?.content || 'Portfolio'}
 		</h1>
@@ -123,18 +123,6 @@
 		}
 	}
 
-	.portfolio-hero h1 {
-		font-size: 3.5rem;
-		font-weight: 900;
-		margin-bottom: 1.5rem;
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		letter-spacing: -0.02em;
-		line-height: 1.1;
-	}
-
 	.subtitle {
 		font-size: 1.5rem;
 		color: #9ca3afff;
@@ -213,7 +201,7 @@
 	}
 
 	.tag {
-		background: #667eea33;
+		background-color: #667eea33;
 		color: #a5b4fcff;
 		padding: 0.375rem 0.75rem;
 		border-radius: 6px;

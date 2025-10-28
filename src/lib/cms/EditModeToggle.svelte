@@ -44,7 +44,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1.25rem;
-		background: #ffffffff;
+		background-color: #ffffffff;
 		border: 2px solid #e5e7ebff;
 		border-radius: 9999px;
 		box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
@@ -61,7 +61,7 @@
 	}
 
 	.edit-mode-toggle.active {
-		background: #3b82f6ff;
+		background-color: #3b82f6ff;
 		border-color: #3b82f6ff;
 		color: #ffffffff;
 	}

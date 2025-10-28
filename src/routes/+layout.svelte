@@ -71,4 +71,27 @@
 	:global(h1, h2, h3) {
 		margin-block: 1rem;
 	}
+
+	:global(.hero h1) {
+		font-size: 4rem;
+		font-weight: 900;
+		margin-bottom: 1.5rem;
+		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
+		background-size: 200% 200%;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+		animation: gradientShift 4s ease infinite;
+	}
+
+	@keyframes gradientShift {
+		0%, 100% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+	}
 </style>

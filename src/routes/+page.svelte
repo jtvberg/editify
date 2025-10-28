@@ -99,18 +99,6 @@
 		}
 	}
 
-	.hero h1 {
-		font-size: 4rem;
-		font-weight: 900;
-		margin-bottom: 1.5rem;
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		letter-spacing: -0.02em;
-		line-height: 1.1;
-	}
-
 	.subtitle {
 		font-size: 1.625rem;
 		color: #9ca3afff;
@@ -155,7 +143,7 @@
 		backdrop-filter: blur(10px);
 		padding: 2rem;
 		border-radius: 16px;
-		border: 1px solid #ffffff0d;
+		border: 1px solid #ffffff1a;
 		box-shadow: 0 8px 32px #0000004d;
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
@@ -164,7 +152,6 @@
 		transform: translateY(-8px);
 		box-shadow: 0 20px 40px #667eea4d;
 		border-color: #667eeaff;
-		background: linear-gradient(135deg, #667eea26 0%, #764ba226 100%);
 	}
 
 	.feature-card h3 {
@@ -218,7 +205,7 @@
 	}
 
 	.instructions :global(code) {
-		background: #667eea33;
+		background-color: #667eea33;
 		padding: 0.35rem 0.65rem;
 		border-radius: 6px;
 		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;

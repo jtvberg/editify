@@ -27,7 +27,7 @@
 
 <Header />
 <main class="container">
-	<section class="contact-hero">
+	<section class="contact-hero hero">
 		<h1 data-cms-ref="contact.hero.title" data-cms-type="text" use:cms>
 			{$cmsStore['contact.hero.title']?.content || 'Get In Touch'}
 		</h1>
@@ -157,18 +157,6 @@
 		}
 	}
 
-	.contact-hero h1 {
-		font-size: 3.5rem;
-		font-weight: 900;
-		margin-bottom: 1.5rem;
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		letter-spacing: -0.02em;
-		line-height: 1.1;
-	}
-
 	.subtitle {
 		font-size: 1.5rem;
 		color: #9ca3afff;
@@ -265,7 +253,7 @@
 
 	.form-group input,
 	.form-group textarea {
-		background: #11182780;
+		background-color: #11182780;
 		border: 1px solid #ffffff1a;
 		border-radius: 8px;
 		padding: 0.875rem 1rem;
@@ -279,7 +267,7 @@
 	.form-group textarea:focus {
 		outline: none;
 		border-color: #667eea80;
-		background: #111827b3;
+		background-color: #111827b3;
 		box-shadow: 0 0 0 3px #667eea1a;
 	}
 
@@ -316,7 +304,7 @@
 	}
 
 	.success-message {
-		background: #10b98133;
+		background-color: #10b98133;
 		border: 1px solid #10b9814d;
 		color: #6ee7b7ff;
 		padding: 1rem;
