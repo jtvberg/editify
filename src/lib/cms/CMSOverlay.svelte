@@ -8,6 +8,9 @@
 	let uploadError = $state<string | null>(null);
 	let uploadSuccess = $state(false);
 	let saving = $state(false);
+	let showLinkInput = $state(false);
+	let linkUrl = $state('');
+	let linkText = $state('');
 
 	async function loadHistory() {
 		if ($activeElement) {
@@ -21,6 +24,9 @@
 		showHistory = false;
 		uploadError = null;
 		uploadSuccess = false;
+		showLinkInput = false;
+		linkUrl = '';
+		linkText = '';
 	}
 
 	async function handleSave() {
@@ -139,9 +145,105 @@
 		}
 	}
 
+	function applyFormat(command: string) {
+		if (!$activeElement) return;
+		
+		// Focus the element first to ensure selection is in the right place
+		$activeElement.element.focus();
+		
+		// Execute the formatting command
+		document.execCommand(command, false);
+		
+		// Keep focus on the element
+		$activeElement.element.focus();
+	}
+
+	function toggleBold() {
+		applyFormat('bold');
+	}
+
+	function toggleItalic() {
+		applyFormat('italic');
+	}
+
+	function showLinkDialog() {
+		// Get the selected text if any
+		const selection = window.getSelection();
+		if (selection && selection.toString()) {
+			linkText = selection.toString();
+		}
+		showLinkInput = true;
+	}
+
+	function insertLink() {
+		if (!linkUrl || !$activeElement) {
+			showLinkInput = false;
+			return;
+		}
+		
+		// Focus the element
+		$activeElement.element.focus();
+		
+		// If we have text selected or provided, create a link
+		if (linkText) {
+			// Create the link HTML
+			const linkHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+			document.execCommand('insertHTML', false, linkHtml);
+		} else {
+			// Just insert the URL as both href and text
+			const linkHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer">${linkUrl}</a>`;
+			document.execCommand('insertHTML', false, linkHtml);
+		}
+		
+		// Reset and close
+		linkUrl = '';
+		linkText = '';
+		showLinkInput = false;
+		
+		// Keep focus on the element
+		$activeElement.element.focus();
+	}
+
+	function cancelLink() {
+		linkUrl = '';
+		linkText = '';
+		showLinkInput = false;
+	}
+
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
-			handleCancel();
+			if (showLinkInput) {
+				cancelLink();
+			} else {
+				handleCancel();
+			}
+		}
+		
+		// Handle Enter in link input
+		if (e.key === 'Enter' && showLinkInput && (e.target as HTMLElement).tagName === 'INPUT') {
+			e.preventDefault();
+			insertLink();
+		}
+		
+		// Only handle keyboard shortcuts when editing rich text
+		if ($activeElement && $activeElement.type === 'rich-text') {
+			// Bold: Cmd+B (Mac) or Ctrl+B (Windows/Linux)
+			if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+				e.preventDefault();
+				toggleBold();
+			}
+			
+			// Italic: Cmd+I (Mac) or Ctrl+I (Windows/Linux)
+			if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
+				e.preventDefault();
+				toggleItalic();
+			}
+			
+			// Link: Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+				e.preventDefault();
+				showLinkDialog();
+			}
 		}
 	}
 
@@ -278,16 +380,61 @@
 			</div>
 		{:else if $activeElement.type === 'rich-text'}
 			<div class="rich-text-toolbar">
-				<button class="format-button" title="Bold">
+				<button 
+					class="format-button" 
+					onclick={toggleBold}
+					title="Bold (Ctrl/Cmd+B)"
+				>
 					<strong>B</strong>
 				</button>
-				<button class="format-button" title="Italic">
+				<button 
+					class="format-button" 
+					onclick={toggleItalic}
+					title="Italic (Ctrl/Cmd+I)"
+				>
 					<em>I</em>
 				</button>
-				<button class="format-button" title="Link">
+				<button 
+					class="format-button" 
+					onclick={showLinkDialog}
+					title="Insert Link (Ctrl/Cmd+K)"
+				>
 					🔗
 				</button>
 			</div>
+			
+			{#if showLinkInput}
+				<div class="link-input-panel">
+					<div class="input-group">
+						<label for="link-url">URL</label>
+						<input
+							id="link-url"
+							type="url"
+							bind:value={linkUrl}
+							placeholder="https://example.com"
+							class="link-input"
+						/>
+					</div>
+					<div class="input-group">
+						<label for="link-text">Link Text (optional)</label>
+						<input
+							id="link-text"
+							type="text"
+							bind:value={linkText}
+							placeholder="Click here"
+							class="link-input"
+						/>
+					</div>
+					<div class="link-actions">
+						<button class="link-button primary" onclick={insertLink}>
+							Insert Link
+						</button>
+						<button class="link-button" onclick={cancelLink}>
+							Cancel
+						</button>
+					</div>
+				</div>
+			{/if}
 		{/if}
 
 		{#if showHistory}
@@ -494,10 +641,90 @@
 		border-radius: 4px;
 		cursor: pointer;
 		transition: all 0.15s;
+		font-size: 1rem;
+		min-width: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.format-button:hover {
 		background-color: #f9fafbff;
+		border-color: #3b82f6ff;
+	}
+
+	.format-button:active {
+		background-color: #eff6ffff;
+		transform: scale(0.98);
+	}
+
+	.link-input-panel {
+		padding: 1rem;
+		border-top: 1px solid #e5e7ebff;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+	}
+
+	.input-group label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #374151ff;
+	}
+
+	.link-input {
+		padding: 0.5rem 0.75rem;
+		border: 1px solid #d1d5dbff;
+		border-radius: 6px;
+		font-size: 0.875rem;
+		transition: all 0.15s;
+		width: 100%;
+	}
+
+	.link-input:focus {
+		outline: none;
+		border-color: #3b82f6ff;
+		box-shadow: 0 0 0 3px #3b82f61a;
+	}
+
+	.link-actions {
+		display: flex;
+		gap: 0.5rem;
+		margin-top: 0.25rem;
+	}
+
+	.link-button {
+		padding: 0.5rem 1rem;
+		border: 1px solid #e5e7ebff;
+		border-radius: 6px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.15s;
+		background-color: #ffffffff;
+		color: #374151ff;
+	}
+
+	.link-button:hover {
+		background-color: #f9fafbff;
+		border-color: #d1d5dbff;
+	}
+
+	.link-button.primary {
+		background-color: #3b82f6ff;
+		color: #ffffffff;
+		border-color: #3b82f6ff;
+	}
+
+	.link-button.primary:hover {
+		background-color: #2563ebff;
+		border-color: #2563ebff;
 	}
 
 	.history-panel {
