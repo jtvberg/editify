@@ -308,31 +308,77 @@
 				return;
 			}
 			
-			// Split content by line breaks or block elements to create list items
+			// Process the extracted content to create list items
 			if (content) {
-				const textContent = content.textContent?.trim();
-				
-				if (textContent) {
-					// Try to split by line breaks
-					const lines = textContent.split('\n').filter(line => line.trim());
+				// Helper function to process nodes and create list items
+				const processNodes = (nodes: NodeList | Node[]) => {
+					const items: Node[][] = [[]];
+					let currentItem = 0;
 					
-					if (lines.length > 1) {
-						// Multiple lines - create list item for each
-						lines.forEach(line => {
-							const li = document.createElement('li');
-							li.textContent = line.trim();
-							list.appendChild(li);
-						});
-					} else {
-						// Single line - create one list item
+					Array.from(nodes).forEach((node) => {
+						if (node.nodeType === Node.ELEMENT_NODE) {
+							const tagName = (node as Element).tagName;
+							
+							// BR tags indicate new list items
+							if (tagName === 'BR') {
+								// Only create new item if current item has content
+								if (items[currentItem].length > 0) {
+									currentItem++;
+									items[currentItem] = [];
+								}
+							}
+							// Block elements indicate new list items
+							else if (['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(tagName)) {
+								// Add current block as an item
+								if (items[currentItem].length > 0) {
+									currentItem++;
+									items[currentItem] = [];
+								}
+								items[currentItem].push(node);
+								currentItem++;
+								items[currentItem] = [];
+							} else {
+								items[currentItem].push(node);
+							}
+						} else if (node.nodeType === Node.TEXT_NODE) {
+							const text = node.textContent || '';
+							// Split by newlines
+							const lines = text.split('\n');
+							
+							lines.forEach((line, idx) => {
+								if (line) {
+									items[currentItem].push(document.createTextNode(line));
+								}
+								// Create new item for each newline (except the last one if empty)
+								if (idx < lines.length - 1 && items[currentItem].length > 0) {
+									currentItem++;
+									items[currentItem] = [];
+								}
+							});
+						} else {
+							items[currentItem].push(node);
+						}
+					});
+					
+					// Filter out empty items and create list items
+					items.filter(item => item.length > 0).forEach(itemNodes => {
 						const li = document.createElement('li');
-						li.appendChild(content);
-						list.appendChild(li);
-					}
-				} else {
-					// Empty selection - create empty list item
+						itemNodes.forEach(node => li.appendChild(node));
+						
+						// Clean up: trim whitespace from text content
+						const text = li.textContent?.trim();
+						if (text) {
+							list.appendChild(li);
+						}
+					});
+				};
+				
+				processNodes(content.childNodes);
+				
+				// If no items were created, create one with all content
+				if (list.children.length === 0) {
 					const li = document.createElement('li');
-					li.textContent = 'List item';
+					li.appendChild(content);
 					list.appendChild(li);
 				}
 			}
