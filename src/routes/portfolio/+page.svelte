@@ -141,19 +141,19 @@
 	}
 
 	.project-card {
+		overflow: hidden;
 		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
 		border: 1px solid #ffffff1a;
 		box-shadow: 0 8px 32px #0000004d;
-		overflow: hidden;
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.project-card:hover {
 		transform: translateY(-8px);
 		box-shadow: 0 20px 40px #667eea4d;
-		border-color: #667eea4d;
+		border-color: #667eeaff;
 	}
 
 	.project-image {

@@ -395,7 +395,7 @@
 
 	.toolbar-button.save {
 		background-color: #3b82f6ff;
-		color: white;
+		color: #ffffffff;
 		border-color: #3b82f6ff;
 	}
 
@@ -406,7 +406,7 @@
 
 	.toolbar-button.cancel {
 		background-color: #ef4444ff;
-		color: white;
+		color: #ffffffff;
 		border-color: #ef4444ff;
 	}
 
@@ -433,7 +433,7 @@
 		gap: 0.5rem;
 		padding: 0.75rem 1rem;
 		background-color: #3b82f6ff;
-		color: white;
+		color: #ffffffff;
 		border-radius: 6px;
 		cursor: pointer;
 		font-weight: 500;
