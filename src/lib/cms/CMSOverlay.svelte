@@ -238,6 +238,125 @@
 		wrapSelection('code');
 	}
 
+	function toggleList(listType: 'ul' | 'ol') {
+		if (!$activeElement) return;
+		
+		const element = $activeElement.element;
+		element.focus();
+		
+		const selection = window.getSelection();
+		if (!selection || selection.rangeCount === 0) return;
+		
+		const range = selection.getRangeAt(0);
+		
+		// Check if selection is within our element
+		if (!element.contains(range.commonAncestorContainer)) return;
+		
+		// Check if we're already inside a list of this type
+		let node = range.commonAncestorContainer;
+		let existingList: HTMLElement | null = null;
+		
+		while (node && node !== element) {
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				const tagName = (node as Element).tagName;
+				if (tagName === 'UL' || tagName === 'OL') {
+					existingList = node as HTMLElement;
+					break;
+				}
+			}
+			node = node.parentNode!;
+		}
+		
+		if (existingList) {
+			// Remove the list - convert list items back to regular content
+			const fragment = document.createDocumentFragment();
+			const items = existingList.querySelectorAll('li');
+			
+			items.forEach((li) => {
+				// Add line breaks between items for readability
+				if (fragment.childNodes.length > 0) {
+					fragment.appendChild(document.createElement('br'));
+				}
+				while (li.firstChild) {
+					fragment.appendChild(li.firstChild);
+				}
+			});
+			
+			existingList.parentNode?.replaceChild(fragment, existingList);
+		} else {
+			// Create a new list
+			const list = document.createElement(listType);
+			
+			// Get the selected content
+			let content: DocumentFragment | null = null;
+			
+			if (!range.collapsed) {
+				content = range.extractContents();
+			} else {
+				// No selection - create empty list item
+				const li = document.createElement('li');
+				li.appendChild(document.createTextNode('List item'));
+				list.appendChild(li);
+				range.insertNode(list);
+				
+				// Place cursor inside the list item
+				range.setStart(li.firstChild!, 0);
+				range.setEnd(li.firstChild!, li.textContent!.length);
+				selection.removeAllRanges();
+				selection.addRange(range);
+				element.focus();
+				return;
+			}
+			
+			// Split content by line breaks or block elements to create list items
+			if (content) {
+				const textContent = content.textContent?.trim();
+				
+				if (textContent) {
+					// Try to split by line breaks
+					const lines = textContent.split('\n').filter(line => line.trim());
+					
+					if (lines.length > 1) {
+						// Multiple lines - create list item for each
+						lines.forEach(line => {
+							const li = document.createElement('li');
+							li.textContent = line.trim();
+							list.appendChild(li);
+						});
+					} else {
+						// Single line - create one list item
+						const li = document.createElement('li');
+						li.appendChild(content);
+						list.appendChild(li);
+					}
+				} else {
+					// Empty selection - create empty list item
+					const li = document.createElement('li');
+					li.textContent = 'List item';
+					list.appendChild(li);
+				}
+			}
+			
+			range.insertNode(list);
+			
+			// Place cursor at the end of the list
+			range.setStartAfter(list);
+			range.setEndAfter(list);
+			selection.removeAllRanges();
+			selection.addRange(range);
+		}
+		
+		element.focus();
+	}
+
+	function toggleUnorderedList() {
+		toggleList('ul');
+	}
+
+	function toggleOrderedList() {
+		toggleList('ol');
+	}
+
 	function showLinkDialog() {
 		// Save the current selection range so we can restore it later
 		const selection = window.getSelection();
@@ -527,6 +646,36 @@
 				>
 					<span>&lt;/&gt;</span>
 				</button>
+				<div class="toolbar-divider"></div>
+				<button 
+					class="format-button" 
+					onclick={toggleUnorderedList}
+					title="Bullet List"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="8" y1="6" x2="21" y2="6" />
+						<line x1="8" y1="12" x2="21" y2="12" />
+						<line x1="8" y1="18" x2="21" y2="18" />
+						<line x1="3" y1="6" x2="3.01" y2="6" />
+						<line x1="3" y1="12" x2="3.01" y2="12" />
+						<line x1="3" y1="18" x2="3.01" y2="18" />
+					</svg>
+				</button>
+				<button 
+					class="format-button" 
+					onclick={toggleOrderedList}
+					title="Numbered List"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="10" y1="6" x2="21" y2="6" />
+						<line x1="10" y1="12" x2="21" y2="12" />
+						<line x1="10" y1="18" x2="21" y2="18" />
+						<path d="M4 6h1v4" />
+						<path d="M4 10h2" />
+						<path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1" />
+					</svg>
+				</button>
+				<div class="toolbar-divider"></div>
 				<button 
 					class="format-button" 
 					onclick={showLinkDialog}
@@ -830,6 +979,12 @@
 		font-family: monospace;
 		font-size: 0.875rem;
 		font-weight: 600;
+	}
+
+	.toolbar-divider {
+		width: 1px;
+		background-color: #e5e7ebff;
+		margin: 0.25rem 0;
 	}
 
 	.link-input-panel {
