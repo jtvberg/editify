@@ -93,6 +93,18 @@
 		box-shadow: 0 10px 30px #0000004d;
 	}
 
+	:global(a:link) {
+		color: #ad8bf7ff;
+	}
+
+	:global(a:visited) {
+		color: #7d7490ff;
+	}
+
+	:global(a:hover, a:active) {
+		color: #cf68ffff;
+	}
+
 	@keyframes gradientShift {
 		0%, 100% {
 			background-position: 0% 50%;

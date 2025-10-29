@@ -11,6 +11,7 @@
 	let showLinkInput = $state(false);
 	let linkUrl = $state('');
 	let linkText = $state('');
+	let savedRange: Range | null = null;
 
 	async function loadHistory() {
 		if ($activeElement) {
@@ -27,6 +28,7 @@
 		showLinkInput = false;
 		linkUrl = '';
 		linkText = '';
+		savedRange = null;
 	}
 
 	async function handleSave() {
@@ -145,32 +147,82 @@
 		}
 	}
 
-	function applyFormat(command: string) {
+	function wrapSelection(tagName: string) {
 		if (!$activeElement) return;
 		
-		// Focus the element first to ensure selection is in the right place
-		$activeElement.element.focus();
+		const element = $activeElement.element;
+		element.focus();
 		
-		// Execute the formatting command
-		document.execCommand(command, false);
+		const selection = window.getSelection();
+		if (!selection || selection.rangeCount === 0) return;
 		
-		// Keep focus on the element
-		$activeElement.element.focus();
+		const range = selection.getRangeAt(0);
+		
+		// Check if selection is within our element
+		if (!element.contains(range.commonAncestorContainer)) return;
+		
+		// Check if the selection is already wrapped in the tag
+		let node = range.commonAncestorContainer;
+		let isWrapped = false;
+		
+		// Walk up the tree to check if we're inside the tag already
+		while (node && node !== element) {
+			if (node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === tagName.toUpperCase()) {
+				isWrapped = true;
+				break;
+			}
+			node = node.parentNode!;
+		}
+		
+		if (isWrapped && node) {
+			// Unwrap: replace the tag with its contents
+			const parent = node.parentNode!;
+			while (node.firstChild) {
+				parent.insertBefore(node.firstChild, node);
+			}
+			parent.removeChild(node);
+		} else {
+			// Wrap: create new tag and wrap selection
+			const wrapper = document.createElement(tagName);
+			
+			try {
+				range.surroundContents(wrapper);
+			} catch (e) {
+				// If surroundContents fails (partial selection), extract and wrap manually
+				const contents = range.extractContents();
+				wrapper.appendChild(contents);
+				range.insertNode(wrapper);
+			}
+			
+			// Restore selection
+			selection.removeAllRanges();
+			const newRange = document.createRange();
+			newRange.selectNodeContents(wrapper);
+			selection.addRange(newRange);
+		}
+		
+		element.focus();
 	}
 
 	function toggleBold() {
-		applyFormat('bold');
+		wrapSelection('strong');
 	}
 
 	function toggleItalic() {
-		applyFormat('italic');
+		wrapSelection('em');
 	}
 
 	function showLinkDialog() {
-		// Get the selected text if any
+		// Save the current selection range so we can restore it later
 		const selection = window.getSelection();
-		if (selection && selection.toString()) {
-			linkText = selection.toString();
+		if (selection && selection.rangeCount > 0) {
+			savedRange = selection.getRangeAt(0).cloneRange();
+			
+			// Get the selected text if any
+			const selectedText = selection.toString();
+			if (selectedText) {
+				linkText = selectedText;
+			}
 		}
 		showLinkInput = true;
 	}
@@ -181,33 +233,75 @@
 			return;
 		}
 		
-		// Focus the element
-		$activeElement.element.focus();
+		const element = $activeElement.element;
+		const selection = window.getSelection();
+		if (!selection) return;
 		
-		// If we have text selected or provided, create a link
-		if (linkText) {
-			// Create the link HTML
-			const linkHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
-			document.execCommand('insertHTML', false, linkHtml);
+		// Restore the saved range if we have one
+		let range: Range;
+		if (savedRange) {
+			range = savedRange;
+			selection.removeAllRanges();
+			selection.addRange(range);
+		} else if (selection.rangeCount > 0) {
+			range = selection.getRangeAt(0);
 		} else {
-			// Just insert the URL as both href and text
-			const linkHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer">${linkUrl}</a>`;
-			document.execCommand('insertHTML', false, linkHtml);
+			// No saved range and no current selection - create one at the end
+			range = document.createRange();
+			range.selectNodeContents(element);
+			range.collapse(false); // Collapse to end
+			selection.removeAllRanges();
+			selection.addRange(range);
 		}
+		
+		// Create the link element
+		const link = document.createElement('a');
+		link.href = linkUrl;
+		link.target = '_blank';
+		link.rel = 'noopener noreferrer';
+		
+		// Check if we have selected text to replace
+		const hasSelection = !range.collapsed;
+		
+		if (hasSelection) {
+			// Replace the selected text with the link
+			const contents = range.extractContents();
+			
+			if (linkText) {
+				// User provided custom link text, use that instead
+				link.textContent = linkText;
+			} else {
+				// Use the selected text
+				link.appendChild(contents);
+			}
+		} else {
+			// No selection - use link text or URL
+			link.textContent = linkText || linkUrl;
+		}
+		
+		// Insert the link at the cursor position
+		range.insertNode(link);
+		
+		// Place cursor after the link
+		range.setStartAfter(link);
+		range.setEndAfter(link);
+		selection.removeAllRanges();
+		selection.addRange(range);
 		
 		// Reset and close
 		linkUrl = '';
 		linkText = '';
 		showLinkInput = false;
+		savedRange = null;
 		
-		// Keep focus on the element
-		$activeElement.element.focus();
+		element.focus();
 	}
 
 	function cancelLink() {
 		linkUrl = '';
 		linkText = '';
 		showLinkInput = false;
+		savedRange = null;
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
@@ -684,7 +778,6 @@
 		border-radius: 6px;
 		font-size: 0.875rem;
 		transition: all 0.15s;
-		width: 100%;
 	}
 
 	.link-input:focus {
