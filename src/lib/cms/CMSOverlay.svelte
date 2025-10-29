@@ -20,6 +20,28 @@
 		}
 	}
 
+	async function restoreFromHistory(historyContent: string) {
+		if (!$activeElement) return;
+		
+		const element = $activeElement.element;
+		const type = $activeElement.type;
+		
+		// Update the element with the historical content
+		if (type === 'text') {
+			element.textContent = historyContent;
+		} else if (type === 'rich-text') {
+			element.innerHTML = historyContent;
+		} else if (type === 'image') {
+			const img = element.querySelector('img');
+			if (img) {
+				img.src = historyContent;
+			}
+		}
+		
+		// Close history panel after restoring
+		showHistory = false;
+	}
+
 	function closeOverlay() {
 		activeElement.set(null);
 		showHistory = false;
@@ -550,15 +572,50 @@
 
 		{#if showHistory}
 			<div class="history-panel">
-				<h3>Version History</h3>
+				<div class="history-header">
+					<h3>Version History</h3>
+					<button 
+						class="history-close"
+						onclick={() => showHistory = false}
+						title="Close history"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 6 6 18" />
+							<path d="m6 6 12 12" />
+						</svg>
+					</button>
+				</div>
 				{#if history.length === 0}
 					<p class="empty-state">No previous versions</p>
 				{:else}
 					<ul class="history-list">
 						{#each history as version}
 							<li class="history-item">
-								<time>{new Date(version.created_at).toLocaleString()}</time>
-								<div class="history-content">{version.content}</div>
+								<div class="history-meta">
+									<time>{new Date(version.created_at).toLocaleString()}</time>
+									<button 
+										class="restore-button"
+										onclick={() => restoreFromHistory(version.content)}
+										title="Restore this version"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+											<path d="M21 3v5h-5" />
+											<path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+											<path d="M3 21v-5h5" />
+										</svg>
+										Restore
+									</button>
+								</div>
+								<div class="history-content">
+									{#if $activeElement.type === 'image'}
+										<img src={version.content} alt="Previous version" class="history-image" />
+									{:else if $activeElement.type === 'rich-text'}
+										{@html version.content}
+									{:else}
+										{version.content}
+									{/if}
+								</div>
 							</li>
 						{/each}
 					</ul>
@@ -844,15 +901,42 @@
 	}
 
 	.history-panel {
-		padding: 1rem;
-		max-height: 300px;
-		overflow-y: auto;
+		border-top: 1px solid #e5e7ebff;
+		max-height: 400px;
+		display: flex;
+		flex-direction: column;
 	}
 
-	.history-panel h3 {
-		margin: 0 0 0.75rem 0;
+	.history-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem;
+		border-bottom: 1px solid #e5e7ebff;
+	}
+
+	.history-header h3 {
+		margin: 0;
 		font-size: 0.875rem;
 		font-weight: 600;
+		color: #111827ff;
+	}
+
+	.history-close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.25rem;
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: #6b7280ff;
+		border-radius: 4px;
+		transition: all 0.15s;
+	}
+
+	.history-close:hover {
+		background-color: #f3f4f6ff;
 		color: #111827ff;
 	}
 
@@ -865,11 +949,13 @@
 
 	.history-list {
 		list-style: none;
-		padding: 0;
+		padding: 1rem;
 		margin: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
+		overflow-y: auto;
+		flex: 1;
 	}
 
 	.history-item {
@@ -877,18 +963,56 @@
 		background-color: #f9fafbff;
 		border-radius: 6px;
 		border: 1px solid #e5e7ebff;
+		transition: all 0.15s;
+	}
+
+	.history-item:hover {
+		border-color: #3b82f6ff;
+		background-color: #eff6ffff;
+	}
+
+	.history-meta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
 	}
 
 	.history-item time {
-		display: block;
 		font-size: 0.75rem;
 		color: #6b7280ff;
-		margin-bottom: 0.5rem;
+	}
+
+	.restore-button {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.25rem 0.5rem;
+		background-color: #3b82f6ff;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.75rem;
+		font-weight: 500;
+		transition: all 0.15s;
+	}
+
+	.restore-button:hover {
+		background-color: #2563ebff;
 	}
 
 	.history-content {
 		font-size: 0.875rem;
 		color: #374151ff;
 		line-height: 1.5;
+	}
+
+	.history-image {
+		max-width: 100%;
+		height: auto;
+		border-radius: 4px;
+		border: 1px solid #e5e7ebff;
+		display: block;
 	}
 </style>
