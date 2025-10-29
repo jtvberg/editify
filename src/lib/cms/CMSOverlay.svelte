@@ -212,6 +212,10 @@
 		wrapSelection('em');
 	}
 
+	function toggleCode() {
+		wrapSelection('code');
+	}
+
 	function showLinkDialog() {
 		// Save the current selection range so we can restore it later
 		const selection = window.getSelection();
@@ -331,6 +335,12 @@
 			if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
 				e.preventDefault();
 				toggleItalic();
+			}
+			
+			// Code: Cmd+` (Mac) or Ctrl+` (Windows/Linux)
+			if ((e.metaKey || e.ctrlKey) && e.key === '`') {
+				e.preventDefault();
+				toggleCode();
 			}
 			
 			// Link: Cmd+K (Mac) or Ctrl+K (Windows/Linux)
@@ -487,6 +497,13 @@
 					title="Italic (Ctrl/Cmd+I)"
 				>
 					<em>I</em>
+				</button>
+				<button 
+					class="format-button code-button" 
+					onclick={toggleCode}
+					title="Code (Ctrl/Cmd+`)"
+				>
+					<span>&lt;/&gt;</span>
 				</button>
 				<button 
 					class="format-button" 
@@ -750,6 +767,12 @@
 	.format-button:active {
 		background-color: #eff6ffff;
 		transform: scale(0.98);
+	}
+
+	.format-button.code-button {
+		font-family: monospace;
+		font-size: 0.875rem;
+		font-weight: 600;
 	}
 
 	.link-input-panel {
