@@ -1,9 +1,22 @@
 <script lang="ts">
 	import { editMode, isEditor, checkEditorRole } from '$lib/cms';
+	import { supabase } from '$lib/supabase';
 	import { onMount } from 'svelte';
 
-	onMount(async () => {
-		await checkEditorRole();
+	onMount(() => {
+		// Check editor role on mount
+		checkEditorRole();
+
+		// Listen for auth state changes and re-check role
+		const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+			// Re-check editor role when auth state changes
+			await checkEditorRole();
+		});
+
+		// Cleanup subscription on unmount
+		return () => {
+			subscription.unsubscribe();
+		};
 	});
 
 	function toggleEditMode() {

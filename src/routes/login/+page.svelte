@@ -103,7 +103,7 @@
 	}
 
 	input {
-		width: 100%;
+		width: -webkit-fill-available;
 		padding: 0.875rem 1rem;
 		background-color: #11182780;
 		border: 1px solid #ffffff1a;
