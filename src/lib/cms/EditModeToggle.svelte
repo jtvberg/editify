@@ -9,8 +9,14 @@
 
 		// Listen for auth state changes and re-check role
 		const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-			// Re-check editor role when auth state changes
-			await checkEditorRole();
+			// Use the session from the callback directly to avoid API calls
+			if (session?.user) {
+				const role = session.user.user_metadata?.role || session.user.app_metadata?.role;
+				const hasEditorRole = role === 'editor';
+				isEditor.set(hasEditorRole);
+			} else {
+				isEditor.set(false);
+			}
 		});
 
 		// Cleanup subscription on unmount
