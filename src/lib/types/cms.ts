@@ -1,4 +1,4 @@
-export type ContentType = 'text' | 'rich-text' | 'image' | 'link';
+export type ContentType = 'text' | 'html' | 'image';
 
 export interface CMSContent {
 	id: string; // The data-cms-ref value

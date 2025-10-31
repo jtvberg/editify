@@ -35,7 +35,7 @@ The standard pattern for editable content:
 
 **Key parts:**
 - `data-cms-ref` - Unique identifier
-- `data-cms-type` - Content type (text or rich-text)
+- `data-cms-type` - Content type (text or html)
 - `use:cms` - Svelte action that enables editing
 - `{$cmsStore['ref']?.content || 'Fallback'}` - Display logic
 
@@ -52,7 +52,7 @@ The standard pattern for editable content:
 ### Rich Text (HTML)
 
 ```svelte
-<article data-cms-ref="article.body" data-cms-type="rich-text" use:cms>
+<article data-cms-ref="article.body" data-cms-type="html" use:cms>
 	{@html $cmsStore['article.body']?.content || '<p>Default content</p>'}
 </article>
 ```

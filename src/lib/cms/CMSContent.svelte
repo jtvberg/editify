@@ -65,9 +65,9 @@
 	}
 
 	async function handleInput(e: Event) {
-		if ($editMode && (type === 'text' || type === 'rich-text')) {
+		if ($editMode && (type === 'text' || type === 'html')) {
 			const target = e.target as HTMLElement;
-			const newContent = type === 'rich-text' ? target.innerHTML : (target.textContent || '');
+			const newContent = type === 'html' ? target.innerHTML : (target.textContent || '');
 			content = newContent;
 		}
 	}
@@ -78,7 +78,7 @@
 	bind:this={localElement}
 	data-cms-ref={ref}
 	data-cms-type={type}
-	contenteditable={$editMode && (type === 'text' || type === 'rich-text')}
+	contenteditable={$editMode && (type === 'text' || type === 'html')}
 	class="cms-content"
 	class:cms-editable={$editMode}
 	class:cms-image={type === 'image'}
@@ -103,7 +103,7 @@
 				<span>Click to upload image</span>
 			</div>
 		{/if}
-	{:else if type === 'rich-text'}
+	{:else if type === 'html'}
 		{@html content}
 	{:else}
 		{content}

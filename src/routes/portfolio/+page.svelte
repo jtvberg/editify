@@ -2,6 +2,11 @@
 	import { cmsStore, cms } from '$lib';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+
+	const project1Tags = ['SvelteKit', 'Supabase', 'Stripe'];
+	const project2Tags = ['SvelteKit', 'MDX', 'Tailwind'];
+	const project3Tags = ['SvelteKit', 'i18n', 'Analytics'];
+	const project4Tags = ['SvelteKit', 'Video', 'Auth'];
 </script>
 
 <Header />
@@ -19,77 +24,93 @@
 	<section class="projects">
 		<div class="project-grid">
 			<article class="project-card">
-				<div class="project-image">
-					<div class="placeholder-image">🎨</div>
+				<div data-cms-ref="portfolio.project1.image" data-cms-type="image" class="project-image image" use:cms>
+					{#if $cmsStore['portfolio.project1.image']?.content}
+						<img src={$cmsStore['portfolio.project1.image']?.content} alt="" />
+					{:else}
+						<div class="placeholder-image">🛒</div>
+					{/if}
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project1.title" data-cms-type="text" use:cms>
 						{$cmsStore['portfolio.project1.title']?.content || 'E-Commerce Site'}
 					</h3>
-					<div data-cms-ref="portfolio.project1.description" data-cms-type="rich-text" class="project-description" use:cms>
+					<div data-cms-ref="portfolio.project1.description" data-cms-type="html" class="project-description" use:cms>
 						{@html $cmsStore['portfolio.project1.description']?.content || '<p>A modern e-commerce platform with inline content editing for product descriptions, banners, and marketing content.</p>'}
 					</div>
 					<div class="project-tags">
-						<span class="tag">SvelteKit</span>
-						<span class="tag">Supabase</span>
-						<span class="tag">Stripe</span>
+						{#each project1Tags as tag}
+							<span class="tag">{tag}</span>
+						{/each}
 					</div>
 				</div>
 			</article>
 
 			<article class="project-card">
-				<div class="project-image">
-					<div class="placeholder-image">📝</div>
+				<div data-cms-ref="portfolio.project2.image" data-cms-type="image" class="project-image image" use:cms>
+					{#if $cmsStore['portfolio.project2.image']?.content}
+						<img src={$cmsStore['portfolio.project2.image']?.content} alt="" />
+					{:else}
+						<div class="placeholder-image">📝</div>
+					{/if}
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project2.title" data-cms-type="text" use:cms>
 						{$cmsStore['portfolio.project2.title']?.content || 'Blog Platform'}
 					</h3>
-					<div data-cms-ref="portfolio.project2.description" data-cms-type="rich-text" class="project-description" use:cms>
+					<div data-cms-ref="portfolio.project2.description" data-cms-type="html" class="project-description" use:cms>
 						{@html $cmsStore['portfolio.project2.description']?.content || '<p>A clean and minimalist blog with rich text editing capabilities and real-time collaboration features.</p>'}
 					</div>
 					<div class="project-tags">
-						<span class="tag">SvelteKit</span>
-						<span class="tag">MDX</span>
-						<span class="tag">Tailwind</span>
+						{#each project2Tags as tag}
+							<span class="tag">{tag}</span>
+						{/each}
 					</div>
 				</div>
 			</article>
 
 			<article class="project-card">
-				<div class="project-image">
-					<div class="placeholder-image">🏢</div>
+				<div data-cms-ref="portfolio.project3.image" data-cms-type="image" class="project-image image" use:cms>
+					{#if $cmsStore['portfolio.project3.image']?.content}
+						<img src={$cmsStore['portfolio.project3.image']?.content} alt="" />
+					{:else}
+						<div class="placeholder-image">🏢</div>
+					{/if}
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project3.title" data-cms-type="text" use:cms>
 						{$cmsStore['portfolio.project3.title']?.content || 'Corporate Website'}
 					</h3>
-					<div data-cms-ref="portfolio.project3.description" data-cms-type="rich-text" class="project-description" use:cms>
+					<div data-cms-ref="portfolio.project3.description" data-cms-type="html" class="project-description" use:cms>
 						{@html $cmsStore['portfolio.project3.description']?.content || '<p>A professional corporate website with multi-language support and content reusability across pages.</p>'}
 					</div>
 					<div class="project-tags">
-						<span class="tag">SvelteKit</span>
-						<span class="tag">i18n</span>
-						<span class="tag">Analytics</span>
+						{#each project3Tags as tag}
+							<span class="tag">{tag}</span>
+						{/each}
 					</div>
 				</div>
 			</article>
 
 			<article class="project-card">
-				<div class="project-image">
-					<div class="placeholder-image">🎓</div>
+				<div data-cms-ref="portfolio.project4.image" data-cms-type="image" class="project-image image" use:cms>
+					{#if $cmsStore['portfolio.project4.image']?.content}
+						<img src={$cmsStore['portfolio.project4.image']?.content} alt="" />
+					{:else}
+						<div class="placeholder-image">🎓</div>
+					{/if}
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project4.title" data-cms-type="text" use:cms>
 						{$cmsStore['portfolio.project4.title']?.content || 'Learning Platform'}
 					</h3>
-					<div data-cms-ref="portfolio.project4.description" data-cms-type="rich-text" class="project-description" use:cms>
+					<div data-cms-ref="portfolio.project4.description" data-cms-type="html" class="project-description" use:cms>
 						{@html $cmsStore['portfolio.project4.description']?.content || '<p>An educational platform with course content management and student progress tracking.</p>'}
 					</div>
 					<div class="project-tags">
-						<span class="tag">SvelteKit</span>
-						<span class="tag">Video</span>
-						<span class="tag">Auth</span>
+						{#each project4Tags as tag}
+							<span class="tag">{tag}</span>
+						{/each}
 					</div>
 				</div>
 			</article>
@@ -99,6 +120,10 @@
 <Footer />
 
 <style>
+	img {
+		max-width: 100%;
+		max-height: 100%;
+	}
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;

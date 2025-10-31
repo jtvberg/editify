@@ -44,7 +44,7 @@
 					{$cmsStore['contact.info.title']?.content || 'Let\'s Talk'}
 				</h2>
 				
-				<div data-cms-ref="contact.info.description" data-cms-type="rich-text" class="info-description" use:cms>
+				<div data-cms-ref="contact.info.description" data-cms-type="html" class="info-description" use:cms>
 					{@html $cmsStore['contact.info.description']?.content || '<p>Whether you have questions about Editify, need help with implementation, or want to discuss a project, our team is ready to answer all your questions.</p>'}
 				</div>
 
@@ -202,7 +202,7 @@
 
 	.contact-method {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		gap: 1rem;
 	}
 

@@ -15,7 +15,7 @@
 			{$cmsStore['home.hero.subtitle']?.content || 'A lightweight CMS built with SvelteKit and Supabase'}
 		</p>
 
-		<div data-cms-ref="home.hero.description" data-cms-type="rich-text" class="description" use:cms>
+		<div data-cms-ref="home.hero.description" data-cms-type="html" class="description" use:cms>
 			{@html $cmsStore['home.hero.description']?.content || '<p>Click Edit Mode to start editing content inline. No complex admin panels, just direct editing where content lives.</p>'}
 		</div>
 	</section>
@@ -60,7 +60,7 @@
 			{$cmsStore['home.demo.title']?.content || 'Try It Out'}
 		</h2>
 
-		<div data-cms-ref="home.demo.instructions" data-cms-type="rich-text" class="instructions" use:cms>
+		<div data-cms-ref="home.demo.instructions" data-cms-type="html" class="instructions" use:cms>
 			{@html $cmsStore['home.demo.instructions']?.content || `
 				<ol>
 					<li>Set up your Supabase project and run the schema SQL</li>

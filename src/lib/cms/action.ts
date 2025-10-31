@@ -7,12 +7,12 @@ import { editMode, cmsStore, saveContent, countRefUsage, activeElement } from '.
  */
 export function cms(node: HTMLElement) {
 	const ref = node.getAttribute('data-cms-ref');
-	const type = (node.getAttribute('data-cms-type') || 'text') as 'text' | 'rich-text' | 'image' | 'link';
+	const type = (node.getAttribute('data-cms-type') || 'text') as 'text' | 'html' | 'image';
 	
 	if (!ref) return;
 
 	// Store the initial content from Svelte (the fallback value)
-	let initialContent = type === 'rich-text' ? node.innerHTML : node.textContent || '';
+	let initialContent = type === 'html' ? node.innerHTML : node.textContent || '';
 	let hasBeenEdited = false;
 	
 	// For images, get the img element
@@ -25,7 +25,7 @@ export function cms(node: HTMLElement) {
 	const storeContent = get(cmsStore)[ref]?.content;
 	if (storeContent) {
 		// Use store content if available
-		if (type === 'rich-text') {
+		if (type === 'html') {
 			node.innerHTML = storeContent;
 		} else if (type === 'image' && imgElement) {
 			imgElement.src = storeContent;
@@ -43,7 +43,7 @@ export function cms(node: HTMLElement) {
 		// 2. Not currently editing
 		// 3. Content is different from what's displayed
 		if (content && document.activeElement !== node) {
-			if (type === 'rich-text' && content !== node.innerHTML) {
+			if (type === 'html' && content !== node.innerHTML) {
 				node.innerHTML = content;
 				initialContent = content;
 			} else if (type === 'image' && imgElement && content !== imgElement.src) {
@@ -58,7 +58,7 @@ export function cms(node: HTMLElement) {
 
 	// Update editability when edit mode changes
 	const unsubscribeEditMode = editMode.subscribe((isEditMode) => {
-		if (isEditMode && (type === 'text' || type === 'rich-text')) {
+		if (isEditMode && (type === 'text' || type === 'html')) {
 			node.setAttribute('contenteditable', 'true');
 			node.classList.add('cms-editable');
 		} else {

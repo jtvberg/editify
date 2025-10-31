@@ -12,7 +12,7 @@
 			{$cmsStore['about.hero.title']?.content || 'About Editify'}
 		</h1>
 		
-		<div data-cms-ref="about.hero.description" data-cms-type="rich-text" class="description" use:cms>
+		<div data-cms-ref="about.hero.description" data-cms-type="html" class="description" use:cms>
 			{@html $cmsStore['about.hero.description']?.content || '<p>Editify is a lightweight, inline CMS built with SvelteKit and Supabase. It allows content editors to update website content directly on the page without navigating through complex admin interfaces.</p>'}
 		</div>
 	</section>
@@ -26,7 +26,7 @@
 			<img src={$cmsStore['about.mission.image']?.content || defaultMissionImage} alt="Our Mission" />
 		</div>
 
-		<div data-cms-ref="about.mission.content" data-cms-type="rich-text" class="content" use:cms>
+		<div data-cms-ref="about.mission.content" data-cms-type="html" class="content" use:cms>
 			{@html $cmsStore['about.mission.content']?.content || '<p>We believe content management should be intuitive and seamless. Our mission is to make content editing as simple as clicking and typing, removing the barriers between content creators and their websites.</p>'}
 		</div>
 	</section>
@@ -41,7 +41,7 @@
 				<h3 data-cms-ref="about.features.direct.title" data-cms-type="text" use:cms>
 					{$cmsStore['about.features.direct.title']?.content || '🎯 Direct Editing'}
 				</h3>
-				<div data-cms-ref="about.features.direct.description" data-cms-type="rich-text" use:cms>
+				<div data-cms-ref="about.features.direct.description" data-cms-type="html" use:cms>
 					{@html $cmsStore['about.features.direct.description']?.content || '<p>Edit content exactly where it appears. No need to navigate to separate admin pages or figure out which field corresponds to which content.</p>'}
 				</div>
 			</div>
@@ -50,7 +50,7 @@
 				<h3 data-cms-ref="about.features.lightweight.title" data-cms-type="text" use:cms>
 					{$cmsStore['about.features.lightweight.title']?.content || '🪶 Lightweight'}
 				</h3>
-				<div data-cms-ref="about.features.lightweight.description" data-cms-type="rich-text" use:cms>
+				<div data-cms-ref="about.features.lightweight.description" data-cms-type="html" use:cms>
 					{@html $cmsStore['about.features.lightweight.description']?.content || '<p>Minimal overhead with a simple architecture. No bloated plugins or unnecessary features—just the essentials for content management.</p>'}
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 				<h3 data-cms-ref="about.features.developer.title" data-cms-type="text" use:cms>
 					{$cmsStore['about.features.developer.title']?.content || '👨‍💻 Developer Friendly'}
 				</h3>
-				<div data-cms-ref="about.features.developer.description" data-cms-type="rich-text" use:cms>
+				<div data-cms-ref="about.features.developer.description" data-cms-type="html" use:cms>
 					{@html $cmsStore['about.features.developer.description']?.content || '<p>Built with modern web standards using SvelteKit. Easy to integrate, customize, and extend to fit your specific needs.</p>'}
 				</div>
 			</div>
@@ -69,6 +69,12 @@
 <Footer />
 
 <style>
+	img {
+		width: 100%;
+		border-radius: 12px;
+		margin-bottom: 2rem;
+		box-shadow: 0 10px 30px #0000004d;
+	}
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;

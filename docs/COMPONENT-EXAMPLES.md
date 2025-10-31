@@ -19,7 +19,7 @@ The simplest pattern uses the `use:cms` action directive:
 **How it works:**
 
 - `data-cms-ref` - Unique identifier for this content
-- `data-cms-type` - Content type (text, rich-text, image, link)
+- `data-cms-type` - Content type (text, html, image)
 - `use:cms` - Svelte action that makes the element editable
 - `{$cmsStore['page.title']?.content || 'Fallback'}` - Displays saved content or fallback
 
@@ -32,7 +32,7 @@ For content with HTML formatting:
 	import { cmsStore, cms } from '$lib/cms';
 </script>
 
-<article data-cms-ref="blog.post.body" data-cms-type="rich-text" use:cms>
+<article data-cms-ref="blog.post.body" data-cms-type="html" use:cms>
 	{@html $cmsStore['blog.post.body']?.content || '<p>Default content...</p>'}
 </article>
 ```
@@ -47,7 +47,7 @@ For content with HTML formatting:
 	$: cleanHTML = DOMPurify.sanitize($cmsStore['blog.post.body']?.content || '<p>Default</p>');
 </script>
 
-<article data-cms-ref="blog.post.body" data-cms-type="rich-text" use:cms>
+<article data-cms-ref="blog.post.body" data-cms-type="html" use:cms>
 	{@html cleanHTML}
 </article>
 ```
@@ -365,7 +365,7 @@ Here's a full page using the CMS:
 
 	<main>
 		<section class="intro">
-			<article data-cms-ref="about.intro" data-cms-type="rich-text" use:cms>
+			<article data-cms-ref="about.intro" data-cms-type="html" use:cms>
 				{@html $cmsStore['about.intro']?.content || '<p>Company introduction...</p>'}
 			</article>
 		</section>

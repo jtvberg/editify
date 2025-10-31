@@ -29,7 +29,7 @@
 		// Update the element with the historical content
 		if (type === 'text') {
 			element.textContent = historyContent;
-		} else if (type === 'rich-text') {
+		} else if (type === 'html') {
 			element.innerHTML = historyContent;
 		} else if (type === 'image') {
 			const img = element.querySelector('img');
@@ -65,7 +65,7 @@
 			
 			if (type === 'text') {
 				newContent = element.textContent || '';
-			} else if (type === 'rich-text') {
+			} else if (type === 'html') {
 				newContent = element.innerHTML;
 			} else if (type === 'image') {
 				const img = element.querySelector('img');
@@ -102,7 +102,7 @@
 		if (storeContent) {
 			if (type === 'text') {
 				element.textContent = storeContent;
-			} else if (type === 'rich-text') {
+			} else if (type === 'html') {
 				element.innerHTML = storeContent;
 			} else if (type === 'image') {
 				const img = element.querySelector('img');
@@ -510,8 +510,8 @@
 			insertLink();
 		}
 		
-		// Only handle keyboard shortcuts when editing rich text
-		if ($activeElement && $activeElement.type === 'rich-text') {
+		// Only handle keyboard shortcuts when editing html
+		if ($activeElement && $activeElement.type === 'html') {
 			// Bold: Cmd+B (Mac) or Ctrl+B (Windows/Linux)
 			if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
 				e.preventDefault();
@@ -669,8 +669,8 @@
 				
 				<p class="upload-info">Max size: 5MB. Supported formats: JPG, PNG, GIF, WebP</p>
 			</div>
-		{:else if $activeElement.type === 'rich-text'}
-			<div class="rich-text-toolbar">
+		{:else if $activeElement.type === 'html'}
+			<div class="html-toolbar">
 				<button 
 					class="format-button" 
 					onclick={toggleBold}
@@ -805,7 +805,7 @@
 								<div class="history-content">
 									{#if $activeElement.type === 'image'}
 										<img src={version.content} alt="Previous version" class="history-image" />
-									{:else if $activeElement.type === 'rich-text'}
+									{:else if $activeElement.type === 'html'}
 										{@html version.content}
 									{:else}
 										{version.content}
@@ -925,7 +925,7 @@
 		border-color: #dc2626ff;
 	}
 
-	.image-uploader, .rich-text-toolbar {
+	.image-uploader, .html-toolbar {
 		padding: 1rem;
 		display: flex;
 		flex-direction: column;
@@ -992,7 +992,7 @@
 		margin: 0;
 	}
 
-	.rich-text-toolbar {
+	.html-toolbar {
 		border-top: 1px solid #e5e7ebff;
 		flex-direction: row;
 	}

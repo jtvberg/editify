@@ -67,7 +67,7 @@ Visit [http://localhost:5173](http://localhost:5173) and log in to see inline ed
 - ✅ Content versioning and history
 - ✅ Role-based access control (editor role)
 - ✅ Reusable content refs
-- ✅ Text and rich-text support
+- ✅ Text and HTML content support
 - ✅ **Image uploads with Supabase Storage**
 - ✅ TypeScript support
 - ✅ Server-side rendering (SSR)

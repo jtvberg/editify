@@ -86,13 +86,6 @@
 		animation: gradientShift 4s ease infinite;
 	}
 
-	:global(img) {
-		width: 100%;
-		border-radius: 12px;
-		margin-bottom: 2rem;
-		box-shadow: 0 10px 30px #0000004d;
-	}
-
 	:global(a:link) {
 		color: #ad8bf7ff;
 	}

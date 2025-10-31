@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS cms_content (
     id TEXT PRIMARY KEY,  -- The data-cms-ref value
     content TEXT NOT NULL,
-    type TEXT NOT NULL CHECK (type IN ('text', 'rich-text', 'image', 'link')),
+    type TEXT NOT NULL CHECK (type IN ('text', 'html', 'image')),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
