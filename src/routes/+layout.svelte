@@ -62,6 +62,29 @@
 		font-style: italic;
 	}
 
+	/* Image-specific styles */
+	:global(.cms-image.cms-editable) {
+		outline: none !important;
+		background-color: transparent !important;
+	}
+
+	:global(.cms-image.cms-editable img) {
+		outline: 2px dashed #3b82f680;
+		outline-offset: 2px;
+		transition: outline 0.2s, background-color 0.2s;
+		cursor: pointer;
+	}
+
+	:global(.cms-image.cms-editable:hover img) {
+		outline: 2px solid #3b82f6cc;
+		background-color: #3b82f60d;
+	}
+
+	:global(.cms-image.cms-editable:focus img) {
+		outline: 2px solid #3b82f6ff;
+		background-color: #3b82f61a;
+	}
+
     :global(body) {
         color: #f9fafbff;
 		background-color: #131720ff;

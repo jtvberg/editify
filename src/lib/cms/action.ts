@@ -58,12 +58,20 @@ export function cms(node: HTMLElement) {
 
 	// Update editability when edit mode changes
 	const unsubscribeEditMode = editMode.subscribe((isEditMode) => {
-		if (isEditMode && (type === 'text' || type === 'html')) {
-			node.setAttribute('contenteditable', 'true');
+		if (isEditMode) {
+			if (type === 'text' || type === 'html') {
+				node.setAttribute('contenteditable', 'true');
+			}
 			node.classList.add('cms-editable');
+			if (type === 'image') {
+				node.classList.add('cms-image');
+			}
 		} else {
 			node.removeAttribute('contenteditable');
 			node.classList.remove('cms-editable');
+			if (type === 'image') {
+				node.classList.remove('cms-image');
+			}
 		}
 	});
 
