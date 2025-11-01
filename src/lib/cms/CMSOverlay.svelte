@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeElement, editMode, saveContent, getContentHistory, uploadImage, cmsStore } from '$lib/cms';
+	import { activeElement, editMode, saveContent, getContentHistory, uploadImage, cmsStore, getAllImages } from '$lib/cms';
 	import { onMount } from 'svelte';
 
 	let showHistory = $state(false);
@@ -12,12 +12,35 @@
 	let linkUrl = $state('');
 	let linkText = $state('');
 	let savedRange: Range | null = null;
+	let showImageLibrary = $state(false);
+	let imageLibrary = $state<string[]>([]);
+	let loadingLibrary = $state(false);
 
 	async function loadHistory() {
 		if ($activeElement) {
 			history = await getContentHistory($activeElement.ref);
 			showHistory = true;
 		}
+	}
+
+	async function loadImageLibrary() {
+		loadingLibrary = true;
+		imageLibrary = await getAllImages();
+		showImageLibrary = true;
+		loadingLibrary = false;
+	}
+
+	function selectImageFromLibrary(imageUrl: string) {
+		if (!$activeElement) return;
+		
+		const element = $activeElement.element;
+		const img = element.querySelector('img');
+		if (img) {
+			img.src = imageUrl;
+		}
+		
+		// Close library after selecting
+		showImageLibrary = false;
 	}
 
 	async function restoreFromHistory(historyContent: string) {
@@ -51,6 +74,8 @@
 		linkUrl = '';
 		linkText = '';
 		savedRange = null;
+		showImageLibrary = false;
+		imageLibrary = [];
 	}
 
 	async function handleSave() {
@@ -635,7 +660,7 @@
 						<polyline points="17 8 12 3 7 8" />
 						<line x1="12" y1="3" x2="12" y2="15" />
 					</svg>
-					{uploading ? 'Uploading...' : 'Choose Image'}
+					{uploading ? 'Uploading...' : 'Upload New Image'}
 				</label>
 				<input
 					id="image-upload"
@@ -645,6 +670,19 @@
 					disabled={uploading}
 					class="file-input"
 				/>
+
+				<button
+					class="browse-library-button"
+					onclick={loadImageLibrary}
+					disabled={loadingLibrary}
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+						<circle cx="8.5" cy="8.5" r="1.5" />
+						<polyline points="21 15 16 10 5 21" />
+					</svg>
+					{loadingLibrary ? 'Loading...' : 'Browse Existing Images'}
+				</button>
 				
 				{#if uploadError}
 					<div class="upload-message error">
@@ -814,6 +852,43 @@
 							</li>
 						{/each}
 					</ul>
+				{/if}
+			</div>
+		{/if}
+
+		{#if showImageLibrary}
+			<div class="image-library-panel">
+				<div class="library-header">
+					<h3>Image Library</h3>
+					<button 
+						class="library-close"
+						onclick={() => showImageLibrary = false}
+						title="Close library"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 6 6 18" />
+							<path d="m6 6 12 12" />
+						</svg>
+					</button>
+				</div>
+				{#if loadingLibrary}
+					<div class="loading-state">
+						<p>Loading images...</p>
+					</div>
+				{:else if imageLibrary.length === 0}
+					<p class="empty-state">No images uploaded yet</p>
+				{:else}
+					<div class="library-grid">
+						{#each imageLibrary as imageUrl}
+							<button 
+								class="library-image"
+								onclick={() => selectImageFromLibrary(imageUrl)}
+								title="Select this image"
+							>
+								<img src={imageUrl} alt="Thumbnail" />
+							</button>
+						{/each}
+					</div>
 				{/if}
 			</div>
 		{/if}
@@ -1214,6 +1289,128 @@
 		height: auto;
 		border-radius: 4px;
 		border: 1px solid #e5e7ebff;
+		display: block;
+	}
+
+	/* Image Library Styles */
+	.browse-library-button {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		background-color: #ffffffff;
+		border: 2px solid #3b82f6ff;
+		color: #3b82f6ff;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 0.875rem;
+		font-weight: 600;
+		transition: all 0.15s;
+		margin-top: 0.5rem;
+		width: 100%;
+		justify-content: center;
+	}
+
+	.browse-library-button:hover:not(:disabled) {
+		background-color: #eff6ffff;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000a;
+	}
+
+	.browse-library-button:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.image-library-panel {
+		position: absolute;
+		top: 0;
+		left: 100%;
+		margin-left: 1rem;
+		background-color: #ffffffff;
+		border-radius: 8px;
+		box-shadow: 0 10px 25px -5px #0000001a, 0 10px 10px -5px #0000000a;
+		width: 400px;
+		max-height: 600px;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		z-index: 10000;
+	}
+
+	.library-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem;
+		border-bottom: 1px solid #e5e7ebff;
+		background-color: #f9fafbff;
+	}
+
+	.library-header h3 {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		color: #111827ff;
+	}
+
+	.library-close {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.25rem;
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: #6b7280ff;
+		border-radius: 4px;
+		transition: all 0.15s;
+	}
+
+	.library-close:hover {
+		background-color: #e5e7ebff;
+		color: #111827ff;
+	}
+
+	.loading-state {
+		padding: 2rem 1rem;
+		text-align: center;
+		color: #6b7280ff;
+		font-size: 0.875rem;
+	}
+
+	.library-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.75rem;
+		padding: 1rem;
+		overflow-y: auto;
+		flex: 1;
+	}
+
+	.library-image {
+		position: relative;
+		aspect-ratio: 1;
+		border-radius: 6px;
+		overflow: hidden;
+		border: 2px solid #e5e7ebff;
+		cursor: pointer;
+		transition: all 0.2s;
+		background-color: #f9fafbff;
+		padding: 0;
+	}
+
+	.library-image:hover {
+		border-color: #3b82f6ff;
+		transform: scale(1.05);
+		box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000a;
+		z-index: 1;
+	}
+
+	.library-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 		display: block;
 	}
 </style>

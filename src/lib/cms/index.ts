@@ -133,6 +133,47 @@ export function countRefUsage(ref: string): number {
 	return document.querySelectorAll(`[data-cms-ref="${ref}"]`).length;
 }
 
+// Get all uploaded images from Supabase Storage
+export async function getAllImages(): Promise<string[]> {
+	try {
+		const { data, error } = await supabase.storage
+			.from('cms-content')
+			.list('cms-images', {
+				limit: 100,
+				offset: 0,
+				sortBy: { column: 'created_at', order: 'desc' }
+			});
+
+		if (error) {
+			console.error('[CMS] Error listing images:', error);
+			return [];
+		}
+
+		if (!data) {
+			return [];
+		}
+
+		// Get public URLs for all images
+		const imageUrls = data
+			.filter(file => {
+				// Filter only image files
+				const ext = file.name.split('.').pop()?.toLowerCase();
+				return ext && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
+			})
+			.map(file => {
+				const { data: urlData } = supabase.storage
+					.from('cms-content')
+					.getPublicUrl(`cms-images/${file.name}`);
+				return urlData.publicUrl;
+			});
+
+		return imageUrls;
+	} catch (err) {
+		console.error('[CMS] Error in getAllImages:', err);
+		return [];
+	}
+}
+
 // Upload image to Supabase Storage
 export async function uploadImage(ref: string, file: File): Promise<string | null> {
 	try {
