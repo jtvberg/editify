@@ -30,9 +30,27 @@
 		loadingLibrary = false;
 	}
 
-	function selectImageFromLibrary(imageUrl: string) {
+	async function selectImageFromLibrary(imageUrl: string) {
 		if (!$activeElement) return;
 		
+		// Save to database first
+		const success = await saveContent($activeElement.ref, imageUrl);
+		if (!success) {
+			console.error('Failed to save image from library');
+			return;
+		}
+		
+		// Update the store
+		cmsStore.update(store => ({
+			...store,
+			[$activeElement.ref]: {
+				...store[$activeElement.ref],
+				content: imageUrl,
+				updated_at: new Date().toISOString()
+			}
+		}));
+		
+		// Update the img element
 		const element = $activeElement.element;
 		const img = element.querySelector('img');
 		if (img) {
