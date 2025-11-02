@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeElement, editMode, saveContent, getContentHistory, uploadImage, cmsStore, getAllImages } from '$lib/cms';
+	import { activeElement, editMode, saveContent, getContentHistory, uploadImageToStorage, cmsStore, getAllImages } from '$lib/cms';
 	import { onMount } from 'svelte';
 
 	let showHistory = $state(false);
@@ -15,6 +15,21 @@
 	let showImageLibrary = $state(false);
 	let imageLibrary = $state<string[]>([]);
 	let loadingLibrary = $state(false);
+	let pendingImageUrl = $state<string | null>(null);
+	let originalContent = $state<string>('');
+	let capturedOriginal = false;
+
+	// Track original content when overlay opens (only once)
+	$effect(() => {
+		if ($activeElement && !capturedOriginal) {
+			const content = $cmsStore[$activeElement.ref]?.content || '';
+			originalContent = content;
+			capturedOriginal = true;
+			console.log('[CMSOverlay] Captured original content:', originalContent);
+		} else if (!$activeElement) {
+			capturedOriginal = false;
+		}
+	});
 
 	async function loadHistory() {
 		if ($activeElement) {
@@ -30,53 +45,52 @@
 		loadingLibrary = false;
 	}
 
-	async function selectImageFromLibrary(imageUrl: string) {
+	function selectImageFromLibrary(imageUrl: string) {
 		if (!$activeElement) return;
 		
-		// Save to database first
-		const success = await saveContent($activeElement.ref, imageUrl);
-		if (!success) {
-			console.error('Failed to save image from library');
-			return;
-		}
+		console.log('[CMSOverlay] Selected image from library:', imageUrl);
+		console.log('[CMSOverlay] Original content was:', originalContent);
 		
-		// Update the store
+		// Store the pending image URL (don't save to database yet)
+		pendingImageUrl = imageUrl;
+		
+		// Temporarily update the store to trigger re-render (for placeholder images)
+		// This doesn't save to database, just updates the local store
 		cmsStore.update(store => ({
 			...store,
 			[$activeElement.ref]: {
 				...store[$activeElement.ref],
-				content: imageUrl,
-				updated_at: new Date().toISOString()
+				content: imageUrl
 			}
 		}));
-		
-		// Update the img element
-		const element = $activeElement.element;
-		const img = element.querySelector('img');
-		if (img) {
-			img.src = imageUrl;
-		}
 		
 		// Close library after selecting
 		showImageLibrary = false;
 	}
 
-	async function restoreFromHistory(historyContent: string) {
+	function restoreFromHistory(historyContent: string) {
 		if (!$activeElement) return;
 		
 		const element = $activeElement.element;
 		const type = $activeElement.type;
 		
-		// Update the element with the historical content
+		// Update the element with the historical content (but don't save yet)
 		if (type === 'text') {
 			element.textContent = historyContent;
 		} else if (type === 'html') {
 			element.innerHTML = historyContent;
 		} else if (type === 'image') {
-			const img = element.querySelector('img');
-			if (img) {
-				img.src = historyContent;
-			}
+			// For images, store the pending URL and update store to trigger re-render
+			pendingImageUrl = historyContent;
+			
+			// Temporarily update the store to trigger re-render (for placeholder images)
+			cmsStore.update(store => ({
+				...store,
+				[$activeElement.ref]: {
+					...store[$activeElement.ref],
+					content: historyContent
+				}
+			}));
 		}
 		
 		// Close history panel after restoring
@@ -94,6 +108,9 @@
 		savedRange = null;
 		showImageLibrary = false;
 		imageLibrary = [];
+		pendingImageUrl = null;
+		originalContent = '';
+		capturedOriginal = false;
 	}
 
 	async function handleSave() {
@@ -111,16 +128,34 @@
 			} else if (type === 'html') {
 				newContent = element.innerHTML;
 			} else if (type === 'image') {
-				const img = element.querySelector('img');
-				newContent = img?.src || '';
+				// Use pending image URL if available
+				if (pendingImageUrl !== null) {
+					newContent = pendingImageUrl;
+				} else {
+					// Otherwise get from the current store content (which may have been updated temporarily)
+					newContent = $cmsStore[$activeElement.ref]?.content || '';
+				}
 			}
 			
+			console.log('[CMSOverlay] Saving image content:', newContent, 'for ref:', $activeElement.ref);
 			const success = await saveContent($activeElement.ref, newContent);
 			
 			if (success) {
+				console.log('[CMSOverlay] Save successful, updating store');
+				// Update the store
+				cmsStore.update(store => ({
+					...store,
+					[$activeElement.ref]: {
+						...store[$activeElement.ref],
+						content: newContent,
+						updated_at: new Date().toISOString()
+					}
+				}));
+				
 				// Success! Close the overlay
 				closeOverlay();
 			} else {
+				console.error('[CMSOverlay] Save failed');
 				uploadError = 'Failed to save changes';
 			}
 		} catch (err) {
@@ -134,25 +169,29 @@
 	function handleCancel() {
 		if (!$activeElement) return;
 		
-		// Revert changes by refreshing from store
-		const element = $activeElement.element;
+		// Revert changes by refreshing from original content
 		const type = $activeElement.type;
 		const ref = $activeElement.ref;
 		
-		// Get the original content from the store
-		const storeContent = $cmsStore[ref]?.content;
-		
-		if (storeContent) {
+		if (type === 'text' || type === 'html') {
+			// For text/html, only update the active element
+			const element = $activeElement.element;
 			if (type === 'text') {
-				element.textContent = storeContent;
-			} else if (type === 'html') {
-				element.innerHTML = storeContent;
-			} else if (type === 'image') {
-				const img = element.querySelector('img');
-				if (img) {
-					img.src = storeContent;
-				}
+				element.textContent = originalContent;
+			} else {
+				element.innerHTML = originalContent;
 			}
+		} else if (type === 'image') {
+			// For images, restore the original content in the store
+			// This will trigger a re-render and show the original image or placeholder
+			console.log('[CMSOverlay] Restoring original content on cancel:', originalContent);
+			cmsStore.update(store => ({
+				...store,
+				[ref]: {
+					...store[ref],
+					content: originalContent
+				}
+			}));
 		}
 		
 		closeOverlay();
@@ -182,23 +221,22 @@
 		uploadSuccess = false;
 		
 		try {
-			const imageUrl = await uploadImage($activeElement.ref, file);
+			// Upload to storage but don't save to database yet
+			const imageUrl = await uploadImageToStorage($activeElement.ref, file);
 			
 			if (imageUrl) {
 				uploadSuccess = true;
-				// Update all elements with this ref
-				const elements = document.querySelectorAll(`[data-cms-ref="${$activeElement.ref}"]`);
-				elements.forEach((el) => {
-					const img = el.querySelector('img');
-					if (img) {
-						img.src = imageUrl;
-					}
-				});
+				pendingImageUrl = imageUrl;
 				
-				// Image upload auto-saves, so close overlay after a short delay
-				setTimeout(() => {
-					closeOverlay();
-				}, 1500);
+				// Temporarily update the store to trigger re-render (for placeholder images)
+				// This doesn't save to database, just updates the local store
+				cmsStore.update(store => ({
+					...store,
+					[$activeElement.ref]: {
+						...store[$activeElement.ref],
+						content: imageUrl
+					}
+				}));
 			} else {
 				uploadError = 'Failed to upload image. Please try again.';
 			}
@@ -860,7 +898,18 @@
 								</div>
 								<div class="history-content">
 									{#if $activeElement.type === 'image'}
-										<img src={version.content} alt="Previous version" class="history-image" />
+										{#if version.content}
+											<img src={version.content} alt="Thumbnail" class="history-image" />
+										{:else}
+											<div class="history-placeholder">
+												<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+													<circle cx="8.5" cy="8.5" r="1.5" />
+													<polyline points="21 15 16 10 5 21" />
+												</svg>
+												<span>Placeholder Image</span>
+											</div>
+										{/if}
 									{:else if $activeElement.type === 'html'}
 										{@html version.content}
 									{:else}
@@ -1308,6 +1357,28 @@
 		border-radius: 4px;
 		border: 1px solid #e5e7ebff;
 		display: block;
+	}
+
+	.history-placeholder {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		padding: 2rem 1rem;
+		background-color: #f9fafbff;
+		border: 2px dashed #d1d5dbff;
+		border-radius: 6px;
+		color: #6b7280ff;
+	}
+
+	.history-placeholder svg {
+		color: #9ca3afff;
+	}
+
+	.history-placeholder span {
+		font-size: 0.75rem;
+		font-weight: 500;
 	}
 
 	/* Image Library Styles */

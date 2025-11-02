@@ -174,8 +174,8 @@ export async function getAllImages(): Promise<string[]> {
 	}
 }
 
-// Upload image to Supabase Storage
-export async function uploadImage(ref: string, file: File): Promise<string | null> {
+// Upload image to Supabase Storage (without saving to database)
+export async function uploadImageToStorage(ref: string, file: File): Promise<string | null> {
 	try {
 		// Generate unique filename with timestamp
 		const fileExt = file.name.split('.').pop();
@@ -205,14 +205,29 @@ export async function uploadImage(ref: string, file: File): Promise<string | nul
 			return null;
 		}
 
+		return urlData.publicUrl;
+	} catch (err) {
+		console.error('[CMS] Error in uploadImageToStorage:', err);
+		return null;
+	}
+}
+
+// Upload image to Supabase Storage and save to database
+export async function uploadImage(ref: string, file: File): Promise<string | null> {
+	try {
+		const imageUrl = await uploadImageToStorage(ref, file);
+		if (!imageUrl) {
+			return null;
+		}
+
 		// Save the URL to the CMS content
-		const success = await saveContent(ref, urlData.publicUrl);
+		const success = await saveContent(ref, imageUrl);
 		if (!success) {
 			console.error('[CMS] Error saving image URL to database');
 			return null;
 		}
 
-		return urlData.publicUrl;
+		return imageUrl;
 	} catch (err) {
 		console.error('[CMS] Error in uploadImage:', err);
 		return null;
