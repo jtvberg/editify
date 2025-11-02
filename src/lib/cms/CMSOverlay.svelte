@@ -22,10 +22,13 @@
 	// Track original content when overlay opens (only once)
 	$effect(() => {
 		if ($activeElement && !capturedOriginal) {
-			const content = $cmsStore[$activeElement.ref]?.content || '';
+			// Capture the original content from the store
+			// This might be empty if the element is using placeholder content
+			const storeItem = $cmsStore[$activeElement.ref];
+			const content = storeItem?.content || '';
 			originalContent = content;
 			capturedOriginal = true;
-			console.log('[CMSOverlay] Captured original content:', originalContent);
+			console.log('[CMSOverlay] Captured original content from store:', originalContent, 'for ref:', $activeElement.ref);
 		} else if (!$activeElement) {
 			capturedOriginal = false;
 		}
@@ -73,24 +76,23 @@
 		
 		const element = $activeElement.element;
 		const type = $activeElement.type;
+		const ref = $activeElement.ref;
 		
-		// Update the element with the historical content (but don't save yet)
-		if (type === 'text') {
-			element.textContent = historyContent;
-		} else if (type === 'html') {
-			element.innerHTML = historyContent;
-		} else if (type === 'image') {
-			// For images, store the pending URL and update store to trigger re-render
+		console.log('[CMSOverlay] Restoring from history:', historyContent, 'for ref:', ref);
+		
+		// Update the store for all types to trigger the subscription logic
+		// This ensures placeholder content is properly rendered
+		cmsStore.update(store => ({
+			...store,
+			[ref]: {
+				...store[ref],
+				content: historyContent
+			}
+		}));
+		
+		// For images, also update the pending image URL
+		if (type === 'image') {
 			pendingImageUrl = historyContent;
-			
-			// Temporarily update the store to trigger re-render (for placeholder images)
-			cmsStore.update(store => ({
-				...store,
-				[$activeElement.ref]: {
-					...store[$activeElement.ref],
-					content: historyContent
-				}
-			}));
 		}
 		
 		// Close history panel after restoring
@@ -169,30 +171,36 @@
 	function handleCancel() {
 		if (!$activeElement) return;
 		
-		// Revert changes by refreshing from original content
+		// Revert changes by restoring original content from the store
 		const type = $activeElement.type;
 		const ref = $activeElement.ref;
+		const element = $activeElement.element;
 		
-		if (type === 'text' || type === 'html') {
-			// For text/html, only update the active element
-			const element = $activeElement.element;
-			if (type === 'text') {
-				element.textContent = originalContent;
+		console.log('[CMSOverlay] Cancel - restoring original content:', originalContent);
+		
+		// Restore original content in the store for all types
+		// This ensures the store subscription updates the element correctly
+		cmsStore.update(store => {
+			if (store[ref]) {
+				// If we have a store entry, update it with original content
+				return {
+					...store,
+					[ref]: {
+						...store[ref],
+						content: originalContent
+					}
+				};
 			} else {
-				element.innerHTML = originalContent;
-			}
-		} else if (type === 'image') {
-			// For images, restore the original content in the store
-			// This will trigger a re-render and show the original image or placeholder
-			console.log('[CMSOverlay] Restoring original content on cancel:', originalContent);
-			cmsStore.update(store => ({
-				...store,
-				[ref]: {
-					...store[ref],
-					content: originalContent
+				// No store entry exists, this means we're using placeholder content
+				// Don't add a new entry, just update the element directly
+				if (type === 'text') {
+					element.textContent = originalContent;
+				} else if (type === 'html') {
+					element.innerHTML = originalContent;
 				}
-			}));
-		}
+				return store;
+			}
+		});
 		
 		closeOverlay();
 	}
@@ -907,13 +915,33 @@
 													<circle cx="8.5" cy="8.5" r="1.5" />
 													<polyline points="21 15 16 10 5 21" />
 												</svg>
-												<span>Placeholder Image</span>
+												<span>Placeholder Content</span>
 											</div>
 										{/if}
 									{:else if $activeElement.type === 'html'}
-										{@html version.content}
+										{#if version.content}
+											{@html version.content}
+										{:else}
+											<div class="history-placeholder">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+													<polyline points="14 2 14 8 20 8" />
+												</svg>
+												<span>Placeholder Content</span>
+											</div>
+										{/if}
 									{:else}
-										{version.content}
+										{#if version.content}
+											{version.content}
+										{:else}
+											<div class="history-placeholder">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+													<polyline points="14 2 14 8 20 8" />
+												</svg>
+												<span>Placeholder Content</span>
+											</div>
+										{/if}
 									{/if}
 								</div>
 							</li>

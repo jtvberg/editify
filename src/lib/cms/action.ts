@@ -11,15 +11,13 @@ export function cms(node: HTMLElement) {
 	
 	if (!ref) return;
 
-	// Store the initial content from Svelte (the fallback value)
-	let initialContent = type === 'html' ? node.innerHTML : node.textContent || '';
-	let hasBeenEdited = false;
+	// Store the initial placeholder content from Svelte (the fallback value)
+	// This is what should be displayed when there's no database content
+	const placeholderContent = type === 'html' ? node.innerHTML : node.textContent || '';
 	
 	// For images, get the img element
 	const imgElement = type === 'image' ? node.querySelector('img') : null;
-	if (imgElement && type === 'image') {
-		initialContent = imgElement.src;
-	}
+	const placeholderImageSrc = imgElement?.src || '';
 	
 	// Check if we have content in the store
 	const storeContent = get(cmsStore)[ref]?.content;
@@ -32,26 +30,35 @@ export function cms(node: HTMLElement) {
 		} else if (type === 'text') {
 			node.textContent = storeContent;
 		}
-		initialContent = storeContent;
 	}
 	
-	// Update content when store changes (only if content is not empty)
+	// Update content when store changes
 	const unsubscribe = cmsStore.subscribe((store) => {
-		const content = store[ref]?.content;
-		// Only update if:
-		// 1. Content exists and is not empty
-		// 2. Not currently editing
-		// 3. Content is different from what's displayed
-		if (content && document.activeElement !== node) {
+		const storeItem = store[ref];
+		const content = storeItem?.content;
+		
+		// Skip updates if currently editing this element
+		if (document.activeElement === node) {
+			return;
+		}
+		
+		// If we have content in the store, use it
+		if (content) {
 			if (type === 'html' && content !== node.innerHTML) {
 				node.innerHTML = content;
-				initialContent = content;
 			} else if (type === 'image' && imgElement && content !== imgElement.src) {
 				imgElement.src = content;
-				initialContent = content;
 			} else if (type === 'text' && content !== node.textContent) {
 				node.textContent = content;
-				initialContent = content;
+			}
+		} else if (storeItem) {
+			// Store item exists but content is empty/null - restore placeholder
+			if (type === 'html') {
+				node.innerHTML = placeholderContent;
+			} else if (type === 'image' && imgElement) {
+				imgElement.src = placeholderImageSrc;
+			} else if (type === 'text') {
+				node.textContent = placeholderContent;
 			}
 		}
 	});
