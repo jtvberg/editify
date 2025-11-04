@@ -2,6 +2,7 @@
 	import { cmsStore, cms } from '$lib';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import defaultCardImage from '$lib/assets/default_image_small.png';
 
 	const project1Tags = ['SvelteKit', 'Supabase', 'Stripe'];
 	const project2Tags = ['SvelteKit', 'MDX', 'Tailwind'];
@@ -25,11 +26,7 @@
 		<div class="project-grid">
 			<article class="project-card">
 				<div data-cms-ref="portfolio.project1.image" data-cms-type="image" class="project-image image" use:cms>
-					{#if $cmsStore['portfolio.project1.image']?.content}
-						<img src={$cmsStore['portfolio.project1.image']?.content} alt="" />
-					{:else}
-						<div class="placeholder-image">🛒</div>
-					{/if}
+					<img src={$cmsStore['portfolio.project1.image']?.content || defaultCardImage} alt="" />
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project1.title" data-cms-type="text" use:cms>
@@ -48,11 +45,7 @@
 
 			<article class="project-card">
 				<div data-cms-ref="portfolio.project2.image" data-cms-type="image" class="project-image image" use:cms>
-					{#if $cmsStore['portfolio.project2.image']?.content}
-						<img src={$cmsStore['portfolio.project2.image']?.content} alt="" />
-					{:else}
-						<div class="placeholder-image">📝</div>
-					{/if}
+					<img src={$cmsStore['portfolio.project2.image']?.content || defaultCardImage} alt="" />
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project2.title" data-cms-type="text" use:cms>
@@ -71,11 +64,7 @@
 
 			<article class="project-card">
 				<div data-cms-ref="portfolio.project3.image" data-cms-type="image" class="project-image image" use:cms>
-					{#if $cmsStore['portfolio.project3.image']?.content}
-						<img src={$cmsStore['portfolio.project3.image']?.content} alt="" />
-					{:else}
-						<div class="placeholder-image">🏢</div>
-					{/if}
+					<img src={$cmsStore['portfolio.project3.image']?.content || defaultCardImage} alt="" />
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project3.title" data-cms-type="text" use:cms>
@@ -94,11 +83,7 @@
 
 			<article class="project-card">
 				<div data-cms-ref="portfolio.project4.image" data-cms-type="image" class="project-image image" use:cms>
-					{#if $cmsStore['portfolio.project4.image']?.content}
-						<img src={$cmsStore['portfolio.project4.image']?.content} alt="" />
-					{:else}
-						<div class="placeholder-image">🎓</div>
-					{/if}
+					<img src={$cmsStore['portfolio.project4.image']?.content || defaultCardImage} alt="" />
 				</div>
 				<div class="project-content">
 					<h3 data-cms-ref="portfolio.project4.title" data-cms-type="text" use:cms>
@@ -189,11 +174,6 @@
 		align-items: center;
 		justify-content: center;
 		border-bottom: 1px solid #ffffff1a;
-	}
-
-	.placeholder-image {
-		font-size: 4rem;
-		opacity: 0.6;
 	}
 
 	.project-content {

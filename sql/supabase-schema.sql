@@ -1,6 +1,6 @@
 -- CMS Content Schema for Supabase
 -- Run this in your Supabase SQL Editor
--- Note: RLS policies are handled separately in update-rls-policies.sql
+-- Note: RLS policies are handled separately in supabase-rls-policies.sql
 
 -- Main content table
 CREATE TABLE IF NOT EXISTS cms_content (
@@ -26,7 +26,6 @@ CREATE INDEX IF NOT EXISTS idx_cms_content_updated_at ON cms_content(updated_at 
 ALTER TABLE cms_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cms_content_history ENABLE ROW LEVEL SECURITY;
 
--- Note: RLS Policies are defined in update-rls-policies.sql
 -- Run that file after creating these tables to set up proper access control
 
 -- Function to automatically create history on update
