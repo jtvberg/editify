@@ -17,7 +17,6 @@ export function cms(node: HTMLElement) {
 	
 	// For images, get the img element
 	const imgElement = type === 'image' ? node.querySelector('img') : null;
-	const placeholderImageSrc = imgElement?.src || '';
 	
 	// Check if we have content in the store
 	const storeContent = get(cmsStore)[ref]?.content;
@@ -51,12 +50,11 @@ export function cms(node: HTMLElement) {
 			} else if (type === 'text' && content !== node.textContent) {
 				node.textContent = content;
 			}
-		} else if (storeItem) {
+		} else if (storeItem && type !== 'image') {
 			// Store item exists but content is empty/null - restore placeholder
+			// Note: Images always have a default src from the template, so we don't restore
 			if (type === 'html') {
 				node.innerHTML = placeholderContent;
-			} else if (type === 'image' && imgElement) {
-				imgElement.src = placeholderImageSrc;
 			} else if (type === 'text') {
 				node.textContent = placeholderContent;
 			}

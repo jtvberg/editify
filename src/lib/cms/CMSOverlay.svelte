@@ -15,7 +15,6 @@
 	let showImageLibrary = $state(false);
 	let imageLibrary = $state<string[]>([]);
 	let loadingLibrary = $state(false);
-	let pendingImageUrl = $state<string | null>(null);
 	let originalContent = $state<string>('');
 	let capturedOriginal = false;
 
@@ -51,14 +50,8 @@
 	function selectImageFromLibrary(imageUrl: string) {
 		if (!$activeElement) return;
 		
-		console.log('[CMSOverlay] Selected image from library:', imageUrl);
-		console.log('[CMSOverlay] Original content was:', originalContent);
-		
-		// Store the pending image URL (don't save to database yet)
-		pendingImageUrl = imageUrl;
-		
-		// Temporarily update the store to trigger re-render (for placeholder images)
-		// This doesn't save to database, just updates the local store
+		// Update the store to show the selected image
+		// This will trigger the subscription in action.ts to update the img src
 		cmsStore.update(store => ({
 			...store,
 			[$activeElement.ref]: {
@@ -74,14 +67,10 @@
 	function restoreFromHistory(historyContent: string) {
 		if (!$activeElement) return;
 		
-		const element = $activeElement.element;
-		const type = $activeElement.type;
 		const ref = $activeElement.ref;
 		
-		console.log('[CMSOverlay] Restoring from history:', historyContent, 'for ref:', ref);
-		
-		// Update the store for all types to trigger the subscription logic
-		// This ensures placeholder content is properly rendered
+		// Update the store to trigger the subscription logic
+		// This will restore the content for all types (text, html, image)
 		cmsStore.update(store => ({
 			...store,
 			[ref]: {
@@ -89,11 +78,6 @@
 				content: historyContent
 			}
 		}));
-		
-		// For images, also update the pending image URL
-		if (type === 'image') {
-			pendingImageUrl = historyContent;
-		}
 		
 		// Close history panel after restoring
 		showHistory = false;
@@ -110,7 +94,6 @@
 		savedRange = null;
 		showImageLibrary = false;
 		imageLibrary = [];
-		pendingImageUrl = null;
 		originalContent = '';
 		capturedOriginal = false;
 	}
@@ -130,21 +113,14 @@
 			} else if (type === 'html') {
 				newContent = element.innerHTML;
 			} else if (type === 'image') {
-				// Use pending image URL if available
-				if (pendingImageUrl !== null) {
-					newContent = pendingImageUrl;
-				} else {
-					// Otherwise get from the current store content (which may have been updated temporarily)
-					newContent = $cmsStore[$activeElement.ref]?.content || '';
-				}
+				// Get the current content from the store (updated by upload or library selection)
+				newContent = $cmsStore[$activeElement.ref]?.content || '';
 			}
 			
-			console.log('[CMSOverlay] Saving image content:', newContent, 'for ref:', $activeElement.ref);
 			const success = await saveContent($activeElement.ref, newContent);
 			
 			if (success) {
-				console.log('[CMSOverlay] Save successful, updating store');
-				// Update the store
+				// Update the store with the saved content
 				cmsStore.update(store => ({
 					...store,
 					[$activeElement.ref]: {
@@ -157,7 +133,6 @@
 				// Success! Close the overlay
 				closeOverlay();
 			} else {
-				console.error('[CMSOverlay] Save failed');
 				uploadError = 'Failed to save changes';
 			}
 		} catch (err) {
@@ -229,15 +204,14 @@
 		uploadSuccess = false;
 		
 		try {
-			// Upload to storage but don't save to database yet
+			// Upload to storage (doesn't save to database yet)
 			const imageUrl = await uploadImageToStorage($activeElement.ref, file);
 			
 			if (imageUrl) {
 				uploadSuccess = true;
-				pendingImageUrl = imageUrl;
 				
-				// Temporarily update the store to trigger re-render (for placeholder images)
-				// This doesn't save to database, just updates the local store
+				// Update the store to show the uploaded image
+				// This will trigger the subscription in action.ts to update the img src
 				cmsStore.update(store => ({
 					...store,
 					[$activeElement.ref]: {
