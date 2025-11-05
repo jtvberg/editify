@@ -4,12 +4,9 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		// Check editor role on mount
 		checkEditorRole();
 
-		// Listen for auth state changes and re-check role
 		const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-			// Use the session from the callback directly to avoid API calls
 			if (session?.user) {
 				const role = session.user.user_metadata?.role || session.user.app_metadata?.role;
 				const hasEditorRole = role === 'editor';
@@ -19,7 +16,6 @@
 			}
 		});
 
-		// Cleanup subscription on unmount
 		return () => {
 			subscription.unsubscribe();
 		};

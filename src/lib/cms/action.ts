@@ -11,17 +11,11 @@ export function cms(node: HTMLElement) {
 	
 	if (!ref) return;
 
-	// Store the initial placeholder content from Svelte (the fallback value)
-	// This is what should be displayed when there's no database content
 	const placeholderContent = type === 'html' ? node.innerHTML : node.textContent || '';
-	
-	// For images, get the img element
 	const imgElement = type === 'image' ? node.querySelector('img') : null;
-	
-	// Check if we have content in the store
 	const storeContent = get(cmsStore)[ref]?.content;
+	
 	if (storeContent) {
-		// Use store content if available
 		if (type === 'html') {
 			node.innerHTML = storeContent;
 		} else if (type === 'image' && imgElement) {
@@ -31,17 +25,14 @@ export function cms(node: HTMLElement) {
 		}
 	}
 	
-	// Update content when store changes
 	const unsubscribe = cmsStore.subscribe((store) => {
 		const storeItem = store[ref];
 		const content = storeItem?.content;
 		
-		// Skip updates if currently editing this element
 		if (document.activeElement === node) {
 			return;
 		}
 		
-		// If we have content in the store, use it
 		if (content) {
 			if (type === 'html' && content !== node.innerHTML) {
 				node.innerHTML = content;
@@ -51,8 +42,6 @@ export function cms(node: HTMLElement) {
 				node.textContent = content;
 			}
 		} else if (storeItem && type !== 'image') {
-			// Store item exists but content is empty/null - restore placeholder
-			// Note: Images always have a default src from the template, so we don't restore
 			if (type === 'html') {
 				node.innerHTML = placeholderContent;
 			} else if (type === 'text') {
@@ -61,7 +50,6 @@ export function cms(node: HTMLElement) {
 		}
 	});
 
-	// Update editability when edit mode changes
 	const unsubscribeEditMode = editMode.subscribe((isEditMode) => {
 		if (isEditMode) {
 			if (type === 'text' || type === 'html') {
@@ -82,13 +70,10 @@ export function cms(node: HTMLElement) {
 
 	function handleClick(e: MouseEvent) {
 		if (get(editMode) && ref) {
-			// Stop propagation to prevent backdrop from closing overlay
 			e.stopPropagation();
-			
-			// Check if this element is already active
+
 			const currentActive = get(activeElement);
 			if (currentActive && currentActive.element === node) {
-				// Already active, don't do anything - let user keep editing
 				return;
 			}
 			
@@ -106,8 +91,7 @@ export function cms(node: HTMLElement) {
 	}
 
 	async function handleBlur() {
-		// Don't auto-save on blur anymore - save/cancel buttons will handle this
-		// Just keep the content in memory for now
+		// Auto save on blur if in edit mode and content has changed not imeplemented
 	}
 
 	node.addEventListener('click', handleClick);

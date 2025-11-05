@@ -18,11 +18,8 @@
 	let originalContent = $state<string>('');
 	let capturedOriginal = false;
 
-	// Track original content when overlay opens (only once)
 	$effect(() => {
 		if ($activeElement && !capturedOriginal) {
-			// Capture the original content from the store
-			// This might be empty if the element is using placeholder content
 			const storeItem = $cmsStore[$activeElement.ref];
 			const content = storeItem?.content || '';
 			originalContent = content;
@@ -49,9 +46,7 @@
 
 	function selectImageFromLibrary(imageUrl: string) {
 		if (!$activeElement) return;
-		
-		// Update the store to show the selected image
-		// This will trigger the subscription in action.ts to update the img src
+
 		cmsStore.update(store => ({
 			...store,
 			[$activeElement.ref]: {
@@ -60,7 +55,6 @@
 			}
 		}));
 		
-		// Close library after selecting
 		showImageLibrary = false;
 	}
 
@@ -69,8 +63,6 @@
 		
 		const ref = $activeElement.ref;
 		
-		// Update the store to trigger the subscription logic
-		// This will restore the content for all types (text, html, image)
 		cmsStore.update(store => ({
 			...store,
 			[ref]: {
@@ -79,7 +71,6 @@
 			}
 		}));
 		
-		// Close history panel after restoring
 		showHistory = false;
 	}
 
@@ -113,14 +104,12 @@
 			} else if (type === 'html') {
 				newContent = element.innerHTML;
 			} else if (type === 'image') {
-				// Get the current content from the store (updated by upload or library selection)
 				newContent = $cmsStore[$activeElement.ref]?.content || '';
 			}
 			
 			const success = await saveContent($activeElement.ref, newContent);
 			
 			if (success) {
-				// Update the store with the saved content
 				cmsStore.update(store => ({
 					...store,
 					[$activeElement.ref]: {
@@ -129,8 +118,7 @@
 						updated_at: new Date().toISOString()
 					}
 				}));
-				
-				// Success! Close the overlay
+
 				closeOverlay();
 			} else {
 				uploadError = 'Failed to save changes';
@@ -145,19 +133,15 @@
 
 	function handleCancel() {
 		if (!$activeElement) return;
-		
-		// Revert changes by restoring original content from the store
+
 		const type = $activeElement.type;
 		const ref = $activeElement.ref;
 		const element = $activeElement.element;
 		
 		console.log('[CMSOverlay] Cancel - restoring original content:', originalContent);
-		
-		// Restore original content in the store for all types
-		// This ensures the store subscription updates the element correctly
+
 		cmsStore.update(store => {
 			if (store[ref]) {
-				// If we have a store entry, update it with original content
 				return {
 					...store,
 					[ref]: {
@@ -166,8 +150,6 @@
 					}
 				};
 			} else {
-				// No store entry exists, this means we're using placeholder content
-				// Don't add a new entry, just update the element directly
 				if (type === 'text') {
 					element.textContent = originalContent;
 				} else if (type === 'html') {
@@ -186,13 +168,11 @@
 		
 		if (!file || !$activeElement) return;
 		
-		// Validate file type
 		if (!file.type.startsWith('image/')) {
 			uploadError = 'Please select a valid image file';
 			return;
 		}
 
-		// Validate file size
 		const maxSize = 6 * 1024 * 1024; // 6MB
 		if (file.size > maxSize) {
 			uploadError = 'Image size must be less than 5MB';
@@ -204,14 +184,11 @@
 		uploadSuccess = false;
 		
 		try {
-			// Upload to storage (doesn't save to database yet)
 			const imageUrl = await uploadImageToStorage($activeElement.ref, file);
 			
 			if (imageUrl) {
 				uploadSuccess = true;
-				
-				// Update the store to show the uploaded image
-				// This will trigger the subscription in action.ts to update the img src
+
 				cmsStore.update(store => ({
 					...store,
 					[$activeElement.ref]: {
@@ -227,7 +204,6 @@
 			uploadError = 'An unexpected error occurred during upload';
 		} finally {
 			uploading = false;
-			// Reset the input
 			input.value = '';
 		}
 	}
@@ -242,15 +218,12 @@
 		if (!selection || selection.rangeCount === 0) return;
 		
 		const range = selection.getRangeAt(0);
-		
-		// Check if selection is within our element
+
 		if (!element.contains(range.commonAncestorContainer)) return;
-		
-		// Check if the selection is already wrapped in the tag
+
 		let node = range.commonAncestorContainer;
 		let isWrapped = false;
-		
-		// Walk up the tree to check if we're inside the tag already
+
 		while (node && node !== element) {
 			if (node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === tagName.toUpperCase()) {
 				isWrapped = true;
@@ -260,26 +233,22 @@
 		}
 		
 		if (isWrapped && node) {
-			// Unwrap: replace the tag with its contents
 			const parent = node.parentNode!;
 			while (node.firstChild) {
 				parent.insertBefore(node.firstChild, node);
 			}
 			parent.removeChild(node);
 		} else {
-			// Wrap: create new tag and wrap selection
 			const wrapper = document.createElement(tagName);
 			
 			try {
 				range.surroundContents(wrapper);
 			} catch (e) {
-				// If surroundContents fails (partial selection), extract and wrap manually
 				const contents = range.extractContents();
 				wrapper.appendChild(contents);
 				range.insertNode(wrapper);
 			}
 			
-			// Restore selection
 			selection.removeAllRanges();
 			const newRange = document.createRange();
 			newRange.selectNodeContents(wrapper);
@@ -311,11 +280,9 @@
 		if (!selection || selection.rangeCount === 0) return;
 		
 		const range = selection.getRangeAt(0);
-		
-		// Check if selection is within our element
+
 		if (!element.contains(range.commonAncestorContainer)) return;
-		
-		// Check if we're already inside a list of this type
+
 		let node = range.commonAncestorContainer;
 		let existingList: HTMLElement | null = null;
 		
@@ -331,12 +298,10 @@
 		}
 		
 		if (existingList) {
-			// Remove the list - convert list items back to regular content
 			const fragment = document.createDocumentFragment();
 			const items = existingList.querySelectorAll('li');
 			
 			items.forEach((li) => {
-				// Add line breaks between items for readability
 				if (fragment.childNodes.length > 0) {
 					fragment.appendChild(document.createElement('br'));
 				}
@@ -347,22 +312,17 @@
 			
 			existingList.parentNode?.replaceChild(fragment, existingList);
 		} else {
-			// Create a new list
 			const list = document.createElement(listType);
-			
-			// Get the selected content
+
 			let content: DocumentFragment | null = null;
 			
 			if (!range.collapsed) {
 				content = range.extractContents();
 			} else {
-				// No selection - create empty list item
 				const li = document.createElement('li');
 				li.appendChild(document.createTextNode('List item'));
 				list.appendChild(li);
 				range.insertNode(list);
-				
-				// Place cursor inside the list item
 				range.setStart(li.firstChild!, 0);
 				range.setEnd(li.firstChild!, li.textContent!.length);
 				selection.removeAllRanges();
@@ -370,10 +330,8 @@
 				element.focus();
 				return;
 			}
-			
-			// Process the extracted content to create list items
+
 			if (content) {
-				// Helper function to process nodes and create list items
 				const processNodes = (nodes: NodeList | Node[]) => {
 					const items: Node[][] = [[]];
 					let currentItem = 0;
@@ -381,18 +339,13 @@
 					Array.from(nodes).forEach((node) => {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							const tagName = (node as Element).tagName;
-							
-							// BR tags indicate new list items
+
 							if (tagName === 'BR') {
-								// Only create new item if current item has content
 								if (items[currentItem].length > 0) {
 									currentItem++;
 									items[currentItem] = [];
 								}
-							}
-							// Block elements indicate new list items
-							else if (['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(tagName)) {
-								// Add current block as an item
+							} else if (['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(tagName)) {
 								if (items[currentItem].length > 0) {
 									currentItem++;
 									items[currentItem] = [];
@@ -405,14 +358,12 @@
 							}
 						} else if (node.nodeType === Node.TEXT_NODE) {
 							const text = node.textContent || '';
-							// Split by newlines
 							const lines = text.split('\n');
 							
 							lines.forEach((line, idx) => {
 								if (line) {
 									items[currentItem].push(document.createTextNode(line));
 								}
-								// Create new item for each newline (except the last one if empty)
 								if (idx < lines.length - 1 && items[currentItem].length > 0) {
 									currentItem++;
 									items[currentItem] = [];
@@ -422,13 +373,11 @@
 							items[currentItem].push(node);
 						}
 					});
-					
-					// Filter out empty items and create list items
+
 					items.filter(item => item.length > 0).forEach(itemNodes => {
 						const li = document.createElement('li');
 						itemNodes.forEach(node => li.appendChild(node));
-						
-						// Clean up: trim whitespace from text content
+
 						const text = li.textContent?.trim();
 						if (text) {
 							list.appendChild(li);
@@ -437,8 +386,7 @@
 				};
 				
 				processNodes(content.childNodes);
-				
-				// If no items were created, create one with all content
+
 				if (list.children.length === 0) {
 					const li = document.createElement('li');
 					li.appendChild(content);
@@ -447,8 +395,6 @@
 			}
 			
 			range.insertNode(list);
-			
-			// Place cursor at the end of the list
 			range.setStartAfter(list);
 			range.setEndAfter(list);
 			selection.removeAllRanges();
@@ -467,12 +413,10 @@
 	}
 
 	function showLinkDialog() {
-		// Save the current selection range so we can restore it later
 		const selection = window.getSelection();
 		if (selection && selection.rangeCount > 0) {
 			savedRange = selection.getRangeAt(0).cloneRange();
-			
-			// Get the selected text if any
+
 			const selectedText = selection.toString();
 			if (selectedText) {
 				linkText = selectedText;
@@ -490,8 +434,7 @@
 		const element = $activeElement.element;
 		const selection = window.getSelection();
 		if (!selection) return;
-		
-		// Restore the saved range if we have one
+
 		let range: Range;
 		if (savedRange) {
 			range = savedRange;
@@ -500,49 +443,38 @@
 		} else if (selection.rangeCount > 0) {
 			range = selection.getRangeAt(0);
 		} else {
-			// No saved range and no current selection - create one at the end
 			range = document.createRange();
 			range.selectNodeContents(element);
-			range.collapse(false); // Collapse to end
+			range.collapse(false);
 			selection.removeAllRanges();
 			selection.addRange(range);
 		}
-		
-		// Create the link element
+
 		const link = document.createElement('a');
 		link.href = linkUrl;
 		link.target = '_blank';
 		link.rel = 'noopener noreferrer';
-		
-		// Check if we have selected text to replace
+
 		const hasSelection = !range.collapsed;
 		
 		if (hasSelection) {
-			// Replace the selected text with the link
 			const contents = range.extractContents();
 			
 			if (linkText) {
-				// User provided custom link text, use that instead
 				link.textContent = linkText;
 			} else {
-				// Use the selected text
 				link.appendChild(contents);
 			}
 		} else {
-			// No selection - use link text or URL
 			link.textContent = linkText || linkUrl;
 		}
 		
-		// Insert the link at the cursor position
 		range.insertNode(link);
-		
-		// Place cursor after the link
 		range.setStartAfter(link);
 		range.setEndAfter(link);
 		selection.removeAllRanges();
 		selection.addRange(range);
-		
-		// Reset and close
+
 		linkUrl = '';
 		linkText = '';
 		showLinkInput = false;
@@ -566,34 +498,28 @@
 				handleCancel();
 			}
 		}
-		
-		// Handle Enter in link input
+
 		if (e.key === 'Enter' && showLinkInput && (e.target as HTMLElement).tagName === 'INPUT') {
 			e.preventDefault();
 			insertLink();
 		}
-		
-		// Only handle keyboard shortcuts when editing html
+
 		if ($activeElement && $activeElement.type === 'html') {
-			// Bold: Cmd+B (Mac) or Ctrl+B (Windows/Linux)
 			if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
 				e.preventDefault();
 				toggleBold();
 			}
-			
-			// Italic: Cmd+I (Mac) or Ctrl+I (Windows/Linux)
+
 			if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
 				e.preventDefault();
 				toggleItalic();
 			}
-			
-			// Code: Cmd+` (Mac) or Ctrl+` (Windows/Linux)
+
 			if ((e.metaKey || e.ctrlKey) && e.key === '`') {
 				e.preventDefault();
 				toggleCode();
 			}
-			
-			// Link: Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+
 			if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
 				e.preventDefault();
 				showLinkDialog();
@@ -605,24 +531,21 @@
 		if (!$activeElement) return;
 		
 		const target = e.target as HTMLElement;
-		
-		// Don't close if clicking on the overlay itself
+
 		if (target.closest('.cms-overlay')) {
 			return;
 		}
-		
-		// Don't close if clicking on the active element or its children
+
 		if ($activeElement.element.contains(target)) {
 			return;
 		}
-		
-		// Clicked outside - cancel editing
+
 		handleCancel();
 	}
 
 	onMount(() => {
 		document.addEventListener('keydown', handleKeydown);
-		document.addEventListener('click', handleDocumentClick, true); // Use capture phase
+		document.addEventListener('click', handleDocumentClick, true);
 		return () => {
 			document.removeEventListener('keydown', handleKeydown);
 			document.removeEventListener('click', handleDocumentClick, true);

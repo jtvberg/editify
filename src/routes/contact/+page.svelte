@@ -13,11 +13,9 @@
 
 	function handleSubmit(e: Event) {
 		e.preventDefault();
-		// Here you would typically send the data to your backend
 		console.log('Form submitted:', formData);
 		submitted = true;
-		
-		// Reset form after 3 seconds
+
 		setTimeout(() => {
 			formData = { name: '', email: '', message: '' };
 			submitted = false;

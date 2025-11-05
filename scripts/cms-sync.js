@@ -3,14 +3,11 @@
 import { readFile } from 'fs/promises';
 import { globby } from 'globby';
 import { createClient } from '@supabase/supabase-js';
-import { parse } from 'svelte/compiler';
 import * as dotenv from 'dotenv';
 
-// Load environment variables
 dotenv.config();
 
 const SUPABASE_URL = process.env.PUBLIC_SUPABASE_URL;
-// Use service role key for sync script (bypasses RLS)
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.PUBLIC_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
@@ -25,18 +22,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 async function extractCMSRefs() {
 	console.log('🔍 Scanning Svelte files for CMS refs...\n');
 
-	// Find all Svelte files
 	const files = await globby('src/**/*.svelte');
-
 	const refs = new Map();
 	const refDetails = new Map();
 
 	for (const file of files) {
 		const content = await readFile(file, 'utf-8');
-
-		// Parse with Svelte compiler
 		try {
-			// Simple regex extraction (more robust than AST parsing for attributes)
 			const refMatches = content.matchAll(/data-cms-ref=["']([^"']+)["']/g);
 			const typeMatches = content.matchAll(/data-cms-type=["']([^"']+)["']/g);
 
@@ -47,7 +39,6 @@ async function extractCMSRefs() {
 				const count = refs.get(ref) || 0;
 				refs.set(ref, count + 1);
 
-				// Store details about first occurrence
 				if (!refDetails.has(ref)) {
 					refDetails.set(ref, {
 						type: typesInFile[index] || 'text',
@@ -80,8 +71,6 @@ async function syncToDatabase(refs, refDetails) {
 
 	for (const [ref, count] of refs.entries()) {
 		const details = refDetails.get(ref);
-
-		// Check if ref exists in database
 		const { data: existingContent } = await supabase
 			.from('cms_content')
 			.select('id')
@@ -89,7 +78,6 @@ async function syncToDatabase(refs, refDetails) {
 			.single();
 
 		if (!existingContent) {
-			// Create new entry
 			const { error } = await supabase.from('cms_content').insert({
 				id: ref,
 				content: details.defaultContent || '',
@@ -112,7 +100,6 @@ async function syncToDatabase(refs, refDetails) {
 			existing++;
 		}
 
-		// Report on reused refs
 		if (count > 1) {
 			console.log(`ℹ️  Reused: ${ref} (${count} occurrences)`);
 		}
@@ -120,7 +107,6 @@ async function syncToDatabase(refs, refDetails) {
 		console.log('');
 	}
 
-	// Summary
 	console.log('═══════════════════════════════════════');
 	console.log('📈 Summary:');
 	console.log(`   ✅ Created: ${created}`);

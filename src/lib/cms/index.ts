@@ -2,13 +2,8 @@ import { writable, derived, get } from 'svelte/store';
 import type { CMSContent, CMSStore } from '../types/cms';
 import { supabase } from '../supabase';
 
-// Edit mode toggle
 export const editMode = writable(false);
-
-// CMS content store
 export const cmsStore = writable<CMSStore>({});
-
-// Active element being edited
 export const activeElement = writable<{
 	ref: string;
 	type: string;
@@ -18,24 +13,18 @@ export const activeElement = writable<{
 	y: number;
 } | null>(null);
 
-// Check if user is an editor
 export const isEditor = writable(false);
-
-// Initialize CMS store with data
 export function initializeCMS(data: CMSStore) {
 	cmsStore.set(data);
 }
 
-// Get content for a specific ref
 export function getContent(ref: string): string {
 	const store = get(cmsStore);
 	return store[ref]?.content || '';
 }
 
-// Save content to database
 export async function saveContent(ref: string, content: string): Promise<boolean> {
 	try {
-		// Type assertion needed due to Supabase type inference limitations
 		const { data, error } = await (supabase.from('cms_content') as any)
 			.update({
 				content,
@@ -54,7 +43,6 @@ export async function saveContent(ref: string, content: string): Promise<boolean
 			return false;
 		}
 		
-		// Update local store
 		cmsStore.update((store) => ({
 			...store,
 			[ref]: {
@@ -71,7 +59,6 @@ export async function saveContent(ref: string, content: string): Promise<boolean
 	}
 }
 
-// Subscribe to real-time updates
 export function subscribeToChanges() {
 	const channel = supabase
 		.channel('cms-changes')
@@ -93,7 +80,6 @@ export function subscribeToChanges() {
 	};
 }
 
-// Check if user has editor role
 export async function checkEditorRole() {
 	const {
 		data: { user }
@@ -104,7 +90,6 @@ export async function checkEditorRole() {
 		return false;
 	}
 
-	// Check for editor role in user metadata or JWT claims
 	const role = user.user_metadata?.role || user.app_metadata?.role;
 	const hasEditorRole = role === 'editor';
 	
@@ -112,7 +97,6 @@ export async function checkEditorRole() {
 	return hasEditorRole;
 }
 
-// Get content history
 export async function getContentHistory(ref: string) {
 	const { data, error } = await supabase
 		.from('cms_content_history')
@@ -128,12 +112,10 @@ export async function getContentHistory(ref: string) {
 	return data || [];
 }
 
-// Count usage of a ref across the DOM
 export function countRefUsage(ref: string): number {
 	return document.querySelectorAll(`[data-cms-ref="${ref}"]`).length;
 }
 
-// Get all uploaded images from Supabase Storage
 export async function getAllImages(): Promise<string[]> {
 	try {
 		const { data, error } = await supabase.storage
@@ -153,10 +135,8 @@ export async function getAllImages(): Promise<string[]> {
 			return [];
 		}
 
-		// Get public URLs for all images
 		const imageUrls = data
 			.filter(file => {
-				// Filter only image files
 				const ext = file.name.split('.').pop()?.toLowerCase();
 				return ext && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
 			})
@@ -174,15 +154,11 @@ export async function getAllImages(): Promise<string[]> {
 	}
 }
 
-// Upload image to Supabase Storage (without saving to database)
 export async function uploadImageToStorage(ref: string, file: File): Promise<string | null> {
 	try {
-		// Generate unique filename with timestamp
 		const fileExt = file.name.split('.').pop();
 		const fileName = `${ref}-${Date.now()}.${fileExt}`;
 		const filePath = `cms-images/${fileName}`;
-
-		// Upload to Supabase Storage
 		const { data: uploadData, error: uploadError } = await supabase.storage
 			.from('cms-content')
 			.upload(filePath, file, {
@@ -195,7 +171,6 @@ export async function uploadImageToStorage(ref: string, file: File): Promise<str
 			return null;
 		}
 
-		// Get public URL
 		const { data: urlData } = supabase.storage
 			.from('cms-content')
 			.getPublicUrl(filePath);
@@ -212,7 +187,6 @@ export async function uploadImageToStorage(ref: string, file: File): Promise<str
 	}
 }
 
-// Upload image to Supabase Storage and save to database
 export async function uploadImage(ref: string, file: File): Promise<string | null> {
 	try {
 		const imageUrl = await uploadImageToStorage(ref, file);
@@ -220,7 +194,6 @@ export async function uploadImage(ref: string, file: File): Promise<string | nul
 			return null;
 		}
 
-		// Save the URL to the CMS content
 		const success = await saveContent(ref, imageUrl);
 		if (!success) {
 			console.error('[CMS] Error saving image URL to database');

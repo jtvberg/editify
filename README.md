@@ -190,4 +190,4 @@ MIT
 
 ---
 
-Built with [SvelteKit](https://kit.svelte.dev/), [Supabase](https://supabase.com/), and ❤️
+Built with [SvelteKit](https://kit.svelte.dev/) and [Supabase](https://supabase.com/)

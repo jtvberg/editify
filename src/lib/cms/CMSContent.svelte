@@ -36,12 +36,9 @@
 
 	function handleClick(e: MouseEvent) {
 		if ($editMode) {
-			// Stop propagation to prevent backdrop from closing overlay
 			e.stopPropagation();
-			
-			// Check if this element is already active
+
 			if ($activeElement && $activeElement.element === e.currentTarget) {
-				// Already active, don't do anything - let user keep editing
 				return;
 			}
 			
@@ -61,7 +58,7 @@
 	}
 
 	async function handleBlur(e: FocusEvent) {
-		// Don't auto-save on blur anymore - save/cancel buttons will handle this
+		// Auto save on blur if in edit mode and content has changed not imeplemented
 	}
 
 	async function handleInput(e: Event) {

@@ -1,7 +1,7 @@
 export type ContentType = 'text' | 'html' | 'image';
 
 export interface CMSContent {
-	id: string; // The data-cms-ref value
+	id: string;
 	content: string;
 	type: ContentType;
 	updated_at: string;

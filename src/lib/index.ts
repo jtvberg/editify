@@ -1,4 +1,3 @@
-// Export all CMS components and utilities
 export { default as CMSContent } from './cms/CMSContent.svelte';
 export { default as EditModeToggle } from './cms/EditModeToggle.svelte';
 export { default as CMSOverlay } from './cms/CMSOverlay.svelte';

@@ -12,14 +12,12 @@
 
 	let { children, data }: Props = $props();
 
-	// Initialize CMS with data from server
 	$effect(() => {
 		if (data?.cmsContent) {
 			initializeCMS(data.cmsContent);
 		}
 	});
 
-	// Subscribe to real-time changes
 	onMount(() => {
 		const unsubscribe = subscribeToChanges();
 		return unsubscribe;
