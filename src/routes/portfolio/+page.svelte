@@ -174,6 +174,7 @@
 		align-items: center;
 		justify-content: center;
 		border-bottom: 1px solid #ffffff1a;
+		overflow: clip;
 	}
 
 	.project-content {
