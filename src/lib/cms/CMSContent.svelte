@@ -46,13 +46,26 @@
 			const target = e.currentTarget as HTMLElement;
 			const rect = target.getBoundingClientRect();
 			
+			// Calculate position accounting for viewport bounds
+			let x = rect.left;
+			let y = rect.bottom + window.scrollY;
+			
+			// Ensure overlay stays on screen horizontally
+			const overlayWidth = 300; // min-width from CSS
+			if (x + overlayWidth > window.innerWidth) {
+				x = window.innerWidth - overlayWidth - 20;
+			}
+			if (x < 10) {
+				x = 10;
+			}
+			
 			activeElement.set({
 				ref,
 				type,
 				element: target,
 				usageCount: countRefUsage(ref),
-				x: rect.left,
-				y: rect.bottom + window.scrollY
+				x,
+				y
 			});
 		}
 	}

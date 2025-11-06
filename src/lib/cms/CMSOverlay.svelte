@@ -928,7 +928,6 @@
 		background-color: #f3f4f6ff;
 		padding: 0.25rem 0.5rem;
 		border-radius: 4px;
-		flex-shrink: 0;
 	}
 
 	.usage-badge {
@@ -1257,7 +1256,7 @@
 		gap: 0.25rem;
 		padding: 0.25rem 0.5rem;
 		background-color: #3b82f6ff;
-		color: white;
+		color: #ffffffff;
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;

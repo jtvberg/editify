@@ -1,15 +1,16 @@
-# Editify - Lightweight CMS Test Bed
+# Editify - Lightweight CMS with Repeatable Content
 
-A minimal, developer-friendly CMS for SvelteKit that uses `data-cms-ref` attributes to map DOM elements directly to database entries. Built with SvelteKit, Supabase, and the new Svelte 5 action system for inline editing.
+A minimal, developer-friendly CMS for SvelteKit with inline editing and a flexible repeatable content system. Built with SvelteKit, Supabase, and Svelte 5.
 
 ## 🎯 What is This?
 
-This project serves as a **test bed** for a lightweight CMS architecture where:
+This project serves as a **production-ready CMS** where:
 
 - **Developers control structure** - Add HTML elements with `data-cms-ref` attributes
-- **Editors control content** - Update text and rich content through inline editing
-- **Two-way binding** - DOM and database stay in perfect sync via Svelte actions
-- **Ref-based architecture** - Same ref = same content everywhere
+- **Editors control content** - Update text, HTML, and images through inline editing
+- **Repeatable content** - Cards, carousels, sections with nested tags
+- **Two-way binding** - DOM and database stay in perfect sync
+- **Ref-based architecture** - Same ref = same content everywhere, history and cancel work automatically
 
 ## 🚀 Quick Start
 
@@ -17,8 +18,12 @@ This project serves as a **test bed** for a lightweight CMS architecture where:
 
    ```bash
    # Create a Supabase project at https://supabase.com
-   # Run sql/supabase-schema.sql in your SQL Editor
-   # Then run sql/supabase-rls-policies.sql to set up permissions
+   # Run these SQL files in order in your SQL Editor:
+   # 1. sql/supabase-schema.sql (base CMS tables)
+   # 2. sql/repeatable-content.sql (repeatable content system)
+   # 3. sql/supabase-rls-policies.sql (CMS permissions)
+   # 4. sql/repeatable-rls-policies.sql (repeatable permissions)
+   # Or use: npm run db:reset (after configuring environment)
    ```
 
 2. **Configure Environment**
@@ -32,7 +37,8 @@ This project serves as a **test bed** for a lightweight CMS architecture where:
 
    ```bash
    npm install
-   npm run cms:sync  # Requires SUPABASE_SERVICE_ROLE_KEY in .env
+   npm run db:reset    # Reset database to current schema (optional if you ran SQL manually)
+   npm run cms:sync    # Sync CMS refs from your components to database
    ```
 
 4. **Set up an Editor User**
@@ -55,25 +61,46 @@ Visit [http://localhost:5173](http://localhost:5173) and log in to see inline ed
 ## 📚 Documentation
 
 - **[docs/SETUP.md](./docs/SETUP.md)** - Complete step-by-step setup instructions
+- **[docs/REPEATABLE-CONTENT.md](./docs/REPEATABLE-CONTENT.md)** - Repeatable content architecture (Cards, Tags, etc.)
 - **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Deploying to Netlify (and other platforms)
 - **[docs/QUICK-REFERENCE.md](./docs/QUICK-REFERENCE.md)** - Commands and patterns cheat sheet
 - **[docs/COMPONENT-EXAMPLES.md](./docs/COMPONENT-EXAMPLES.md)** - Usage examples and patterns
 - **[docs/AUTH-SETUP.md](./docs/AUTH-SETUP.md)** - Authentication and editor role setup
+- **[docs/CURRENT-STATE.md](./docs/CURRENT-STATE.md)** - Current implementation state and architecture decisions
 
 ## ✨ Features
+
+### Core CMS
 
 - ✅ Inline content editing with Svelte 5 actions
 - ✅ Real-time synchronization via Supabase
 - ✅ Content versioning and history
 - ✅ Role-based access control (editor role)
 - ✅ Reusable content refs
-- ✅ Text and HTML content support
-- ✅ **Image uploads with Supabase Storage**
-- ✅ TypeScript support
-- ✅ Server-side rendering (SSR)
+- ✅ Text, HTML, and image content support
+- ✅ Image uploads with Supabase Storage
 - ✅ CLI sync tool
 
+### Repeatable Content
+
+- ✅ Cards, Carousels, Sections components
+- ✅ Nested repeatables (tags within cards)
+- ✅ Reference-based architecture (no content duplication)
+- ✅ Database triggers for auto-create/delete
+- ✅ History and cancel work automatically
+- ✅ Add, remove, reorder controls
+- ✅ Extensible component system
+
+### Developer Experience
+
+- ✅ TypeScript support
+- ✅ Server-side rendering (SSR)
+- ✅ Hot module replacement
+- ✅ Simple, maintainable code
+
 ## 📝 Basic Usage
+
+### Inline Editable Content
 
 Add editable content to your Svelte components using the `use:cms` action:
 
@@ -86,6 +113,25 @@ Add editable content to your Svelte components using the `use:cms` action:
 	{$cmsStore['home.hero.title']?.content || 'Welcome!'}
 </h1>
 ```
+
+### Repeatable Content
+
+Add repeatable sections (cards, carousels, etc.):
+
+```svelte
+<script>
+	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
+</script>
+
+<RepeatableContainer ref="portfolio.projects" type="Card" containerClass="project-grid" />
+```
+
+Each card automatically includes nested tags. The system handles:
+
+- Auto-creating cms_content entries
+- Add/remove/reorder controls (in edit mode)
+- History and cancel functionality
+- All CRUD operations
 
 Sync refs to database:
 
