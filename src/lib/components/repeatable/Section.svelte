@@ -19,7 +19,7 @@
     {#if data.title_ref}
         <h3 class="section-title">
             <CMSContent ref={data.title_ref} type="text">
-                {title || 'Untitled Project'}
+                {title || 'Title'}
             </CMSContent>
         </h3>
     {/if}
@@ -27,7 +27,7 @@
     {#if data.description_ref}
         <div class="section-description">
             <CMSContent ref={data.description_ref} type="html">
-                {@html description || '<p>No description</p>'}
+                {@html description || '<p>Description</p>'}
             </CMSContent>
         </div>
     {/if}
@@ -51,9 +51,15 @@
 	}
 
 	.section-item h3 {
-		font-size: 1.5rem;
+		font-size: 1.625rem;
 		font-weight: 700;
 		color: #f9fafbff;
 		margin-bottom: 1rem;
+	}
+
+	.section-description {
+		font-size: 1.05rem;
+		color: #e5e7ebff;
+		line-height: 1.7;
 	}
 </style>

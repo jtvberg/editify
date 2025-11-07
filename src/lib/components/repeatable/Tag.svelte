@@ -18,13 +18,14 @@
 <style>
 	.tag {
 		display: inline-block;
-		padding: 0.5rem 0.75rem;
-		background-color: #6474aaff;
-		color: #e7e6f3ff;
-		border-radius: 0.25rem;
+		padding: 0.375rem 0.75rem;
+		background-color: #667eea33;
+		color: #a5b4fcff;
+		border-radius: 6px;
 		font-size: 0.875rem;
 		font-weight: 500;
 		transition: all 0.2s;
+    	border: 1px solid #667eea4d;
 	}
 
 	.tag:hover {

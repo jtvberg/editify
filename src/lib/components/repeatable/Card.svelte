@@ -28,7 +28,7 @@
 				{#if image}
 					<img src={image} alt={title || 'Project'} />
 				{:else}
-					<div class="placeholder">No image</div>
+					<div class="placeholder">Image</div>
 				{/if}
 			</CMSContent>
 		</div>
@@ -38,7 +38,7 @@
 		{#if data.title_ref}
 			<h3 class="card-title">
 				<CMSContent ref={data.title_ref} type="text">
-					{title || 'Untitled Project'}
+					{title || 'Title'}
 				</CMSContent>
 			</h3>
 		{/if}
@@ -46,7 +46,7 @@
 		{#if data.description_ref}
 			<div class="card-description">
 				<CMSContent ref={data.description_ref} type="html">
-					{@html description || '<p>No description</p>'}
+					{@html description || '<p>Description</p>'}
 				</CMSContent>
 			</div>
 		{/if}
@@ -54,7 +54,7 @@
 		{#if data.link_ref}
 			<div class="card-link">
 				<CMSContent ref={data.link_ref} type="html">
-					{@html link || '<p>No link</p>'}
+					{@html link || '<p>Link</p>'}
 				</CMSContent>
 			</div>
 		{/if}

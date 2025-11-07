@@ -127,7 +127,9 @@
 	:global(.feature-list) {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: 3rem;
+		max-width: 900px;
+		margin: 0 auto;
 	}
 
 	@media (max-width: 768px) {
