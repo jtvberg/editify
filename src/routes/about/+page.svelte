@@ -3,6 +3,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import defaultMissionImage from '$lib/assets/default_image.jpg';
+	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
 </script>
 
 <Header />
@@ -36,33 +37,12 @@
 			{$cmsStore['about.features.title']?.content || 'What Makes Us Different'}
 		</h2>
 
-		<div class="feature-list">
-			<div class="feature-item">
-				<h3 data-cms-ref="about.features.direct.title" data-cms-type="text" use:cms>
-					{$cmsStore['about.features.direct.title']?.content || '🎯 Direct Editing'}
-				</h3>
-				<div data-cms-ref="about.features.direct.description" data-cms-type="html" use:cms>
-					{@html $cmsStore['about.features.direct.description']?.content || '<p>Edit content exactly where it appears. No need to navigate to separate admin pages or figure out which field corresponds to which content.</p>'}
-				</div>
-			</div>
-
-			<div class="feature-item">
-				<h3 data-cms-ref="about.features.lightweight.title" data-cms-type="text" use:cms>
-					{$cmsStore['about.features.lightweight.title']?.content || '🪶 Lightweight'}
-				</h3>
-				<div data-cms-ref="about.features.lightweight.description" data-cms-type="html" use:cms>
-					{@html $cmsStore['about.features.lightweight.description']?.content || '<p>Minimal overhead with a simple architecture. No bloated plugins or unnecessary features—just the essentials for content management.</p>'}
-				</div>
-			</div>
-
-			<div class="feature-item">
-				<h3 data-cms-ref="about.features.developer.title" data-cms-type="text" use:cms>
-					{$cmsStore['about.features.developer.title']?.content || '👨‍💻 Developer Friendly'}
-				</h3>
-				<div data-cms-ref="about.features.developer.description" data-cms-type="html" use:cms>
-					{@html $cmsStore['about.features.developer.description']?.content || '<p>Built with modern web standards using SvelteKit. Easy to integrate, customize, and extend to fit your specific needs.</p>'}
-				</div>
-			</div>
+		<div class="features">
+			<RepeatableContainer 
+				ref="about.features"
+				type="Section" 
+				containerClass="feature-list"
+			/>
 		</div>
 	</section>
 </main>
@@ -144,42 +124,10 @@
 		letter-spacing: -0.02em;
 	}
 
-	.feature-list {
-		display: grid;
-		gap: 3rem;
-		max-width: 900px;
-		margin: 0 auto;
-	}
-
-	.feature-item {
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
-		backdrop-filter: blur(10px);
-		padding: 2rem;
-		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.feature-item:hover {
-		transform: translateY(-8px);
-		box-shadow: 0 20px 40px #667eea4d;
-		border-color: #667eeaff;
-	}
-
-	.feature-item h3 {
-		font-size: 1.75rem;
-		font-weight: 700;
-		color: #f9fafbff;
-		margin-bottom: 1rem;
-		letter-spacing: -0.01em;
-	}
-
-	.feature-item :global(p) {
-		color: #d1d5dbff;
-		line-height: 1.7;
-		font-size: 1.125rem;
-		margin: 0;
+	:global(.feature-list) {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
 	}
 
 	@media (max-width: 768px) {
@@ -199,10 +147,6 @@
 		.description,
 		.content {
 			font-size: 1.125rem;
-		}
-
-		.feature-item {
-			padding: 2rem;
 		}
 	}
 </style>

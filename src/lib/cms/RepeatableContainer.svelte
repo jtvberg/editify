@@ -119,6 +119,7 @@
 	.repeatable-container.editable {
 		display: flex;
         flex-direction: column;
+		gap: 2rem;
 	}
 
 	.repeatable-item {
@@ -173,6 +174,8 @@
 	}
 
 	.add-item-btn {
+		height: fit-content;
+    	width: fit-content;
 		padding: 0.5rem 0.75rem;
 		background: #3b82f6ff;
 		color: #ffffffff;

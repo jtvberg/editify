@@ -2,7 +2,7 @@
 	import CMSContent from '$lib/cms/CMSContent.svelte';
 	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
 	import { cmsStore } from '$lib/cms';
-	import type { CardData, RepeatableItem } from '$lib/types/cms';
+	import type { RepeatableItem } from '$lib/types/cms';
 
 	interface Props {
 		item: RepeatableItem;

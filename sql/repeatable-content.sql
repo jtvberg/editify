@@ -90,14 +90,22 @@ BEGIN
     ELSIF NEW.component_type = 'Carousel' THEN
         -- Carousel fields (TBD)
         INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.quote', '', 'html', NOW());
+        field_refs := field_refs || jsonb_build_object('quote_ref', base_ref || '.quote');
+
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.name', '', 'text', NOW());
+        field_refs := field_refs || jsonb_build_object('name_ref', base_ref || '.name');
+        
+    ELSIF NEW.component_type = 'Section' THEN
+        -- Section fields: title and description
+        INSERT INTO cms_content (id, content, type, updated_at)
         VALUES (base_ref || '.title', '', 'text', NOW());
         field_refs := field_refs || jsonb_build_object('title_ref', base_ref || '.title');
         
-    ELSIF NEW.component_type = 'Section' THEN
-        -- Section fields (TBD)
         INSERT INTO cms_content (id, content, type, updated_at)
-        VALUES (base_ref || '.heading', '', 'text', NOW());
-        field_refs := field_refs || jsonb_build_object('heading_ref', base_ref || '.heading');
+        VALUES (base_ref || '.description', '', 'html', NOW());
+        field_refs := field_refs || jsonb_build_object('description_ref', base_ref || '.description');
         
     ELSIF NEW.component_type = 'Tag' THEN
         -- Tag label field

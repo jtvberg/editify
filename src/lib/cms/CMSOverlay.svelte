@@ -16,6 +16,7 @@
 	let imageLibrary = $state<string[]>([]);
 	let loadingLibrary = $state(false);
 	let originalContent = $state<string>('');
+	let originalDOMContent = $state<string>('');
 	let capturedOriginal = false;
 
 	$effect(() => {
@@ -23,8 +24,20 @@
 			const storeItem = $cmsStore[$activeElement.ref];
 			const content = storeItem?.content || '';
 			originalContent = content;
+			
+			// Also capture the current DOM content
+			const type = $activeElement.type;
+			const element = $activeElement.element;
+			if (type === 'text') {
+				originalDOMContent = element.textContent || '';
+			} else if (type === 'html') {
+				originalDOMContent = element.innerHTML;
+			} else {
+				originalDOMContent = content;
+			}
+			
 			capturedOriginal = true;
-			console.log('[CMSOverlay] Captured original content from store:', originalContent, 'for ref:', $activeElement.ref);
+			console.log('[CMSOverlay] Captured original - store:', originalContent, 'DOM:', originalDOMContent, 'for ref:', $activeElement.ref);
 		} else if (!$activeElement) {
 			capturedOriginal = false;
 		}
@@ -86,6 +99,7 @@
 		showImageLibrary = false;
 		imageLibrary = [];
 		originalContent = '';
+		originalDOMContent = '';
 		capturedOriginal = false;
 	}
 
@@ -138,8 +152,9 @@
 		const ref = $activeElement.ref;
 		const element = $activeElement.element;
 		
-		console.log('[CMSOverlay] Cancel - restoring original content:', originalContent);
+		console.log('[CMSOverlay] Cancel - restoring original store:', originalContent, 'DOM:', originalDOMContent);
 
+		// Update the store with original store content
 		cmsStore.update(store => {
 			if (store[ref]) {
 				return {
@@ -149,15 +164,16 @@
 						content: originalContent
 					}
 				};
-			} else {
-				if (type === 'text') {
-					element.textContent = originalContent;
-				} else if (type === 'html') {
-					element.innerHTML = originalContent;
-				}
-				return store;
 			}
+			return store;
 		});
+		
+		// Restore DOM element to its original DOM content (which may include placeholder text)
+		if (type === 'text') {
+			element.textContent = originalDOMContent;
+		} else if (type === 'html') {
+			element.innerHTML = originalDOMContent;
+		}
 		
 		closeOverlay();
 	}

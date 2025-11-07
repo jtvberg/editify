@@ -47,6 +47,11 @@ export interface CardData {
 	link_ref?: string;
 }
 
+export interface SectionData {
+	title_ref: string;
+	description_ref: string;
+}
+
 export interface RepeatableStore {
 	[parentRef: string]: RepeatableItem[];
 }
