@@ -1,10 +1,11 @@
 export type ContentType = 'text' | 'html' | 'image';
 
 export interface CMSContent {
-	id: string;
-	content: string;
-	type: ContentType;
-	updated_at: string;
+    id: string;
+    content: string;
+    type: ContentType;
+    updated_at: string;
+    metadata?: ImageMetadata | Record<string, any>;
 }
 
 export interface CMSContentHistory {
@@ -47,6 +48,11 @@ export interface CardData {
 export interface SectionData {
 	title_ref: string;
 	description_ref: string;
+}
+
+export interface ImageMetadata {
+    objectFit?: 'fill' | 'contain' | 'cover' | 'none';
+    alt?: string;
 }
 
 export interface RepeatableStore {

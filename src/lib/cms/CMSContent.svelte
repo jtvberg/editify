@@ -18,8 +18,15 @@
 	}: Props = $props();
 
 	let content = $state('');
-	let isEditing = $state(false);
 	let localElement: HTMLElement;
+
+	let objectFit = $derived(
+        type === 'image' && content && $cmsStore[ref]?.metadata?.objectFit
+            ? $cmsStore[ref].metadata.objectFit
+            : 'contain'
+    );
+
+	let computedObjectFit = $derived($editMode ? 'contain' : objectFit);
 
 	$effect(() => {
 		const storeContent = $cmsStore[ref];
@@ -100,7 +107,7 @@
 		{@render children()}
 	{:else if type === 'image'}
 		{#if content}
-			<img src={content} alt="" />
+			<img src={content} alt="" style="object-fit: {computedObjectFit};" />
 		{:else}
 			<div class="image-placeholder">
 				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -145,7 +152,12 @@
 		cursor: pointer;
 	}
 
-	.cms-image img {
+	.cms-image {
+		display: flex;
+		max-height: 100%;
+	}
+
+	.cms-image > :global(img) {
 		max-width: 100%;
 		height: auto;
 		display: block;

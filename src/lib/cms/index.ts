@@ -24,40 +24,42 @@ export function getContent(ref: string): string {
 	return store[ref]?.content || '';
 }
 
-export async function saveContent(ref: string, content: string): Promise<boolean> {
-	try {
-		const { data, error } = await (supabase.from('cms_content') as any)
-			.update({
-				content,
-				updated_at: new Date().toISOString()
-			})
-			.eq('id', ref)
-			.select();
+export async function saveContent(ref: string, content: string, metadata?: any): Promise<boolean> {
+    try {
+        const updateData: any = {
+            content,
+            updated_at: new Date().toISOString()
+        };
+        
+        if (metadata !== undefined) {
+            updateData.metadata = metadata;
+        }
+        
+        const { data, error } = await (supabase.from('cms_content') as any)
+            .update(updateData)
+            .eq('id', ref)
+            .select();
 
-		if (error) {
-			console.error('[CMS] Error saving content:', error);
-			return false;
-		}
+        if (error || !data || data.length === 0) {
+            console.error('[CMS] Error saving content:', error);
+            return false;
+        }
+        
+        cmsStore.update((store) => ({
+            ...store,
+            [ref]: {
+                ...store[ref],
+                content,
+                ...(metadata !== undefined && { metadata }),
+                updated_at: new Date().toISOString()
+            }
+        }));
 
-		if (!data || data.length === 0) {
-			console.warn('[CMS] No rows updated - content ref may not exist:', ref);
-			return false;
-		}
-		
-		cmsStore.update((store) => ({
-			...store,
-			[ref]: {
-				...store[ref],
-				content,
-				updated_at: new Date().toISOString()
-			}
-		}));
-
-		return true;
-	} catch (err) {
-		console.error('Error saving content:', err);
-		return false;
-	}
+        return true;
+    } catch (err) {
+        console.error('Error saving content:', err);
+        return false;
+    }
 }
 
 export function subscribeToChanges() {

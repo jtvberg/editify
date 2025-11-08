@@ -17,13 +17,23 @@
 	let loadingLibrary = $state(false);
 	let originalContent = $state<string>('');
 	let originalDOMContent = $state<string>('');
+	let originalMetadata = $state<any>(undefined);
 	let capturedOriginal = false;
+	let selectedObjectFit = $state<'fill' | 'contain' | 'cover' | 'none'>('contain');
+
+	$effect(() => {
+		if ($activeElement && $activeElement.type === 'image') {
+			const metadata = $cmsStore[$activeElement.ref]?.metadata;
+			selectedObjectFit = metadata?.objectFit || 'contain';
+		}
+	});
 
 	$effect(() => {
 		if ($activeElement && !capturedOriginal) {
 			const storeItem = $cmsStore[$activeElement.ref];
 			const content = storeItem?.content || '';
 			originalContent = content;
+			originalMetadata = storeItem?.metadata;
 
 			const type = $activeElement.type;
 			const element = $activeElement.element;
@@ -36,7 +46,7 @@
 			}
 			
 			capturedOriginal = true;
-			console.log('[CMSOverlay] Captured original - store:', originalContent, 'DOM:', originalDOMContent, 'for ref:', $activeElement.ref);
+			console.log('[CMSOverlay] Captured original - store:', originalContent, 'DOM:', originalDOMContent, 'metadata:', originalMetadata, 'for ref:', $activeElement.ref);
 		} else if (!$activeElement) {
 			capturedOriginal = false;
 		}
@@ -70,6 +80,23 @@
 		showImageLibrary = false;
 	}
 
+	function updateObjectFit(value: 'fill' | 'contain' | 'cover' | 'none') {
+		if (!$activeElement || $activeElement.type !== 'image') return;
+		
+		selectedObjectFit = value;
+
+		cmsStore.update(store => ({
+			...store,
+			[$activeElement.ref]: {
+				...store[$activeElement.ref],
+				metadata: {
+					...store[$activeElement.ref]?.metadata,
+					objectFit: value
+				}
+			}
+		}));
+	}
+
 	function restoreFromHistory(historyContent: string) {
 		if (!$activeElement) return;
 		
@@ -99,6 +126,7 @@
 		imageLibrary = [];
 		originalContent = '';
 		originalDOMContent = '';
+		originalMetadata = undefined;
 		capturedOriginal = false;
 	}
 
@@ -110,6 +138,7 @@
 		try {
 			const element = $activeElement.element;
 			const type = $activeElement.type;
+			const ref = $activeElement.ref;
 			let newContent = '';
 			
 			if (type === 'text') {
@@ -117,19 +146,27 @@
 			} else if (type === 'html') {
 				newContent = element.innerHTML;
 			} else if (type === 'image') {
-				newContent = $cmsStore[$activeElement.ref]?.content || '';
+				newContent = $cmsStore[ref]?.content || '';
 			}
+
+			const metadata = type === 'image' ? $cmsStore[ref]?.metadata : undefined;
 			
-			const success = await saveContent($activeElement.ref, newContent);
+			const success = await saveContent(ref, newContent, metadata);
 			
 			if (success) {
+				const updateData: any = {
+					...($cmsStore[ref] || {}),
+					content: newContent,
+					updated_at: new Date().toISOString()
+				};
+				
+				if (metadata !== undefined) {
+					updateData.metadata = metadata;
+				}
+				
 				cmsStore.update(store => ({
 					...store,
-					[$activeElement.ref]: {
-						...store[$activeElement.ref],
-						content: newContent,
-						updated_at: new Date().toISOString()
-					}
+					[ref]: updateData
 				}));
 
 				closeOverlay();
@@ -151,16 +188,22 @@
 		const ref = $activeElement.ref;
 		const element = $activeElement.element;
 		
-		console.log('[CMSOverlay] Cancel - restoring original store:', originalContent, 'DOM:', originalDOMContent);
+		console.log('[CMSOverlay] Cancel - restoring original store:', originalContent, 'DOM:', originalDOMContent, 'metadata:', originalMetadata);
 
 		cmsStore.update(store => {
 			if (store[ref]) {
+				const updatedItem: any = {
+					...store[ref],
+					content: originalContent
+				};
+
+				if (originalMetadata !== undefined) {
+					updatedItem.metadata = originalMetadata;
+				}
+				
 				return {
 					...store,
-					[ref]: {
-						...store[ref],
-						content: originalContent
-					}
+					[ref]: updatedItem
 				};
 			}
 			return store;
@@ -657,6 +700,24 @@
 					</svg>
 					{loadingLibrary ? 'Loading...' : 'Browse Existing Images'}
 				</button>
+
+				<!-- Object-fit controls -->
+				<div class="object-fit-controls">
+					<div class="control-label">Image Fit:</div>
+					<div class="fit-options">
+						{#each ['fill', 'contain', 'cover', 'none'] as fit}
+							<button
+								class="fit-button"
+								class:active={selectedObjectFit === fit}
+								onclick={() => updateObjectFit(fit as 'fill' | 'contain' | 'cover' | 'none')}
+								type="button"
+								title="Set object-fit to {fit}"
+							>
+								{fit}
+							</button>
+						{/each}
+					</div>
+				</div>
 				
 				{#if uploadError}
 					<div class="upload-message error">
@@ -1438,5 +1499,56 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
+	}
+
+	/* Object-fit controls */
+	.object-fit-controls {
+		padding: 1rem;
+		border-top: 1px solid #e5e7ebff;
+		background-color: #f9fafbff;
+	}
+	
+	.control-label {
+		display: block;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #374151ff;
+		margin-bottom: 0.625rem;
+	}
+	
+	.fit-options {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.5rem;
+	}
+	
+	.fit-button {
+		padding: 0.5rem 0.75rem;
+		background-color: #ffffffff;
+		border: 2px solid #e5e7ebff;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		text-transform: capitalize;
+		transition: all 0.15s ease;
+		color: #374151ff;
+	}
+	
+	.fit-button:hover {
+		background-color: #f3f4f6ff;
+		border-color: #d1d5dbff;
+	}
+	
+	.fit-button.active {
+		background-color: #3b82f6ff;
+		color: #ffffffff;
+		border-color: #3b82f6ff;
+		font-weight: 600;
+	}
+
+	.fit-button.active:hover {
+		background-color: #2563ebff;
+		border-color: #2563ebff;
 	}
 </style>

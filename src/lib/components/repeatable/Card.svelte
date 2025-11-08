@@ -20,13 +20,7 @@
 <div class="card">
 	{#if data.image_ref}
 		<div class="card-image">
-			<CMSContent ref={data.image_ref} type="image">
-				{#if image}
-					<img src={image} alt={title || 'Project'} />
-				{:else}
-					<div class="placeholder">Image</div>
-				{/if}
-			</CMSContent>
+			<CMSContent ref={data.image_ref} type="image" />
 		</div>
 	{/if}
 
@@ -63,11 +57,7 @@
 </div>
 
 <style>
-	img {
-        width: 100%;
-    }
-    
-    .card {
+	.card {
 		overflow: hidden;
 		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
 		backdrop-filter: blur(10px);
@@ -92,16 +82,6 @@
 		justify-content: center;
 		border-bottom: 1px solid #ffffff1a;
 		overflow: clip;
-	}
-
-	.placeholder {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: #9ca3afff;
-		font-size: 0.875rem;
 	}
 
 	.card-content {
