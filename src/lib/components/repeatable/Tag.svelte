@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RepeatableItem } from '$lib/types/cms';
-	import CMSContent from '$lib/cms/CMSContent.svelte';
+	import { cms } from '$lib/cms/action';
 	import { cmsStore } from '$lib/cms';
 
 	export let item: RepeatableItem;
@@ -9,10 +9,13 @@
 	$: label = $cmsStore[labelRef]?.content || '';
 </script>
 
-<span class="tag">
-	<CMSContent ref={labelRef} type="text">
-		{label}
-	</CMSContent>
+<span 
+	class="tag" 
+	data-cms-ref={labelRef} 
+	data-cms-type="text" 
+	use:cms
+>
+	{label}
 </span>
 
 <style>
