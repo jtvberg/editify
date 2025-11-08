@@ -1,10 +1,6 @@
 import { get } from 'svelte/store';
 import { editMode, cmsStore, saveContent, countRefUsage, activeElement } from './index';
 
-/**
- * Svelte action to make elements with data-cms-ref editable
- * Usage: <h1 data-cms-ref="home.title" data-cms-type="text" use:cms>Content</h1>
- */
 export function cms(node: HTMLElement) {
 	const ref = node.getAttribute('data-cms-ref');
 	const type = (node.getAttribute('data-cms-type') || 'text') as 'text' | 'html' | 'image';

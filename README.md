@@ -215,17 +215,6 @@ This CMS architecture is perfect for:
 - Landing pages
 - Any site where developers control layout but editors need content control
 
-## 🚧 Current Limitations
-
-This is a test bed / V1 implementation. Not yet implemented:
-
-- Image upload and management
-- Link/URL editing
-- Collections (repeating content blocks)
-- Drag-and-drop reordering
-- Content scheduling
-- Multi-language support
-
 ## 🤝 Contributing
 
 This is a test bed project. Feel free to fork, experiment, and adapt to your needs!

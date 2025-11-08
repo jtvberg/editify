@@ -1,16 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * Database Reset Script for Editify
- * 
- * This script resets the database to the current baseline with:
- * - Repeatable content system (Cards, Carousels, Sections, Tags)
- * - Nested repeatables support (tags within cards)
- * - Reference-based architecture (content in cms_content, structure in content_repeatable)
- * 
- * Usage: npm run db:reset
- */
-
 import { readFile } from 'fs/promises';
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';

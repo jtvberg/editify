@@ -46,12 +46,10 @@
 			const target = e.currentTarget as HTMLElement;
 			const rect = target.getBoundingClientRect();
 			
-			// Calculate position accounting for viewport bounds
 			let x = rect.left;
 			let y = rect.bottom + window.scrollY;
 			
-			// Ensure overlay stays on screen horizontally
-			const overlayWidth = 300; // min-width from CSS
+			const overlayWidth = 300;
 			if (x + overlayWidth > window.innerWidth) {
 				x = window.innerWidth - overlayWidth - 20;
 			}

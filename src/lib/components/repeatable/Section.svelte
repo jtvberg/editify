@@ -9,8 +9,6 @@
 
 	let { item }: Props = $props();
 	let data = $derived(item.data);
-
-	// Get content from cmsStore using refs
 	let title = $derived(data.title_ref ? ($cmsStore[data.title_ref]?.content || '') : '');
 	let description = $derived(data.description_ref ? ($cmsStore[data.description_ref]?.content || '') : '');
 </script>

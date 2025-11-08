@@ -25,7 +25,6 @@ export interface CMSElementData {
 	usageCount: number;
 }
 
-// Repeatable Content Types (Reference-Based)
 export type RepeatableComponentType = 'Card' | 'Carousel' | 'Section' | 'Tag';
 
 export interface RepeatableItem {
@@ -33,8 +32,6 @@ export interface RepeatableItem {
 	parent_ref: string;
 	component_type: RepeatableComponentType;
 	position: number;
-	// data contains REFERENCES to cms_content IDs
-	// e.g., { title_ref: "portfolio.projects.{uuid}.title", description_ref: "...", image_ref: "..." }
 	data: Record<string, string>;
 	created_at?: string;
 	updated_at?: string;

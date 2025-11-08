@@ -208,14 +208,6 @@ export async function uploadImage(ref: string, file: File): Promise<string | nul
 	}
 }
 
-// ============================================================================
-// Repeatable Content Functions (Reference-Based)
-// ============================================================================
-
-/**
- * Load repeatable items for a parent ref
- * Items contain references to cms_content - actual content is in cmsStore
- */
 export async function loadRepeatableItems(parentRef: string): Promise<RepeatableItem[]> {
 	try {
 		const { data: items, error } = await (supabase
@@ -239,7 +231,6 @@ export async function loadRepeatableItems(parentRef: string): Promise<Repeatable
 
 		const repeatableItems = items as RepeatableItem[];
 
-		// Update store
 		repeatableStore.update(store => ({
 			...store,
 			[parentRef]: repeatableItems
@@ -252,21 +243,14 @@ export async function loadRepeatableItems(parentRef: string): Promise<Repeatable
 	}
 }
 
-/**
- * Add a new repeatable item
- * Database trigger automatically creates cms_content entries
- */
 export async function addRepeatableItem(
 	parentRef: string,
 	componentType: RepeatableComponentType,
 	initialData: Record<string, string> = {}
 ): Promise<RepeatableItem | null> {
 	try {
-		// Get current items for position
 		const currentItems = get(repeatableStore)[parentRef] || [];
 		const position = currentItems.length;
-
-		// Insert - trigger creates cms_content entries and populates data with refs
 		const { data, error } = await (supabase
 			.from('content_repeatable') as any)
 			.insert({
@@ -285,7 +269,6 @@ export async function addRepeatableItem(
 
 		const newItem = data as RepeatableItem;
 
-		// If initial content provided, update cms_content entries and cmsStore
 		if (componentType === 'Card' && Object.keys(initialData).length > 0) {
 			const updates = [];
 			const cmsUpdates: Record<string, CMSContent> = {};
@@ -349,7 +332,6 @@ export async function addRepeatableItem(
 			}
 		}
 
-		// Update repeatableStore
 		repeatableStore.update(store => ({
 			...store,
 			[parentRef]: [...currentItems, newItem]
@@ -362,10 +344,6 @@ export async function addRepeatableItem(
 	}
 }
 
-/**
- * Remove a repeatable item
- * Database trigger automatically deletes cms_content entries
- */
 export async function removeRepeatableItem(itemId: string, parentRef: string): Promise<boolean> {
 	try {
 		const { error } = await (supabase
@@ -378,13 +356,11 @@ export async function removeRepeatableItem(itemId: string, parentRef: string): P
 			return false;
 		}
 
-		// Update repeatableStore
 		repeatableStore.update(store => ({
 			...store,
 			[parentRef]: (store[parentRef] || []).filter(item => item.id !== itemId)
 		}));
 
-		// Clean up cmsStore (trigger handles DB cleanup)
 		const store = get(cmsStore);
 		const baseRef = `${parentRef}.${itemId}`;
 		const keysToRemove = Object.keys(store).filter(key => key.startsWith(baseRef));
@@ -404,9 +380,6 @@ export async function removeRepeatableItem(itemId: string, parentRef: string): P
 	}
 }
 
-/**
- * Reorder a repeatable item
- */
 export async function reorderRepeatableItem(
 	itemId: string,
 	parentRef: string,
@@ -420,7 +393,6 @@ export async function reorderRepeatableItem(
 			return false;
 		}
 
-		// Optimistically update UI
 		const reordered = [...items];
 		const [movedItem] = reordered.splice(oldPosition, 1);
 		reordered.splice(newPosition, 0, movedItem);
@@ -433,7 +405,6 @@ export async function reorderRepeatableItem(
 			}))
 		}));
 
-		// Update database
 		const updates = reordered.map((item, index) =>
 			(supabase
 				.from('content_repeatable') as any)
@@ -445,7 +416,6 @@ export async function reorderRepeatableItem(
 		return true;
 	} catch (err) {
 		console.error('[Repeatable] Error in reorderRepeatableItem:', err);
-		// Rollback UI
 		await loadRepeatableItems(parentRef);
 		return false;
 	}

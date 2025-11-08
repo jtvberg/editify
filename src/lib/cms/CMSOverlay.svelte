@@ -24,8 +24,7 @@
 			const storeItem = $cmsStore[$activeElement.ref];
 			const content = storeItem?.content || '';
 			originalContent = content;
-			
-			// Also capture the current DOM content
+
 			const type = $activeElement.type;
 			const element = $activeElement.element;
 			if (type === 'text') {
@@ -154,7 +153,6 @@
 		
 		console.log('[CMSOverlay] Cancel - restoring original store:', originalContent, 'DOM:', originalDOMContent);
 
-		// Update the store with original store content
 		cmsStore.update(store => {
 			if (store[ref]) {
 				return {
@@ -168,7 +166,6 @@
 			return store;
 		});
 		
-		// Restore DOM element to its original DOM content (which may include placeholder text)
 		if (type === 'text') {
 			element.textContent = originalDOMContent;
 		} else if (type === 'html') {

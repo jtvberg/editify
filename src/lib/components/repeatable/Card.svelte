@@ -10,14 +10,10 @@
 
 	let { item }: Props = $props();
 	let data = $derived(item.data);
-
-	// Get content from cmsStore using refs
 	let title = $derived(data.title_ref ? ($cmsStore[data.title_ref]?.content || '') : '');
 	let description = $derived(data.description_ref ? ($cmsStore[data.description_ref]?.content || '') : '');
 	let image = $derived(data.image_ref ? ($cmsStore[data.image_ref]?.content || '') : '');
 	let link = $derived(data.link_ref ? ($cmsStore[data.link_ref]?.content || '') : '');
-	
-	// Tags are nested repeatables
 	let tagsRef = $derived(`${item.parent_ref}.${item.id}.tags`);
 </script>
 
