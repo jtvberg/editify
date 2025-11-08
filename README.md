@@ -79,6 +79,9 @@ Visit [http://localhost:5173](http://localhost:5173) and log in to see inline ed
 - ✅ Reusable content refs
 - ✅ Text, HTML, and image content support
 - ✅ Image uploads with Supabase Storage
+- ✅ Image library browser for existing images
+- ✅ Image object-fit control (fill, contain, cover, none)
+- ✅ Metadata storage for extensibility
 - ✅ CLI sync tool
 
 ### Repeatable Content

@@ -21,8 +21,10 @@ Follow these steps to get your CMS up and running from scratch.
 5. Click **Run** (or press Cmd/Ctrl + Enter)
 6. Verify success - you should see:
    - ✅ 2 tables created (`cms_content`, `cms_content_history`)
+   - ✅ `cms_content` has columns: `id`, `content`, `type`, `metadata`, `updated_at`
    - ✅ RLS enabled on both tables
    - ✅ Triggers created for history and timestamps
+   - ✅ Indexes created including GIN index for metadata queries
 
 ## Step 3: Set Up RLS Policies
 

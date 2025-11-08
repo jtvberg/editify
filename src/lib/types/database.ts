@@ -8,18 +8,21 @@ export interface Database {
 					id: string;
 					content: string;
 					type: string;
+					metadata?: Json;
 					updated_at: string;
 				};
 				Insert: {
 					id: string;
 					content: string;
 					type: string;
+					metadata?: Json;
 					updated_at?: string;
 				};
 				Update: {
 					id?: string;
 					content?: string;
 					type?: string;
+					metadata?: Json;
 					updated_at?: string;
 				};
 			};

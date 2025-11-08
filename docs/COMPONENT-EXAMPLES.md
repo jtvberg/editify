@@ -223,6 +223,17 @@ You can also use the `CMSContent` component wrapper:
 5. The public URL is saved to the database
 6. All instances of that ref are updated automatically
 
+**Image Object-Fit Control:**
+
+When editing an image, you can control how it fits within its container:
+
+- **Fill**: Image stretches to fill the container (may distort)
+- **Contain**: Image scales to fit entirely within container (default, maintains aspect ratio)
+- **Cover**: Image covers entire container (may crop, maintains aspect ratio)
+- **None**: Image displays at natural size
+
+The setting is saved as metadata and persists across sessions. In edit mode, images always use "contain" to ensure the edit overlay is properly positioned.
+
 **Setup Required:** See [IMAGE-STORAGE-SETUP.md](./IMAGE-STORAGE-SETUP.md) for configuring Supabase Storage.
 
 ### Image with Responsive Variants

@@ -1,6 +1,6 @@
 # Current State Documentation
 
-**Date:** November 6, 2025  
+**Date:** November 8, 2025  
 **Status:** ✅ Production Ready
 
 ## Overview
@@ -9,6 +9,7 @@ The codebase implements:
 
 - Reference-based repeatable content system
 - Nested repeatables support (tags within cards)
+- Image metadata support (object-fit control)
 - All colors in hex with alpha format
 - Complete documentation and scripts
 
@@ -18,9 +19,11 @@ The codebase implements:
 
 - ✅ Inline editing for text, HTML, and images
 - ✅ Content history and versioning
-- ✅ Cancel functionality
+- ✅ Cancel functionality (restores content and metadata)
 - ✅ Role-based access (editor role)
 - ✅ Image uploads to Supabase Storage
+- ✅ Image library browser for existing images
+- ✅ Object-fit control for images (fill, contain, cover, none)
 - ✅ Real-time synchronization
 
 ### Repeatable Content
@@ -49,6 +52,7 @@ The codebase implements:
 **cms_content**
 
 - Stores all content (text, HTML, images)
+- `metadata` JSONB column for additional data (e.g., objectFit for images)
 - Has automatic history trigger
 - Used by both inline CMS and repeatables
 
@@ -56,6 +60,7 @@ The codebase implements:
 
 - Automatic versioning via trigger
 - Supports history/cancel features
+- Preserves content snapshots on updates
 
 **content_repeatable**
 
@@ -69,6 +74,16 @@ The codebase implements:
 - `Carousel`: Placeholder (TBD)
 - `Section`: Placeholder (TBD)
 - `Tag`: Label field (nested in cards)
+
+### Image Metadata
+
+Images can store additional metadata in the `metadata` JSONB column:
+
+- **objectFit**: Controls how images are displayed (`fill`, `contain`, `cover`, `none`)
+- Set via the image edit overlay (4 buttons)
+- In edit mode: always uses `contain` for proper overlay positioning
+- In display mode: uses saved preference from metadata
+- Future extensibility: alt text, captions, etc.
 
 ### Example Structure
 
