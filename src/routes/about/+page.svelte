@@ -53,7 +53,7 @@
 		width: 100%;
 		border-radius: 12px;
 		margin-bottom: 2rem;
-		box-shadow: 0 10px 30px #0000004d;
+		box-shadow: 0 10px 30px var(--color-black-50);
 	}
 	.container {
 		max-width: 1200px;
@@ -82,7 +82,7 @@
 	.description,
 	.content {
 		font-size: 1.25rem;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		max-width: 800px;
 		margin: 0 auto;
 		line-height: 1.8;
@@ -106,7 +106,7 @@
 	.mission h2 {
 		font-size: 2.75rem;
 		font-weight: 800;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-bottom: 2rem;
 		letter-spacing: -0.02em;
 	}
@@ -118,7 +118,7 @@
 	.features-detail h2 {
 		font-size: 2.75rem;
 		font-weight: 800;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		text-align: center;
 		margin-bottom: 4rem;
 		letter-spacing: -0.02em;

@@ -81,7 +81,7 @@
 
 	.subtitle {
 		font-size: 1.625rem;
-		color: #9ca3afff;
+		color: var(--color-text-muted);
 		margin-bottom: 2rem;
 		font-weight: 400;
 		letter-spacing: -0.01em;
@@ -89,7 +89,7 @@
 
 	.description {
 		font-size: 1.125rem;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		max-width: 800px;
 		margin: 0 auto;
 		line-height: 1.8;
@@ -108,7 +108,7 @@
 		font-weight: 800;
 		text-align: center;
 		margin-bottom: 4rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
 	}
 
@@ -120,11 +120,11 @@
 
 	.demo {
 		padding: 2rem 1rem;
-		background: linear-gradient(135deg, #667eea14 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		border-radius: 20px;
 		margin: 3rem 0;
-		border: 1px solid #ffffff14;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 	}
 
 	.demo h2 {
@@ -132,7 +132,7 @@
 		font-weight: 800;
 		text-align: center;
 		margin-bottom: 3rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
 	}
 
@@ -141,7 +141,7 @@
 		margin: 0 auto;
 		font-size: 1.125rem;
 		line-height: 1.8;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 	}
 
 	.instructions :global(ol) {
@@ -155,13 +155,13 @@
 	}
 
 	.instructions :global(code) {
-		background-color: #667eea33;
+		background-color: var(--color-primary-20);
 		padding: 0.35rem 0.65rem;
 		border-radius: 6px;
 		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 		font-size: 0.95em;
-		color: #a5b4fcff;
-		border: 1px solid #667eea4d;
+		color: var(--color-text-secondary);
+		border: 1px solid var(--color-primary-30);
 	}
 
 	@media (max-width: 768px) {

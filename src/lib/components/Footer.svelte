@@ -17,14 +17,14 @@
 	}
 
 	.footer p {
-		color: #6b7280ff;
+		color: var(--cms-placeholder-text);
 	}
 
 	.login-link {
-		color: #a5b4fcff;
+		color: var(--color-text-secondary);
 	}
 
 	.login-link:hover {
-		color: #c7d2feff;
+		color: var(--color-text-primary);
 	}
 </style>

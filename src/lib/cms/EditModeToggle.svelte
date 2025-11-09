@@ -59,26 +59,26 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.75rem 1.25rem;
-		background-color: #ffffffff;
-		border: 2px solid #e5e7ebff;
+		background-color: var(--cms-overlay-bg);
+		border: 2px solid var(--color-border-light);
 		border-radius: 9999px;
-		box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 		cursor: pointer;
 		font-weight: 600;
-		color: #374151ff;
+		color: var(--color-text-dark);
 		transition: all 0.2s;
 		z-index: 9999;
 	}
 
 	.edit-mode-toggle:hover {
-		box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000f;
+		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.06);
 		transform: translateY(-2px);
 	}
 
 	.edit-mode-toggle.active {
-		background-color: #3b82f6ff;
-		border-color: #3b82f6ff;
-		color: #ffffffff;
+		background-color: var(--cms-primary);
+		border-color: var(--cms-primary);
+		color: var(--cms-overlay-bg);
 	}
 
 	.edit-mode-toggle svg {

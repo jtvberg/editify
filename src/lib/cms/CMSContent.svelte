@@ -131,20 +131,20 @@
 	}
 
 	.cms-editable {
-		outline: 2px dashed #3b82f680;
+		outline: 2px dashed var(--cms-outline-idle);
 		outline-offset: 2px;
 		transition: outline 0.2s;
 		cursor: pointer;
 	}
 
 	.cms-editable:hover {
-		outline: 2px solid #3b82f6cc;
-		background-color: #3b82f60d;
+		outline: 2px solid var(--cms-outline-hover);
+		background-color: var(--cms-bg-hover);
 	}
 
 	.cms-editable:focus {
-		outline: 2px solid #3b82f6ff;
-		background-color: #3b82f61a;
+		outline: 2px solid var(--cms-outline-active);
+		background-color: var(--cms-bg-active);
 		cursor: text;
 	}
 
@@ -170,19 +170,19 @@
 	}
 
 	.cms-image.cms-editable img {
-		outline: 2px dashed #3b82f680;
+		outline: 2px dashed var(--cms-outline-idle);
 		outline-offset: 2px;
 		transition: outline 0.2s, background-color 0.2s;
 	}
 
 	.cms-image.cms-editable:hover img {
-		outline: 2px solid #3b82f6cc;
-		background-color: #3b82f60d;
+		outline: 2px solid var(--cms-outline-hover);
+		background-color: var(--cms-bg-hover);
 	}
 
 	.cms-image.cms-editable:focus img {
-		outline: 2px solid #3b82f6ff;
-		background-color: #3b82f61a;
+		outline: 2px solid var(--cms-outline-active);
+		background-color: var(--cms-bg-active);
 	}
 
 	.image-placeholder {
@@ -192,10 +192,10 @@
 		justify-content: center;
 		gap: 0.75rem;
 		padding: 3rem 2rem;
-		background-color: #f9fafbff;
-		border: 2px dashed #d1d5dbff;
+		background-color: var(--cms-placeholder-bg);
+		border: 2px dashed var(--cms-placeholder-border);
 		border-radius: 8px;
-		color: #6b7280ff;
+		color: var(--cms-placeholder-text);
 		text-align: center;
 		min-height: 200px;
 	}
@@ -206,9 +206,9 @@
 	}
 
 	.cms-editable:hover .image-placeholder {
-		background-color: #f3f4f6ff;
-		border-color: #3b82f6cc;
-		color: #3b82f6ff;
+		background-color: var(--cms-placeholder-hover-bg);
+		border-color: var(--cms-outline-hover);
+		color: var(--cms-primary);
 	}
 
 	.image-placeholder span {

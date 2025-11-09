@@ -59,28 +59,28 @@
 <style>
 	.card {
 		overflow: hidden;
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.card:hover {
 		transform: translateY(-8px);
-		box-shadow: 0 20px 40px #667eea4d;
-		border-color: #667eeaff;
+		box-shadow: 0 20px 40px var(--color-primary-30);
+		border-color: var(--color-primary);
 	}
 
 	.card-image {
 		width: 100%;
 		height: 200px;
-		background: linear-gradient(135deg, #667eea33 0%, #764ba233 100%);
+		background: var(--gradient-card);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-bottom: 1px solid #ffffff1a;
+		border-bottom: 1px solid var(--color-white-10);
 		overflow: clip;
 	}
 
@@ -91,13 +91,13 @@
 	.card-title {
 		font-size: 1.5rem;
 		font-weight: 700;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-top: 0rem;
 		letter-spacing: -0.01em;
 	}
 
 	.card-description {
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		line-height: 1.7;
 		font-size: 1.05rem;
 		margin-bottom: 1.5rem;
@@ -114,7 +114,7 @@
 	.card-tags {
 		margin-top: 1.5rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid #ffffff1a;
+		border-top: 1px solid var(--color-white-10);
 	}
 
 	.card-tags :global(.tag-list) {

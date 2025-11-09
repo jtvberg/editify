@@ -22,16 +22,16 @@
 	.tag {
 		display: inline-block;
 		padding: 0.375rem 0.75rem;
-		background-color: #667eea33;
-		color: #a5b4fcff;
+		background-color: var(--color-primary-20);
+		color: var(--color-text-secondary);
 		border-radius: 6px;
 		font-size: 0.875rem;
 		font-weight: 500;
 		transition: all 0.2s;
-    	border: 1px solid #667eea4d;
+    	border: 1px solid var(--color-primary-30);
 	}
 
 	.tag:hover {
-		background-color: #778fdbff;
+		background-color: var(--color-primary);
 	}
 </style>

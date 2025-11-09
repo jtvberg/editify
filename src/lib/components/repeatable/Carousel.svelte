@@ -16,14 +16,14 @@
 <style>
 	.carousel-placeholder {
 		padding: 2rem;
-		background: #f3f4f6ff;
+		background: var(--color-bg-light);
 		border-radius: 0.5rem;
 		text-align: center;
 	}
 
 	pre {
 		text-align: left;
-		background: #ffffffff;
+		background: var(--cms-overlay-bg);
 		padding: 1rem;
 		border-radius: 0.25rem;
 		overflow: auto;

@@ -1,0 +1,38 @@
+/* CMS System Colors */
+:root {
+	/* CMS Edit Mode - Blue theme for editing */
+	--cms-outline-idle: #3b82f680;
+	--cms-outline-hover: #3b82f6cc;
+	--cms-outline-active: #3b82f6ff;
+	--cms-bg-hover: #3b82f60d;
+	--cms-bg-active: #3b82f61a;
+	
+	/* CMS Buttons & Actions */
+	--cms-primary: #3b82f6ff;
+	--cms-primary-hover: #2563ebff;
+	--cms-danger: #ef4444ff;
+	--cms-danger-hover: #dc2626ff;
+	--cms-danger-bg: #dc2626cc;
+	
+	/* CMS Overlays & Modals */
+	--cms-overlay-bg: #ffffffff;
+	--cms-modal-bg: #000000cc;
+	
+	/* CMS Placeholder (empty images, etc.) */
+	--cms-placeholder-bg: #f9fafbff;
+	--cms-placeholder-hover-bg: #f3f4f6ff;
+	--cms-placeholder-border: #d1d5dbff;
+	--cms-placeholder-text: #6b7280ff;
+	
+	/* CMS Badge */
+	--cms-badge-bg: #dbeafeff;
+	--cms-badge-text: #1e40afff;
+	
+	/* CMS Status Messages */
+	--cms-success-bg: #f0fdf4ff;
+	--cms-success-text: #166534ff;
+	--cms-success-border: #bbf7d0ff;
+	--cms-error-bg: #fef2f2ff;
+	--cms-error-text: #991b1bff;
+	--cms-error-border: #fecacaff;
+}

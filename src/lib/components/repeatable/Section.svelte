@@ -34,30 +34,30 @@
 <style>
 	.section-item {
 		padding: 2rem;
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.section-item:hover {
 		transform: translateY(-4px);
-		box-shadow: 0 12px 40px #667eea33;
-		border-color: #667eea99;
+		box-shadow: 0 12px 40px var(--color-primary-20);
+		border-color: var(--color-primary);
 	}
 
 	.section-item h3 {
 		font-size: 1.625rem;
 		font-weight: 700;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-bottom: 1rem;
 	}
 
 	.section-description {
 		font-size: 1.05rem;
-		color: #e5e7ebff;
+		color: var(--color-text-secondary);
 		line-height: 1.7;
 	}
 </style>

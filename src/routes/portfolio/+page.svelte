@@ -54,7 +54,7 @@
 
 	.subtitle {
 		font-size: 1.5rem;
-		color: #9ca3afff;
+		color: var(--color-text-muted);
 		font-weight: 400;
 		letter-spacing: -0.01em;
 	}

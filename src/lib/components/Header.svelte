@@ -111,7 +111,7 @@
 		font-size: 1.5rem;
 		font-weight: 800;
 		text-decoration: none;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		transition: opacity 0.2s;
 		letter-spacing: -0.02em;
 	}
@@ -126,7 +126,7 @@
 	}
 
 	.logo-text {
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
+		background: var(--gradient-hero);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -141,7 +141,7 @@
 	.nav-link {
 		padding: 0.5rem 1rem;
 		text-decoration: none;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		font-weight: 500;
 		font-size: 0.9375rem;
 		border-radius: 8px;
@@ -150,12 +150,12 @@
 	}
 
 	.nav-link:hover {
-		color: #f9fafbff;
-		background-color: #667eea1a;
+		color: var(--color-text-primary);
+		background-color: var(--color-primary-10);
 	}
 
 	.nav-link.active {
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 	}
 
 	.nav-link.active::after {
@@ -166,7 +166,7 @@
 		transform: translateX(-50%);
 		width: 60%;
 		height: 2px;
-		background: linear-gradient(90deg, #667eeaff, #764ba2ff);
+		background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
 		border-radius: 2px;
 	}
 
@@ -174,7 +174,7 @@
 		display: none;
 		background: none;
 		border: none;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		cursor: pointer;
 		padding: 0.5rem;
 		border-radius: 8px;
@@ -182,7 +182,7 @@
 	}
 
 	.mobile-menu-btn:hover {
-		background-color: #667eea1a;
+		background-color: var(--color-primary-10);
 	}
 
 	.mobile-nav {
@@ -190,7 +190,7 @@
 		flex-direction: column;
 		padding: 1rem 0;
 		gap: 0.5rem;
-		border-top: 1px solid #ffffff0d;
+		border-top: 1px solid var(--color-white-10);
 		animation: slideDown 0.3s ease-out;
 	}
 
@@ -209,7 +209,7 @@
 		display: block;
 		padding: 0.75rem 1rem;
 		text-decoration: none;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		font-weight: 500;
 		font-size: 1rem;
 		border-radius: 8px;
@@ -217,14 +217,14 @@
 	}
 
 	.mobile-nav-link:hover {
-		color: #f9fafbff;
-		background-color: #667eea1a;
+		color: var(--color-text-primary);
+		background-color: var(--color-primary-10);
 	}
 
 	.mobile-nav-link.active {
-		color: #f9fafbff;
-		background-color: #667eea26;
-		border-left: 3px solid #667eeaff;
+		color: var(--color-text-primary);
+		background-color: var(--color-primary-20);
+		border-left: 3px solid var(--color-primary);
 		padding-left: calc(1rem - 3px);
 	}
 

@@ -1,0 +1,34 @@
+/* Demo Site Theme Colors */
+:root {
+	/* Primary Brand Colors */
+	--color-primary: #667eeaff;
+	--color-primary-dark: #764ba2ff;
+	--color-accent: #f093fbff;
+	
+	/* Background Colors */
+	--color-bg-primary: #131720ff;
+	--color-bg-secondary: #111827ff;
+	--color-bg-light: #f3f4f6ff;
+	
+	/* Text Colors */
+	--color-text-primary: #f9fafbff;
+	--color-text-secondary: #d1d5dbff;
+	--color-text-muted: #9ca3afff;
+	--color-text-dark: #374151ff;
+	
+	/* Border Colors */
+	--color-border-light: #e5e7ebff;
+	--color-border-medium: #d1d5dbff;
+	
+	/* Gradients */
+	--gradient-hero: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
+	--gradient-card: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
+	
+	/* Transparencies */
+	--color-primary-10: #667eea1a;
+	--color-primary-20: #667eea33;
+	--color-primary-30: #667eea4d;
+	--color-white-10: #ffffff1a;
+	--color-white-20: #ffffff33;
+	--color-black-50: #0000004d;
+}

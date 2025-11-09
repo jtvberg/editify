@@ -133,7 +133,7 @@
 		display: flex;
 		gap: 0.25rem;
 		z-index: 10;
-		background: #000000cc;
+		background: var(--cms-modal-bg);
 		padding: 0.25rem;
 		border-radius: 0.5rem;
 	}
@@ -142,8 +142,8 @@
 		width: 2rem;
 		height: 2rem;
 		border: none;
-		background: #ffffff1a;
-		color: #ffffffff;
+		background: var(--color-white-10);
+		color: var(--cms-overlay-bg);
 		cursor: pointer;
 		border-radius: 0.25rem;
 		font-size: 1.2rem;
@@ -155,7 +155,7 @@
 	}
 
 	.control-btn:hover:not(:disabled) {
-		background: #ffffff33;
+		background: var(--color-white-20);
 	}
 
 	.control-btn:disabled {
@@ -164,21 +164,21 @@
 	}
 
 	.control-btn.remove {
-		background: #dc2626cc;
+		background: var(--cms-danger-bg);
         font-size: xx-large;
         padding-top: 0.3rem;
 	}
 
 	.control-btn.remove:hover:not(:disabled) {
-		background: #dc2626ff;
+		background: var(--cms-danger);
 	}
 
 	.add-item-btn {
 		height: fit-content;
     	width: fit-content;
 		padding: 0.5rem 0.75rem;
-		background: #3b82f6ff;
-		color: #ffffffff;
+		background: var(--cms-primary);
+		color: var(--cms-overlay-bg);
 		border: none;
 		border-radius: 0.5rem;
 		cursor: pointer;
@@ -189,13 +189,13 @@
 	}
 
 	.add-item-btn:hover {
-		background: #2563ebff;
+		background: var(--cms-primary-hover);
 	}
 
 	.loading-overlay {
 		position: absolute;
 		inset: 0;
-		background: #ffffffcc;
+		background: rgba(255, 255, 255, 0.8);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -205,8 +205,8 @@
 	.spinner {
 		width: 2rem;
 		height: 2rem;
-		border: 3px solid #e5e7ebff;
-		border-top-color: #3b82f6ff;
+		border: 3px solid var(--color-border-light);
+		border-top-color: var(--cms-primary);
 		border-radius: 50%;
 		animation: spin 0.6s linear infinite;
 	}
