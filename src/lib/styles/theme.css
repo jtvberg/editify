@@ -20,15 +20,16 @@
 	--color-border-light: #e5e7ebff;
 	--color-border-medium: #d1d5dbff;
 	
-	/* Gradients */
-	--gradient-hero: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 50%, #f093fbff 100%);
-	--gradient-card: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
-	
 	/* Transparencies */
 	--color-primary-10: #667eea1a;
 	--color-primary-20: #667eea33;
 	--color-primary-30: #667eea4d;
+	--color-primary-dark-10: #764ba21a;
 	--color-white-10: #ffffff1a;
 	--color-white-20: #ffffff33;
 	--color-black-50: #0000004d;
+
+	/* Gradients */
+	--gradient-hero: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 50%, var(--color-accent) 100%);
+	--gradient-card: linear-gradient(135deg, var(--color-primary-10) 0%, var(--color-primary-dark-10) 100%);
 }

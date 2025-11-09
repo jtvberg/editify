@@ -26,7 +26,7 @@
 		<div class="nav-content">
 			<!-- Logo/Brand -->
 			<a href="/" class="logo" on:click={closeMobileMenu}>
-				<span class="logo-icon">✏️</span>
+				<span class="logo-icon"></span>
 				<span class="logo-text">Editify</span>
 			</a>
 
