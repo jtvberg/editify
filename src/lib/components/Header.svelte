@@ -166,7 +166,7 @@
 		transform: translateX(-50%);
 		width: 60%;
 		height: 2px;
-		background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+		background: var(--gradient-primary);
 		border-radius: 2px;
 	}
 

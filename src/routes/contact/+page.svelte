@@ -280,7 +280,7 @@
 	}
 
 	.submit-btn {
-		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+		background: var(--gradient-primary);
 		color: var(--cms-overlay-bg);
 		border: none;
 		border-radius: 8px;
