@@ -157,7 +157,7 @@
 
 	.subtitle {
 		font-size: 1.5rem;
-		color: #9ca3afff;
+		color: var(--color-text-muted);
 		font-weight: 400;
 		letter-spacing: -0.01em;
 	}
@@ -176,14 +176,14 @@
 	.contact-info h2 {
 		font-size: 2.25rem;
 		font-weight: 800;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-bottom: 1.5rem;
 		letter-spacing: -0.02em;
 	}
 
 	.info-description {
 		font-size: 1.125rem;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		line-height: 1.8;
 		margin-bottom: 3rem;
 	}
@@ -212,23 +212,23 @@
 	.contact-method h3 {
 		font-size: 1.125rem;
 		font-weight: 700;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-bottom: 0.25rem;
 	}
 
 	.contact-method p {
-		color: #9ca3afff;
+		color: var(--color-text-muted);
 		font-size: 1rem;
 		margin: 0;
 	}
 
 	.contact-form-wrapper {
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		backdrop-filter: blur(10px);
 		padding: 2rem;
 		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 	}
 
 	.contact-form {
@@ -244,18 +244,18 @@
 	}
 
 	.form-group label {
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		font-weight: 600;
 		font-size: 0.9375rem;
 	}
 
 	.form-group input,
 	.form-group textarea {
-		background-color: #11182780;
-		border: 1px solid #ffffff1a;
+		background-color: rgba(17, 24, 39, 0.5);
+		border: 1px solid var(--color-white-10);
 		border-radius: 8px;
 		padding: 0.875rem 1rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		font-size: 1rem;
 		font-family: inherit;
 		transition: all 0.2s;
@@ -264,14 +264,14 @@
 	.form-group input:focus,
 	.form-group textarea:focus {
 		outline: none;
-		border-color: #667eea80;
-		background-color: #111827b3;
-		box-shadow: 0 0 0 3px #667eea1a;
+		border-color: rgba(102, 126, 234, 0.5);
+		background-color: rgba(17, 24, 39, 0.7);
+		box-shadow: 0 0 0 3px var(--color-primary-10);
 	}
 
 	.form-group input::placeholder,
 	.form-group textarea::placeholder {
-		color: #6b7280ff;
+		color: var(--cms-placeholder-text);
 	}
 
 	.form-group textarea {
@@ -280,8 +280,8 @@
 	}
 
 	.submit-btn {
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 100%);
-		color: #ffffffff;
+		background: var(--gradient-primary);
+		color: var(--cms-overlay-bg);
 		border: none;
 		border-radius: 8px;
 		padding: 1rem 2rem;
@@ -289,12 +289,12 @@
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s;
-		box-shadow: 0 4px 12px #667eea66;
+		box-shadow: 0 4px 12px var(--color-primary-20);
 	}
 
 	.submit-btn:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px #667eea80;
+		box-shadow: 0 6px 20px var(--color-primary-30);
 	}
 
 	.submit-btn:active {
@@ -302,9 +302,9 @@
 	}
 
 	.success-message {
-		background-color: #10b98133;
-		border: 1px solid #10b9814d;
-		color: #6ee7b7ff;
+		background-color: var(--cms-success-bg);
+		border: 1px solid var(--cms-success-border);
+		color: var(--cms-success-text);
 		padding: 1rem;
 		border-radius: 8px;
 		text-align: center;

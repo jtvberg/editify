@@ -18,8 +18,15 @@
 	}: Props = $props();
 
 	let content = $state('');
-	let isEditing = $state(false);
 	let localElement: HTMLElement;
+
+	let objectFit = $derived(
+        type === 'image' && content && $cmsStore[ref]?.metadata?.objectFit
+            ? $cmsStore[ref].metadata.objectFit
+            : 'contain'
+    );
+
+	let computedObjectFit = $derived($editMode ? 'contain' : objectFit);
 
 	$effect(() => {
 		const storeContent = $cmsStore[ref];
@@ -46,13 +53,24 @@
 			const target = e.currentTarget as HTMLElement;
 			const rect = target.getBoundingClientRect();
 			
+			let x = rect.left;
+			let y = rect.bottom + window.scrollY;
+			
+			const overlayWidth = 300;
+			if (x + overlayWidth > window.innerWidth) {
+				x = window.innerWidth - overlayWidth - 20;
+			}
+			if (x < 10) {
+				x = 10;
+			}
+			
 			activeElement.set({
 				ref,
 				type,
 				element: target,
 				usageCount: countRefUsage(ref),
-				x: rect.left,
-				y: rect.bottom + window.scrollY
+				x,
+				y
 			});
 		}
 	}
@@ -89,7 +107,7 @@
 		{@render children()}
 	{:else if type === 'image'}
 		{#if content}
-			<img src={content} alt="" />
+			<img src={content} alt="" style="object-fit: {computedObjectFit};" />
 		{:else}
 			<div class="image-placeholder">
 				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -113,20 +131,20 @@
 	}
 
 	.cms-editable {
-		outline: 2px dashed #3b82f680;
+		outline: 2px dashed var(--cms-outline-idle);
 		outline-offset: 2px;
 		transition: outline 0.2s;
 		cursor: pointer;
 	}
 
 	.cms-editable:hover {
-		outline: 2px solid #3b82f6cc;
-		background-color: #3b82f60d;
+		outline: 2px solid var(--cms-outline-hover);
+		background-color: var(--cms-bg-hover);
 	}
 
 	.cms-editable:focus {
-		outline: 2px solid #3b82f6ff;
-		background-color: #3b82f61a;
+		outline: 2px solid var(--cms-outline-active);
+		background-color: var(--cms-bg-active);
 		cursor: text;
 	}
 
@@ -134,7 +152,12 @@
 		cursor: pointer;
 	}
 
-	.cms-image img {
+	.cms-image {
+		display: flex;
+		max-height: 100%;
+	}
+
+	.cms-image > :global(img) {
 		max-width: 100%;
 		height: auto;
 		display: block;
@@ -147,19 +170,19 @@
 	}
 
 	.cms-image.cms-editable img {
-		outline: 2px dashed #3b82f680;
+		outline: 2px dashed var(--cms-outline-idle);
 		outline-offset: 2px;
 		transition: outline 0.2s, background-color 0.2s;
 	}
 
 	.cms-image.cms-editable:hover img {
-		outline: 2px solid #3b82f6cc;
-		background-color: #3b82f60d;
+		outline: 2px solid var(--cms-outline-hover);
+		background-color: var(--cms-bg-hover);
 	}
 
 	.cms-image.cms-editable:focus img {
-		outline: 2px solid #3b82f6ff;
-		background-color: #3b82f61a;
+		outline: 2px solid var(--cms-outline-active);
+		background-color: var(--cms-bg-active);
 	}
 
 	.image-placeholder {
@@ -169,10 +192,10 @@
 		justify-content: center;
 		gap: 0.75rem;
 		padding: 3rem 2rem;
-		background-color: #f9fafbff;
-		border: 2px dashed #d1d5dbff;
+		background-color: var(--cms-placeholder-bg);
+		border: 2px dashed var(--cms-placeholder-border);
 		border-radius: 8px;
-		color: #6b7280ff;
+		color: var(--cms-placeholder-text);
 		text-align: center;
 		min-height: 200px;
 	}
@@ -183,9 +206,9 @@
 	}
 
 	.cms-editable:hover .image-placeholder {
-		background-color: #f3f4f6ff;
-		border-color: #3b82f6cc;
-		color: #3b82f6ff;
+		background-color: var(--cms-placeholder-hover-bg);
+		border-color: var(--cms-outline-hover);
+		color: var(--cms-primary);
 	}
 
 	.image-placeholder span {

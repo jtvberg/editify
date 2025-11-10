@@ -2,6 +2,7 @@
 	import { cmsStore, cms } from '$lib';
     import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
 </script>
 
 <Header />
@@ -20,38 +21,17 @@
 		</div>
 	</section>
 
-	<section class="features">
+	<section class="features-detail">
 		<h2 data-cms-ref="home.features.title" data-cms-type="text" use:cms>
 			{$cmsStore['home.features.title']?.content || 'Key Features'}
 		</h2>
 
-		<div class="feature-grid">
-			<div class="feature-card">
-				<h3 data-cms-ref="home.features.inline.title" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.inline.title']?.content || '✏️ Inline Editing'}
-				</h3>
-				<p data-cms-ref="home.features.inline.description" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.inline.description']?.content || 'Edit content directly where it appears on your site'}
-				</p>
-			</div>
-
-			<div class="feature-card">
-				<h3 data-cms-ref="home.features.refs.title" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.refs.title']?.content || '🔗 Content References'}
-				</h3>
-				<p data-cms-ref="home.features.refs.description" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.refs.description']?.content || 'Reuse content across multiple pages with shared refs'}
-				</p>
-			</div>
-
-			<div class="feature-card">
-				<h3 data-cms-ref="home.features.realtime.title" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.realtime.title']?.content || '⚡ Real-time Updates'}
-				</h3>
-				<p data-cms-ref="home.features.realtime.description" data-cms-type="text" use:cms>
-					{$cmsStore['home.features.realtime.description']?.content || 'Changes sync instantly across all open sessions'}
-				</p>
-			</div>
+		<div class="features">
+			<RepeatableContainer 
+				ref="home.features"
+				type="Section" 
+				containerClass="feature-grid"
+			/>
 		</div>
 	</section>
 
@@ -101,7 +81,7 @@
 
 	.subtitle {
 		font-size: 1.625rem;
-		color: #9ca3afff;
+		color: var(--color-text-muted);
 		margin-bottom: 2rem;
 		font-weight: 400;
 		letter-spacing: -0.01em;
@@ -109,7 +89,7 @@
 
 	.description {
 		font-size: 1.125rem;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 		max-width: 800px;
 		margin: 0 auto;
 		line-height: 1.8;
@@ -119,62 +99,32 @@
 		margin: 0;
 	}
 
-	.features {
+	.features-detail {
 		padding: 5rem 0;
 	}
 
-	.features h2 {
+	.features-detail h2 {
 		font-size: 2.75rem;
 		font-weight: 800;
 		text-align: center;
 		margin-bottom: 4rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
 	}
 
-	.feature-grid {
+	:global(.feature-grid) {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 2rem;
 	}
 
-	.feature-card {
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
-		backdrop-filter: blur(10px);
-		padding: 2rem;
-		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.feature-card:hover {
-		transform: translateY(-8px);
-		box-shadow: 0 20px 40px #667eea4d;
-		border-color: #667eeaff;
-	}
-
-	.feature-card h3 {
-		font-size: 1.625rem;
-		font-weight: 700;
-		margin-bottom: 1rem;
-		color: #f9fafbff;
-		letter-spacing: -0.01em;
-	}
-
-	.feature-card p {
-		color: #d1d5dbff;
-		line-height: 1.7;
-		font-size: 1.05rem;
-	}
-
 	.demo {
 		padding: 2rem 1rem;
-		background: linear-gradient(135deg, #667eea14 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		border-radius: 20px;
 		margin: 3rem 0;
-		border: 1px solid #ffffff14;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 	}
 
 	.demo h2 {
@@ -182,7 +132,7 @@
 		font-weight: 800;
 		text-align: center;
 		margin-bottom: 3rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
 	}
 
@@ -191,7 +141,7 @@
 		margin: 0 auto;
 		font-size: 1.125rem;
 		line-height: 1.8;
-		color: #d1d5dbff;
+		color: var(--color-text-secondary);
 	}
 
 	.instructions :global(ol) {
@@ -205,13 +155,13 @@
 	}
 
 	.instructions :global(code) {
-		background-color: #667eea33;
+		background-color: var(--color-primary-20);
 		padding: 0.35rem 0.65rem;
 		border-radius: 6px;
 		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', 'Source Code Pro', monospace;
 		font-size: 0.95em;
-		color: #a5b4fcff;
-		border: 1px solid #667eea4d;
+		color: var(--color-text-secondary);
+		border: 1px solid var(--color-primary-30);
 	}
 
 	@media (max-width: 768px) {
@@ -227,13 +177,9 @@
 			font-size: 1.375rem;
 		}
 
-		.features h2,
+		.features-detail h2,
 		.demo h2 {
 			font-size: 2.25rem;
-		}
-
-		.feature-grid {
-			grid-template-columns: 1fr;
 		}
 
 		.demo {
@@ -252,10 +198,6 @@
 
 		.subtitle {
 			font-size: 1.125rem;
-		}
-
-		.feature-card {
-			padding: 2rem;
 		}
 	}
 </style>

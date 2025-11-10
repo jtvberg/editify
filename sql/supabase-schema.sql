@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS cms_content (
     id TEXT PRIMARY KEY,  -- The data-cms-ref value
     content TEXT NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('text', 'html', 'image')),
+    metadata JSONB DEFAULT '{}'::jsonb,  -- Stores additional metadata like objectFit for images
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -21,6 +22,7 @@ CREATE TABLE IF NOT EXISTS cms_content_history (
 -- Create index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_cms_content_history_content_id ON cms_content_history(content_id);
 CREATE INDEX IF NOT EXISTS idx_cms_content_updated_at ON cms_content(updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_cms_content_metadata ON cms_content USING GIN (metadata);  -- For JSON queries
 
 -- Enable Row Level Security
 ALTER TABLE cms_content ENABLE ROW LEVEL SECURITY;

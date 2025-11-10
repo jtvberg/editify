@@ -1,9 +1,10 @@
 import { writable, derived, get } from 'svelte/store';
-import type { CMSContent, CMSStore } from '../types/cms';
+import type { CMSContent, CMSStore, RepeatableItem, RepeatableStore, RepeatableComponentType } from '../types/cms';
 import { supabase } from '../supabase';
 
 export const editMode = writable(false);
 export const cmsStore = writable<CMSStore>({});
+export const repeatableStore = writable<RepeatableStore>({});
 export const activeElement = writable<{
 	ref: string;
 	type: string;
@@ -23,40 +24,42 @@ export function getContent(ref: string): string {
 	return store[ref]?.content || '';
 }
 
-export async function saveContent(ref: string, content: string): Promise<boolean> {
-	try {
-		const { data, error } = await (supabase.from('cms_content') as any)
-			.update({
-				content,
-				updated_at: new Date().toISOString()
-			})
-			.eq('id', ref)
-			.select();
+export async function saveContent(ref: string, content: string, metadata?: any): Promise<boolean> {
+    try {
+        const updateData: any = {
+            content,
+            updated_at: new Date().toISOString()
+        };
+        
+        if (metadata !== undefined) {
+            updateData.metadata = metadata;
+        }
+        
+        const { data, error } = await (supabase.from('cms_content') as any)
+            .update(updateData)
+            .eq('id', ref)
+            .select();
 
-		if (error) {
-			console.error('[CMS] Error saving content:', error);
-			return false;
-		}
+        if (error || !data || data.length === 0) {
+            console.error('[CMS] Error saving content:', error);
+            return false;
+        }
+        
+        cmsStore.update((store) => ({
+            ...store,
+            [ref]: {
+                ...store[ref],
+                content,
+                ...(metadata !== undefined && { metadata }),
+                updated_at: new Date().toISOString()
+            }
+        }));
 
-		if (!data || data.length === 0) {
-			console.warn('[CMS] No rows updated - content ref may not exist:', ref);
-			return false;
-		}
-		
-		cmsStore.update((store) => ({
-			...store,
-			[ref]: {
-				...store[ref],
-				content,
-				updated_at: new Date().toISOString()
-			}
-		}));
-
-		return true;
-	} catch (err) {
-		console.error('Error saving content:', err);
-		return false;
-	}
+        return true;
+    } catch (err) {
+        console.error('Error saving content:', err);
+        return false;
+    }
 }
 
 export function subscribeToChanges() {
@@ -206,3 +209,217 @@ export async function uploadImage(ref: string, file: File): Promise<string | nul
 		return null;
 	}
 }
+
+export async function loadRepeatableItems(parentRef: string): Promise<RepeatableItem[]> {
+	try {
+		const { data: items, error } = await (supabase
+			.from('content_repeatable') as any)
+			.select('*')
+			.eq('parent_ref', parentRef)
+			.order('position', { ascending: true });
+
+		if (error) {
+			console.error('[Repeatable] Error loading items:', error);
+			return [];
+		}
+
+		if (!items || items.length === 0) {
+			repeatableStore.update(store => ({
+				...store,
+				[parentRef]: []
+			}));
+			return [];
+		}
+
+		const repeatableItems = items as RepeatableItem[];
+
+		repeatableStore.update(store => ({
+			...store,
+			[parentRef]: repeatableItems
+		}));
+
+		return repeatableItems;
+	} catch (err) {
+		console.error('[Repeatable] Error in loadRepeatableItems:', err);
+		return [];
+	}
+}
+
+export async function addRepeatableItem(
+	parentRef: string,
+	componentType: RepeatableComponentType,
+	initialData: Record<string, string> = {}
+): Promise<RepeatableItem | null> {
+	try {
+		const currentItems = get(repeatableStore)[parentRef] || [];
+		const position = currentItems.length;
+		const { data, error } = await (supabase
+			.from('content_repeatable') as any)
+			.insert({
+				parent_ref: parentRef,
+				component_type: componentType,
+				position,
+				data: {}
+			})
+			.select()
+			.single();
+
+		if (error) {
+			console.error('[Repeatable] Error adding item:', error);
+			return null;
+		}
+
+		const newItem = data as RepeatableItem;
+
+		if (componentType === 'Card' && Object.keys(initialData).length > 0) {
+			const updates = [];
+			const cmsUpdates: Record<string, CMSContent> = {};
+
+			if (initialData.title && newItem.data.title_ref) {
+				updates.push(
+					(supabase.from('cms_content') as any)
+						.update({ content: initialData.title })
+						.eq('id', newItem.data.title_ref)
+				);
+				cmsUpdates[newItem.data.title_ref] = {
+					id: newItem.data.title_ref,
+					content: initialData.title,
+					type: 'text',
+					updated_at: new Date().toISOString()
+				};
+			}
+			if (initialData.description && newItem.data.description_ref) {
+				updates.push(
+					(supabase.from('cms_content') as any)
+						.update({ content: initialData.description })
+						.eq('id', newItem.data.description_ref)
+				);
+				cmsUpdates[newItem.data.description_ref] = {
+					id: newItem.data.description_ref,
+					content: initialData.description,
+					type: 'html',
+					updated_at: new Date().toISOString()
+				};
+			}
+			if (initialData.image && newItem.data.image_ref) {
+				updates.push(
+					(supabase.from('cms_content') as any)
+						.update({ content: initialData.image })
+						.eq('id', newItem.data.image_ref)
+				);
+				cmsUpdates[newItem.data.image_ref] = {
+					id: newItem.data.image_ref,
+					content: initialData.image,
+					type: 'image',
+					updated_at: new Date().toISOString()
+				};
+			}
+			if (initialData.link && newItem.data.link_ref) {
+				updates.push(
+					(supabase.from('cms_content') as any)
+						.update({ content: initialData.link })
+						.eq('id', newItem.data.link_ref)
+				);
+				cmsUpdates[newItem.data.link_ref] = {
+					id: newItem.data.link_ref,
+					content: initialData.link,
+					type: 'text',
+					updated_at: new Date().toISOString()
+				};
+			}
+
+			if (updates.length > 0) {
+				await Promise.all(updates);
+				cmsStore.update(store => ({ ...store, ...cmsUpdates }));
+			}
+		}
+
+		repeatableStore.update(store => ({
+			...store,
+			[parentRef]: [...currentItems, newItem]
+		}));
+
+		return newItem;
+	} catch (err) {
+		console.error('[Repeatable] Error in addRepeatableItem:', err);
+		return null;
+	}
+}
+
+export async function removeRepeatableItem(itemId: string, parentRef: string): Promise<boolean> {
+	try {
+		const { error } = await (supabase
+			.from('content_repeatable') as any)
+			.delete()
+			.eq('id', itemId);
+
+		if (error) {
+			console.error('[Repeatable] Error removing item:', error);
+			return false;
+		}
+
+		repeatableStore.update(store => ({
+			...store,
+			[parentRef]: (store[parentRef] || []).filter(item => item.id !== itemId)
+		}));
+
+		const store = get(cmsStore);
+		const baseRef = `${parentRef}.${itemId}`;
+		const keysToRemove = Object.keys(store).filter(key => key.startsWith(baseRef));
+		
+		if (keysToRemove.length > 0) {
+			cmsStore.update(s => {
+				const newStore = { ...s };
+				keysToRemove.forEach(key => delete newStore[key]);
+				return newStore;
+			});
+		}
+
+		return true;
+	} catch (err) {
+		console.error('[Repeatable] Error in removeRepeatableItem:', err);
+		return false;
+	}
+}
+
+export async function reorderRepeatableItem(
+	itemId: string,
+	parentRef: string,
+	newPosition: number
+): Promise<boolean> {
+	try {
+		const items = get(repeatableStore)[parentRef] || [];
+		const oldPosition = items.findIndex(item => item.id === itemId);
+
+		if (oldPosition === -1 || oldPosition === newPosition) {
+			return false;
+		}
+
+		const reordered = [...items];
+		const [movedItem] = reordered.splice(oldPosition, 1);
+		reordered.splice(newPosition, 0, movedItem);
+
+		repeatableStore.update(store => ({
+			...store,
+			[parentRef]: reordered.map((item, index) => ({
+				...item,
+				position: index
+			}))
+		}));
+
+		const updates = reordered.map((item, index) =>
+			(supabase
+				.from('content_repeatable') as any)
+				.update({ position: index })
+				.eq('id', item.id)
+		);
+
+		await Promise.all(updates);
+		return true;
+	} catch (err) {
+		console.error('[Repeatable] Error in reorderRepeatableItem:', err);
+		await loadRepeatableItems(parentRef);
+		return false;
+	}
+}
+

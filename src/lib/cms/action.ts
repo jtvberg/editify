@@ -1,10 +1,6 @@
 import { get } from 'svelte/store';
 import { editMode, cmsStore, saveContent, countRefUsage, activeElement } from './index';
 
-/**
- * Svelte action to make elements with data-cms-ref editable
- * Usage: <h1 data-cms-ref="home.title" data-cms-type="text" use:cms>Content</h1>
- */
 export function cms(node: HTMLElement) {
 	const ref = node.getAttribute('data-cms-ref');
 	const type = (node.getAttribute('data-cms-type') || 'text') as 'text' | 'html' | 'image';
@@ -20,6 +16,9 @@ export function cms(node: HTMLElement) {
 			node.innerHTML = storeContent;
 		} else if (type === 'image' && imgElement) {
 			imgElement.src = storeContent;
+			const metadata = get(cmsStore)[ref]?.metadata;
+			const objectFit = metadata?.objectFit || 'contain';
+			imgElement.style.objectFit = get(editMode) ? 'contain' : objectFit;
 		} else if (type === 'text') {
 			node.textContent = storeContent;
 		}
@@ -28,6 +27,7 @@ export function cms(node: HTMLElement) {
 	const unsubscribe = cmsStore.subscribe((store) => {
 		const storeItem = store[ref];
 		const content = storeItem?.content;
+		const metadata = storeItem?.metadata;
 		
 		if (document.activeElement === node) {
 			return;
@@ -48,6 +48,11 @@ export function cms(node: HTMLElement) {
 				node.textContent = placeholderContent;
 			}
 		}
+
+		if (type === 'image' && imgElement && metadata) {
+			const objectFit = metadata.objectFit || 'contain';
+			imgElement.style.objectFit = get(editMode) ? 'contain' : objectFit;
+		}
 	});
 
 	const unsubscribeEditMode = editMode.subscribe((isEditMode) => {
@@ -58,12 +63,20 @@ export function cms(node: HTMLElement) {
 			node.classList.add('cms-editable');
 			if (type === 'image') {
 				node.classList.add('cms-image');
+				if (imgElement) {
+					imgElement.style.objectFit = 'contain';
+				}
 			}
 		} else {
 			node.removeAttribute('contenteditable');
 			node.classList.remove('cms-editable');
 			if (type === 'image') {
 				node.classList.remove('cms-image');
+				if (imgElement) {
+					const metadata = get(cmsStore)[ref]?.metadata;
+					const objectFit = metadata?.objectFit || 'contain';
+					imgElement.style.objectFit = objectFit;
+				}
 			}
 		}
 	});

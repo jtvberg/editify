@@ -1,0 +1,36 @@
+/* Demo Site Theme Colors */
+:root {
+	/* Primary Brand Colors */
+	--color-primary: #667eeaff;
+	--color-primary-dark: #764ba2ff;
+	--color-accent: #f093fbff;
+	
+	/* Background Colors */
+	--color-bg-primary: #131720ff;
+	--color-bg-secondary: #111827ff;
+	--color-bg-light: #f3f4f6ff;
+	
+	/* Text Colors */
+	--color-text-primary: #f9fafbff;
+	--color-text-secondary: #d1d5dbff;
+	--color-text-muted: #9ca3afff;
+	--color-text-dark: #374151ff;
+	
+	/* Border Colors */
+	--color-border-light: #e5e7ebff;
+	--color-border-medium: #d1d5dbff;
+	
+	/* Transparencies */
+	--color-primary-10: #667eea1a;
+	--color-primary-20: #667eea33;
+	--color-primary-30: #667eea4d;
+	--color-primary-dark-10: #764ba21a;
+	--color-white-10: #ffffff1a;
+	--color-white-20: #ffffff33;
+	--color-black-50: #0000004d;
+
+	/* Gradients */
+	--gradient-hero: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 50%, var(--color-accent) 100%);
+	--gradient-card: linear-gradient(135deg, var(--color-primary-10) 0%, var(--color-primary-dark-10) 100%);
+	--gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}

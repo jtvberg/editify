@@ -62,11 +62,11 @@
 		margin: 6rem auto;
 		padding: 3rem;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-		background: linear-gradient(135deg, #667eea1a 0%, #764ba21a 100%);
+		background: var(--gradient-card);
 		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid #ffffff1a;
-		box-shadow: 0 8px 32px #0000004d;
+		border: 1px solid var(--color-white-10);
+		box-shadow: 0 8px 32px var(--color-black-50);
 		animation: fadeInUp 0.6s ease-out;
 	}
 
@@ -84,7 +84,7 @@
 	.login-container h1 {
 		font-size: 2rem;
 		font-weight: 800;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		margin-bottom: 2rem;
 		text-align: center;
 		letter-spacing: -0.02em;
@@ -98,51 +98,51 @@
 		display: block;
 		margin-bottom: 0.5rem;
 		font-weight: 600;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		font-size: 0.9375rem;
 	}
 
 	input {
 		width: -webkit-fill-available;
 		padding: 0.875rem 1rem;
-		background-color: #11182780;
-		border: 1px solid #ffffff1a;
+		background-color: rgba(17, 24, 39, 0.5);
+		border: 1px solid var(--color-white-10);
 		border-radius: 8px;
 		font-size: 1rem;
-		color: #f9fafbff;
+		color: var(--color-text-primary);
 		font-family: inherit;
 		transition: all 0.2s;
 	}
 
 	input:focus {
 		outline: none;
-		border-color: #667eea80;
-		background-color: #111827b3;
-		box-shadow: 0 0 0 3px #667eea1a;
+		border-color: rgba(102, 126, 234, 0.5);
+		background-color: rgba(17, 24, 39, 0.7);
+		box-shadow: 0 0 0 3px var(--color-primary-10);
 	}
 
 	input::placeholder {
-		color: #6b7280ff;
+		color: var(--cms-placeholder-text);
 	}
 
 	button {
 		width: 100%;
 		padding: 0.875rem;
-		background: linear-gradient(135deg, #667eeaff 0%, #764ba2ff 100%);
-		color: #ffffffff;
+		background: var(--gradient-primary);
+		color: var(--cms-overlay-bg);
 		border: none;
 		border-radius: 8px;
 		font-size: 1rem;
 		font-weight: 600;
 		cursor: pointer;
 		transition: all 0.3s;
-		box-shadow: 0 4px 12px #667eea66;
+		box-shadow: 0 4px 12px var(--color-primary-20);
 		margin-top: 0.5rem;
 	}
 
 	button:hover:not(:disabled) {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 20px #667eea80;
+		box-shadow: 0 6px 20px var(--color-primary-30);
 	}
 
 	button:active:not(:disabled) {
@@ -156,9 +156,9 @@
 	}
 
 	.error {
-		background-color: #ef444433;
-		border: 1px solid #ef444433;
-		color: #fca5a5ff;
+		background-color: var(--cms-error-bg);
+		border: 1px solid var(--cms-error-border);
+		color: var(--cms-error-text);
 		padding: 0.875rem;
 		border-radius: 8px;
 		margin-bottom: 1rem;
