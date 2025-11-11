@@ -71,7 +71,7 @@
 						<span class="method-icon">🔗</span>
 						<div>
 							<h3>GitHub</h3>
-							<p data-cms-ref="contact.github" data-cms-type="text" use:cms>
+							<p data-cms-ref="contact.github" data-cms-type="html" use:cms>
 								{$cmsStore['contact.github']?.content || 'github.com/editify'}
 							</p>
 						</div>
