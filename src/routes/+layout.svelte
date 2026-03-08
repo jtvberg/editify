@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
-	import { initializeCMS, subscribeToChanges } from '$lib/cms';
+	import { initializeCMS, subscribeToChanges, isEditor } from '$lib/cms';
 	import { EditModeToggle, CMSOverlay } from '$lib';
 	import type { CMSStore } from '$lib/types/cms';
 	import '$lib/styles/theme.css';
@@ -9,7 +9,7 @@
 
 	interface Props {
 		children?: import('svelte').Snippet;
-		data?: { cmsContent?: CMSStore };
+		data?: { cmsContent?: CMSStore; user?: App.PageData['user']; session?: App.PageData['session'] };
 	}
 
 	let { children, data }: Props = $props();
@@ -17,6 +17,17 @@
 	$effect(() => {
 		if (data?.cmsContent) {
 			initializeCMS(data.cmsContent);
+		}
+	});
+
+	// Derive isEditor from server-validated user data (primary source of truth)
+	$effect(() => {
+		const user = data?.user;
+		if (user) {
+			const role = user.user_metadata?.role || user.app_metadata?.role;
+			isEditor.set(role === 'editor');
+		} else {
+			isEditor.set(false);
 		}
 	});
 

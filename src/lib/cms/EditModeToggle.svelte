@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { editMode, isEditor, checkEditorRole } from '$lib/cms';
+	import { editMode, isEditor } from '$lib/cms';
 	import { supabase } from '$lib/supabase';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		checkEditorRole();
-
-		const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-			if (session?.user) {
-				const role = session.user.user_metadata?.role || session.user.app_metadata?.role;
-				const hasEditorRole = role === 'editor';
-				isEditor.set(hasEditorRole);
-			} else {
+		// +layout.svelte $effect is the primary source of truth for isEditor
+		// (uses server-validated getUser() via safeGetSession).
+		// Only handle SIGNED_OUT here so the button hides immediately on sign-out
+		// without waiting for a server round-trip.
+		const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+			if (event === 'SIGNED_OUT') {
 				isEditor.set(false);
+				editMode.set(false);
 			}
 		});
 

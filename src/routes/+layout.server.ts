@@ -1,14 +1,15 @@
-import { createSupabaseServerClient } from '$lib/supabase';
 import type { CMSStore, CMSContent } from '$lib/types/cms';
 
-export const load = async ({ fetch }: { fetch: typeof globalThis.fetch }) => {
-	const supabase = createSupabaseServerClient(fetch);
+export const load = async ({ locals }: { locals: App.Locals }) => {
+	const { session, user } = await locals.safeGetSession();
 
-	const { data: cmsContent, error } = await supabase.from('cms_content').select('*');
+	const { data: cmsContent, error } = await locals.supabase.from('cms_content').select('*');
 
 	if (error) {
 		console.error('Error loading CMS content:', error);
 		return {
+			session,
+			user,
 			cmsContent: {} as CMSStore
 		};
 	}
@@ -20,6 +21,8 @@ export const load = async ({ fetch }: { fetch: typeof globalThis.fetch }) => {
 	}, {} as CMSStore);
 
 	return {
+		session,
+		user,
 		cmsContent: cmsStore
 	};
 };

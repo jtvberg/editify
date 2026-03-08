@@ -21,7 +21,7 @@
 			error = signInError.message;
 			loading = false;
 		} else {
-			goto('/');
+			goto('/', { invalidateAll: true });
 		}
 	}
 </script>
