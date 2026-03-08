@@ -339,6 +339,24 @@ export async function addRepeatableItem(
 			[parentRef]: [...currentItems, newItem]
 		}));
 
+		// Load the trigger-created cms_content entries into the client store so
+		// fields are immediately editable without requiring a page refresh.
+		const newRefs = Object.values(newItem.data).filter((v): v is string => typeof v === 'string');
+		if (newRefs.length > 0) {
+			const { data: contentItems } = await (supabase.from('cms_content') as any)
+				.select('*')
+				.in('id', newRefs);
+			if (contentItems && contentItems.length > 0) {
+				cmsStore.update(store => ({
+					...store,
+					...(contentItems as CMSContent[]).reduce<CMSStore>((acc, item) => {
+						acc[item.id] = item;
+						return acc;
+					}, {} as CMSStore)
+				}));
+			}
+		}
+
 		return newItem;
 	} catch (err) {
 		console.error('[Repeatable] Error in addRepeatableItem:', err);

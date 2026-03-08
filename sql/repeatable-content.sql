@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS content_repeatable (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     parent_ref TEXT NOT NULL,  -- e.g., 'portfolio.projects'
-    component_type TEXT NOT NULL CHECK (component_type IN ('Card', 'Carousel', 'Section', 'Tag')),
+    component_type TEXT NOT NULL CHECK (component_type IN ('Card', 'Carousel', 'Section', 'Tag', 'Quote')),
     position INTEGER NOT NULL DEFAULT 0,
     -- data contains REFERENCES to cms_content IDs, not actual content
     -- Example: {"title_ref": "portfolio.projects.{uuid}.title", "description_ref": "...", "image_ref": "..."}
@@ -107,6 +107,20 @@ BEGIN
         VALUES (base_ref || '.description', '', 'html', NOW());
         field_refs := field_refs || jsonb_build_object('description_ref', base_ref || '.description');
         
+    ELSIF NEW.component_type = 'Quote' THEN
+        -- Quote fields: quote text, author name, role/title
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.quote', '', 'html', NOW());
+        field_refs := field_refs || jsonb_build_object('quote_ref', base_ref || '.quote');
+
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.author', '', 'text', NOW());
+        field_refs := field_refs || jsonb_build_object('author_ref', base_ref || '.author');
+
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.role', '', 'text', NOW());
+        field_refs := field_refs || jsonb_build_object('role_ref', base_ref || '.role');
+
     ELSIF NEW.component_type = 'Tag' THEN
         -- Tag label field
         INSERT INTO cms_content (id, content, type, updated_at)
@@ -151,3 +165,15 @@ CREATE TRIGGER repeatable_delete_cms_content
 -- Comments
 COMMENT ON TABLE content_repeatable IS 'Stores repeatable component structure - content lives in cms_content';
 COMMENT ON COLUMN content_repeatable.data IS 'JSONB with refs to cms_content (e.g., {"title_ref": "portfolio.projects.uuid.title"})';
+
+-- ============================================================
+-- MIGRATION: Add 'Quote' component type to existing database
+-- Run this in Supabase SQL Editor if the table already exists
+-- ============================================================
+-- ALTER TABLE content_repeatable
+--   DROP CONSTRAINT IF EXISTS content_repeatable_component_type_check;
+-- ALTER TABLE content_repeatable
+--   ADD CONSTRAINT content_repeatable_component_type_check
+--   CHECK (component_type IN ('Card', 'Carousel', 'Section', 'Tag', 'Quote'));
+-- -- Then re-run the CREATE OR REPLACE FUNCTION create_repeatable_cms_content() block above.
+-- ============================================================

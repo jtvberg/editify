@@ -3,9 +3,9 @@
 	import type { RepeatableComponentType } from '$lib/types/cms';
 	import { onMount } from 'svelte';
 	import Card from '$lib/components/repeatable/Card.svelte';
-	import Carousel from '$lib/components/repeatable/Carousel.svelte';
 	import Section from '$lib/components/repeatable/Section.svelte';
 	import Tag from '$lib/components/repeatable/Tag.svelte';
+	import Quote from '$lib/components/repeatable/Quote.svelte';
 
 	interface Props {
 		ref: string;
@@ -18,11 +18,11 @@
 	let items = $derived($repeatableStore[ref] || []);
 	let loading = $state(false);
 
-	const componentMap = {
+	const componentMap: Partial<Record<RepeatableComponentType, any>> = {
 		Card,
-		Carousel,
 		Section,
-		Tag
+		Tag,
+		Quote
 	};
 	
 	let Component = $derived(componentMap[type]);

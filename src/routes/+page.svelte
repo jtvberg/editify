@@ -3,6 +3,7 @@
     import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
+	import { Carousel } from '$lib';
 </script>
 
 <Header />
@@ -33,6 +34,10 @@
 				containerClass="feature-grid"
 			/>
 		</div>
+	</section>
+
+	<section>
+		<Carousel ref="home.testimonials" type="Quote" />
 	</section>
 
 	<section class="demo">
