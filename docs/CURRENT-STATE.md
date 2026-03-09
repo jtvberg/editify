@@ -1,6 +1,6 @@
 # Current State Documentation
 
-**Date:** November 8, 2025  
+**Date:** March 9, 2026  
 **Status:** ✅ Production Ready
 
 ## Overview
@@ -30,11 +30,13 @@ The codebase implements:
 
 - ✅ Card component with title, description, image, link
 - ✅ Tag component (nested in cards)
-- ✅ Carousel component (placeholder)
-- ✅ Section component (placeholder)
+- ✅ Quote component (quote, author, role) — for testimonials
+- ✅ Section component
+- ✅ Carousel container component with left/right navigation and auto-play
 - ✅ Add/remove/reorder controls
 - ✅ Database triggers for auto-create/delete
 - ✅ RepeatableContainer with dynamic component rendering
+- ✅ New CMS entries hydrated into store immediately on add (no page refresh needed)
 
 ### Architecture
 
@@ -68,12 +70,19 @@ The codebase implements:
 - `data` JSONB contains refs, not content
 - Supports nested items via hierarchical `parent_ref`
 
-### Component Types
+### Component Types (Repeatable Items)
 
-- `Card`: Title, description, image, link
-- `Carousel`: Placeholder (TBD)
-- `Section`: Placeholder (TBD)
-- `Tag`: Label field (nested in cards)
+- `Card`: Title, description, image, link (supports nested Tags)
+- `Section`: Title, description
+- `Tag`: Label field (nested within Cards)
+- `Quote`: Quote text (html), author name, author role/title
+
+### Carousel (Page-Level Container)
+
+Carousel is **not** a repeatable item type — it is a page-level container component that accepts a `ref` and `type` prop and internally uses `RepeatableContainer` for edit mode. Currently supports `Quote` items.
+
+- **View mode**: single-item display with prev/next arrows, dot pagination, slide counter, auto-play toggle
+- **Edit mode**: delegates to `RepeatableContainer` (identical controls to all other repeatable types)
 
 ### Image Metadata
 
@@ -90,18 +99,32 @@ Images can store additional metadata in the `metadata` JSONB column:
 ```
 portfolio.projects (parent_ref for cards)
 ├── card-uuid-1
-│   ├── .title (cms_content)
-│   ├── .description (cms_content)
-│   ├── .image (cms_content)
-│   ├── .link (cms_content)
+│   ├── .title (cms_content, text)
+│   ├── .description (cms_content, html)
+│   ├── .image (cms_content, image)
+│   ├── .link (cms_content, text)
 │   └── .tags (parent_ref for tags)
 │       ├── tag-uuid-1
-│       │   └── .label (cms_content)
+│       │   └── .label (cms_content, text)
 │       └── tag-uuid-2
-│           └── .label (cms_content)
+│           └── .label (cms_content, text)
 └── card-uuid-2
     └── ... (same structure)
+
+home.testimonials (parent_ref for quotes, used inside Carousel)
+├── quote-uuid-1
+│   ├── .quote (cms_content, html)
+│   ├── .author (cms_content, text)
+│   └── .role (cms_content, text)
+└── quote-uuid-2
+    └── ... (same structure)
 ```
+
+│ └── .label (cms_content)
+└── card-uuid-2
+└── ... (same structure)
+
+````
 
 ## File Inventory
 
@@ -122,11 +145,12 @@ portfolio.projects (parent_ref for cards)
 
 ### Repeatable Components
 
-- `src/lib/cms/RepeatableContainer.svelte` - Container with controls
+- `src/lib/cms/RepeatableContainer.svelte` - Container with add/remove/reorder controls
 - `src/lib/components/repeatable/Card.svelte` - Card component (complete)
-- `src/lib/components/repeatable/Tag.svelte` - Tag component (complete)
-- `src/lib/components/repeatable/Carousel.svelte` - Placeholder
-- `src/lib/components/repeatable/Section.svelte` - Placeholder
+- `src/lib/components/repeatable/Tag.svelte` - Tag component (complete, nested in cards)
+- `src/lib/components/repeatable/Quote.svelte` - Quote/testimonial component (complete)
+- `src/lib/components/repeatable/Section.svelte` - Section component (complete)
+- `src/lib/components/Carousel.svelte` - Page-level carousel container (complete)
 
 ### Scripts
 
@@ -175,7 +199,7 @@ All repeatable components follow this pattern:
 		{field}
 	</CMSContent>
 </div>
-```
+````
 
 ### Nested Repeatables Pattern
 
@@ -252,6 +276,15 @@ When testing the implementation:
 - [ ] Verify history works on all fields
 - [ ] Verify cancel works on all fields
 
+### Quote / Carousel
+
+- [ ] Place `<Carousel ref="..." type="Quote" />` on a page
+- [ ] In edit mode: add/edit/remove/reorder Quote items
+- [ ] In view mode: prev/next arrows navigate slides
+- [ ] Dot indicators reflect current slide
+- [ ] Auto-play toggle starts/pauses rotation
+- [ ] New Quote items are immediately editable (no page refresh needed)
+
 ## Known Issues
 
 None! 🎉
@@ -260,20 +293,14 @@ None! 🎉
 
 Potential enhancements:
 
-1. Implement Carousel component
-2. Implement Section component
-3. Add drag-and-drop reordering
-4. Add image cropping/resizing
-5. Add bulk operations
-6. Add search/filter for repeatables
-7. Add categories/taxonomies
-8. Add preview mode
-9. Add scheduled publishing
-10. Add multi-language support
-
-## Migration Notes
-
-None needed - this is the baseline implementation.
+1. Add drag-and-drop reordering
+2. Add image cropping/resizing
+3. Add bulk operations
+4. Add search/filter for repeatables
+5. Add categories/taxonomies
+6. Add preview mode
+7. Add scheduled publishing
+8. Add multi-language support
 
 ## Architecture Decisions
 

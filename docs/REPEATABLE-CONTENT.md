@@ -18,7 +18,8 @@ A clean, reference-based repeatable content system for Editify with support for 
 ### 2. TypeScript Types (`src/lib/types/cms.ts`)
 
 ```typescript
-export type RepeatableComponentType = 'Card' | 'Carousel' | 'Section' | 'Tag';
+export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote';
+// Note: Carousel is a page-level container, not a repeatable item type
 
 export interface RepeatableItem {
 	id: string;
@@ -53,7 +54,7 @@ export interface CardData {
 - Loads items on mount
 - Renders add/remove/reorder controls in edit mode
 - Uses dynamic components (Svelte 5 syntax)
-- Conditional `display: contents` only in edit mode
+- Supports: `Card`, `Section`, `Tag`, `Quote`
 
 #### Card (`src/lib/components/repeatable/Card.svelte`)
 
@@ -70,10 +71,30 @@ export interface CardData {
 - Example: `parent_ref = "portfolio.projects.{card-uuid}.tags"`
 - Renders as styled pill/badge
 
-#### Carousel & Section (Placeholders)
+#### Quote (`src/lib/components/repeatable/Quote.svelte`)
 
-- Ready for future implementation
-- Follow same pattern as Card
+- Three editable fields: `quote` (html), `author` (text), `role` (text)
+- Designed for testimonials
+- Styled as a blockquote with decorative opening mark
+- Used as the item type inside a Carousel
+
+#### Section (`src/lib/components/repeatable/Section.svelte`)
+
+- Two editable fields: `title` (text), `description` (html)
+- Used standalone with `RepeatableContainer`
+
+#### Carousel (`src/lib/components/Carousel.svelte`) — Page-Level Container
+
+Carousel is **not** a repeatable item — it is a standalone page component placed directly in a route:
+
+```svelte
+<Carousel ref="home.testimonials" type="Quote" />
+```
+
+- **View mode**: single-item display with prev/next arrows, dot indicators, slide counter, auto-play toggle
+- **Edit mode**: delegates entirely to `RepeatableContainer` (identical add/remove/reorder UX)
+- Accepts `autoRotateDelay` prop (default 5000ms)
+- Currently supports `Quote` as item type; extend `componentMap` for additional types
 
 ### 5. Portfolio Page Update
 
@@ -128,9 +149,22 @@ export interface CardData {
 5. RepeatableStore updates
 6. Tag component renders within card
 
+### Adding a Quote to a Carousel
+
+1. Place `<Carousel ref="home.testimonials" type="Quote" />` on a page
+2. Toggle edit mode — Carousel shows RepeatableContainer controls
+3. Click "Add Quote"
+4. `addRepeatableItem()` inserts to content_repeatable with `parent_ref = "home.testimonials"`
+5. **Database trigger** creates cms_content entries:
+   - `home.testimonials.{uuid}.quote`
+   - `home.testimonials.{uuid}.author`
+   - `home.testimonials.{uuid}.role`
+6. New entries are immediately fetched and hydrated into cmsStore
+7. Quote component renders and fields are clickable/editable right away
+
 ### Editing a Field
 
-1. User clicks on card title
+1. User clicks on a field (quote text, author, etc.)
 2. CMSOverlay opens (standard flow)
 3. User edits content
 4. Save goes to `cms_content` table (standard flow)
@@ -193,9 +227,9 @@ await addRepeatableItem('portfolio.projects', 'Card', {
 
 ## Adding New Component Types
 
-To add a new repeatable component type (e.g., "Testimonial"):
+To add a new repeatable item type (e.g., "Testimonial" — though Quote already covers this pattern):
 
-1. **Update schema trigger** to create fields:
+1. **Update schema trigger** in `sql/repeatable-content.sql`:
 
 ```sql
 ELSIF NEW.component_type = 'Testimonial' THEN
@@ -206,61 +240,78 @@ ELSIF NEW.component_type = 'Testimonial' THEN
 END IF;
 ```
 
-2. **Add TypeScript type**:
+Also update the check constraint:
 
-```typescript
-export interface TestimonialData {
-	quote_ref: string;
-	author_ref: string;
-	role_ref?: string;
-}
+```sql
+CHECK (component_type IN ('Card', 'Section', 'Tag', 'Quote', 'Testimonial'))
 ```
 
-3. **Create component**:
+2. **Add TypeScript type** in `src/lib/types/cms.ts`:
+
+```typescript
+export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote' | 'Testimonial';
+```
+
+3. **Create the component** at `src/lib/components/repeatable/Testimonial.svelte`:
 
 ```svelte
-<!-- Testimonial.svelte -->
-<script>
-	let { data } = $props();
-	let quote = $derived($cmsStore[data.quote_ref]?.content || '');
-	let author = $derived($cmsStore[data.author_ref]?.content || '');
+<script lang="ts">
+	import CMSContent from '$lib/cms/CMSContent.svelte';
+	import { cmsStore } from '$lib/cms';
+	import type { RepeatableItem } from '$lib/types/cms';
+
+	interface Props {
+		item: RepeatableItem;
+	}
+	let { item }: Props = $props();
+	let data = $derived(item.data);
+	let quote = $derived(data.quote_ref ? $cmsStore[data.quote_ref]?.content || '' : '');
 </script>
 
 <blockquote>
 	<CMSContent ref={data.quote_ref} type="html">
-		{@html quote}
+		{@html quote || '<p>Quote text…</p>'}
 	</CMSContent>
-	<cite>
-		<CMSContent ref={data.author_ref} type="text">
-			{author}
-		</CMSContent>
-	</cite>
 </blockquote>
 ```
 
-4. **Use it**:
+4. **Register in RepeatableContainer** (`src/lib/cms/RepeatableContainer.svelte`):
+
+```typescript
+import Testimonial from '$lib/components/repeatable/Testimonial.svelte';
+
+const componentMap = { Card, Section, Tag, Quote, Testimonial };
+```
+
+5. **Use it**:
 
 ```svelte
 <RepeatableContainer ref="about.testimonials" type="Testimonial" />
 ```
 
-## Files Created/Modified
+## Files
 
-**Created:**
+**SQL:**
 
-- `sql/repeatable-content.sql` (schema + triggers for Card, Carousel, Section, Tag)
-- `sql/repeatable-rls-policies.sql` (RLS policies)
-- `src/lib/cms/RepeatableContainer.svelte` (container component)
-- `src/lib/components/repeatable/Card.svelte` (card component with nested tags)
-- `src/lib/components/repeatable/Tag.svelte` (tag component)
-- `src/lib/components/repeatable/Carousel.svelte` (placeholder)
-- `src/lib/components/repeatable/Section.svelte` (placeholder)
+- `sql/repeatable-content.sql` — schema + triggers (Card, Section, Tag, Quote)
+- `sql/repeatable-rls-policies.sql` — RLS policies
 
-**Modified:**
+**Components:**
 
-- `src/lib/types/cms.ts` (added RepeatableItem, CardData types)
-- `src/lib/cms/index.ts` (added repeatableStore, API functions)
-- `src/routes/portfolio/+page.svelte` (simplified to use RepeatableContainer)
+- `src/lib/cms/RepeatableContainer.svelte` — container with add/remove/reorder controls
+- `src/lib/components/repeatable/Card.svelte` — card (title, description, image, link + nested tags)
+- `src/lib/components/repeatable/Tag.svelte` — tag label (nested in cards)
+- `src/lib/components/repeatable/Quote.svelte` — quote, author, role (for testimonials)
+- `src/lib/components/repeatable/Section.svelte` — title, description
+- `src/lib/components/Carousel.svelte` — page-level carousel container
+
+**Types:**
+
+- `src/lib/types/cms.ts` — `RepeatableComponentType`, `RepeatableItem`, `CardData`, etc.
+
+**API:**
+
+- `src/lib/cms/index.ts` — `repeatableStore`, `loadRepeatableItems()`, `addRepeatableItem()`, `removeRepeatableItem()`, `reorderRepeatableItem()`
 
 ## Nested Repeatables Pattern
 
@@ -292,11 +343,10 @@ Tags demonstrate how to nest repeatables within other repeatables:
 
 ## Next Steps
 
-1. **Test thoroughly** - Add, edit, delete, reorder cards and tags
-2. **Migrate existing data** (if you have old portfolio cards in cms_content)
-3. **Add more component types** (Carousel, Section, Testimonial, etc.)
-4. **Add more nested types** (Items in Carousel, Blocks in Section, etc.)
-5. **Add drag-and-drop reordering** (replace up/down buttons)
+1. **Test thoroughly** — Add, edit, delete, reorder cards/tags/quotes
+2. **Add drag-and-drop reordering** (replace up/down buttons)
+3. **Extend Carousel** to support additional item types beyond Quote
+4. **Add more nested types** (items in sections, etc.)
 
 ## Key Takeaways
 

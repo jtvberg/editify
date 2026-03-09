@@ -34,6 +34,7 @@ The standard pattern for editable content:
 ```
 
 **Key parts:**
+
 - `data-cms-ref` - Unique identifier
 - `data-cms-type` - Content type (text or html)
 - `use:cms` - Svelte action that enables editing
@@ -85,6 +86,7 @@ Examples:
 ```
 
 **Namespaces:**
+
 - `global.*` - Site-wide content used in multiple places
 - `[page].*` - Page-specific content
 - `[page].[section].*` - Section within a page
@@ -159,7 +161,7 @@ npm run cms:sync
 Grant editor access via SQL:
 
 ```sql
-UPDATE auth.users 
+UPDATE auth.users
 SET raw_user_meta_data = raw_user_meta_data || '{"role": "editor"}'::jsonb
 WHERE email = 'editor@example.com';
 ```
@@ -207,21 +209,77 @@ Edit once, updates everywhere!
 ## 🛠️ Troubleshooting
 
 ### Content Not Showing
+
 - Run `npm run cms:sync`
 - Check Supabase `cms_content` table
 - Verify ref name matches exactly
 
 ### Can't Edit
+
 - Confirm you're logged in
 - Check editor role in user metadata
 - Toggle Edit Mode button
 - Ensure element has `use:cms`
 
 ### Edits Not Saving
+
 - Check browser console for errors
 - Verify RLS policies are set up
 - Confirm `sql/supabase-rls-policies.sql` was run
 - Check for 403 Forbidden errors
+
+## 🎠 Carousel / Repeatable Content
+
+### Carousel (page-level container)
+
+Place a `Carousel` directly in any page route. It handles both view and edit mode automatically:
+
+```svelte
+<script>
+	import { Carousel } from '$lib';
+</script>
+
+<!-- Default 5 s auto-rotate -->
+<Carousel ref="home.testimonials" type="Quote" />
+
+<!-- Custom auto-rotate speed -->
+<Carousel ref="home.testimonials" type="Quote" autoRotateDelay={4000} />
+```
+
+In **view mode** the carousel shows one item at a time with prev/next arrows, dot indicators, a slide counter, and a play/pause toggle.
+
+In **edit mode** it delegates to `RepeatableContainer` so you get the standard add / reorder / delete controls.
+
+### RepeatableContainer (standalone)
+
+Use this directly when you want a managed list without the carousel UI:
+
+```svelte
+<script>
+	import { RepeatableContainer } from '$lib/cms';
+</script>
+
+<!-- Edit-mode-only container (hides in view mode) -->
+<RepeatableContainer ref="home.cards" type="Card" />
+```
+
+### Available Item Types
+
+| Type      | Fields                          | Use for                        |
+| --------- | ------------------------------- | ------------------------------ |
+| `Card`    | title, description, image, link | Feature cards, portfolio items |
+| `Section` | title, description              | Content sections               |
+| `Tag`     | label                           | Tags, badges, categories       |
+| `Quote`   | quote, author, role             | Testimonials, pull quotes      |
+
+### Adding a New Item Type
+
+1. Create `src/lib/components/repeatable/MyType.svelte` using the same pattern as `Quote.svelte`
+2. Add `'MyType'` to `RepeatableComponentType` in `src/lib/types/cms.ts`
+3. Import and add `MyType` to `componentMap` in `RepeatableContainer.svelte`
+4. Add a `WHEN NEW.component_type = 'MyType'` block to the trigger in `sql/repeatable-content.sql`
+5. Update the `CHECK` constraint in that same file
+6. Re-run the SQL in Supabase
 
 ## 📚 More Info
 

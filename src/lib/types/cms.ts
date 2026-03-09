@@ -26,7 +26,7 @@ export interface CMSElementData {
 	usageCount: number;
 }
 
-export type RepeatableComponentType = 'Card' | 'Carousel' | 'Section' | 'Tag' | 'Quote';
+export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote';
 
 export interface RepeatableItem {
 	id: string;

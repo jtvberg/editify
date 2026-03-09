@@ -14,29 +14,25 @@ Follow these steps to get your CMS up and running from scratch.
 
 ## Step 2: Set Up Database Schema
 
+Run all four SQL files **in order** in the Supabase SQL Editor:
+
+1. `sql/supabase-schema.sql` — core CMS tables (`cms_content`, `cms_content_history`) and triggers
+2. `sql/supabase-rls-policies.sql` — RLS policies and `is_editor()` function for CMS tables
+3. `sql/repeatable-content.sql` — `content_repeatable` table and auto-create/delete triggers
+4. `sql/repeatable-rls-policies.sql` — RLS policies for the repeatable table
+
+For each file:
+
 1. In your Supabase dashboard, go to **SQL Editor**
 2. Click **New Query**
-3. Copy the entire contents of `sql/supabase-schema.sql` from this project
-4. Paste into the query editor
-5. Click **Run** (or press Cmd/Ctrl + Enter)
-6. Verify success - you should see:
-   - ✅ 2 tables created (`cms_content`, `cms_content_history`)
-   - ✅ `cms_content` has columns: `id`, `content`, `type`, `metadata`, `updated_at`
-   - ✅ RLS enabled on both tables
-   - ✅ Triggers created for history and timestamps
-   - ✅ Indexes created including GIN index for metadata queries
+3. Copy the entire file contents, paste, and click **Run**
 
-## Step 3: Set Up RLS Policies
+Verify success after running all four:
 
-1. In Supabase SQL Editor, click **New Query**
-2. Copy the entire contents of `sql/supabase-rls-policies.sql`
-3. Paste and click **Run**
-4. This creates:
-   - ✅ `is_editor()` security definer function
-   - ✅ Read policy (everyone can read)
-   - ✅ Update policy (editors only)
-   - ✅ Insert policy (editors only)
-   - ✅ History insert policy (system)
+- ✅ Tables: `cms_content`, `cms_content_history`, `content_repeatable`
+- ✅ RLS enabled on all three tables
+- ✅ `is_editor()` security definer function exists
+- ✅ Triggers: history, timestamps, repeatable auto-create/delete/reorder
 
 ## Step 4: Get API Keys
 
@@ -48,7 +44,7 @@ Follow these steps to get your CMS up and running from scratch.
    - **service_role** key (under "Project API keys" - click to reveal)
      - ⚠️ **Keep this secret!** Never commit it to git or expose it client-side
 
-## Step 4: Configure Environment
+## Step 5: Configure Environment
 
 1. In your project root, create a `.env` file:
 
@@ -169,16 +165,20 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ## Step 9: Test Editing
 
 1. Open your site in the browser
-2. **Log in** using the email/password you created in Step 7
-   - You may need to add a login page, or use Supabase Auth UI
-   - For quick testing, you can temporarily modify the code to set `isEditor` to `true`
+2. Navigate to `/login` and log in with the editor account from Step 7
 3. Look for the **Edit Mode** button (bottom right corner)
 4. Click it to enable editing
-5. Click any text with a blue dashed outline
-6. Edit the content
-7. Click outside to save
+5. Click any text with a blue dashed outline to edit
+6. Changes save automatically to Supabase
 
-Changes are saved automatically to Supabase!
+### Testing Repeatable Content
+
+If you have a page using `RepeatableContainer` or `Carousel`:
+
+1. Toggle edit mode
+2. Click **“+ Add …”** to add an item
+3. Click each field to edit — fields are immediately editable without page refresh
+4. Use ↑ ↓ buttons to reorder, × to delete
 
 ## Step 10: Deploy to Netlify
 
