@@ -24,6 +24,34 @@ export function getContent(ref: string): string {
 	return store[ref]?.content || '';
 }
 
+/**
+ * Ensures a cms_content row exists for the given ref.
+ * Inserts with the provided default value on first load; does nothing if the row already exists.
+ * Updates cmsStore so the content is immediately available client-side.
+ */
+export async function ensureContent(
+	ref: string,
+	defaultValue: string,
+	type: 'text' | 'html' | 'image' = 'text'
+): Promise<void> {
+	// If already in the store, nothing to do
+	if (get(cmsStore)[ref]) return;
+
+	const { data, error } = await (supabase.from('cms_content') as any)
+		.upsert({ id: ref, content: defaultValue, type }, { onConflict: 'id', ignoreDuplicates: true })
+		.select()
+		.single();
+
+	if (error) {
+		console.error('[CMS] ensureContent error:', error);
+		return;
+	}
+
+	if (data) {
+		cmsStore.update((store) => ({ ...store, [ref]: data }));
+	}
+}
+
 export async function saveContent(ref: string, content: string, metadata?: any): Promise<boolean> {
     try {
         const updateData: any = {

@@ -3,6 +3,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
+	import Marquee from '$lib/components/Marquee.svelte';
 </script>
 
 <Header />
@@ -23,6 +24,10 @@
 			type="Card" 
 			containerClass="project-grid"
 		/>
+	</section>
+
+	<section class="marquee-section">
+		<Marquee ref="portfolio.marquee" duration={30} gap="6rem" />
 	</section>
 </main>
 <Footer />
