@@ -37,12 +37,12 @@
 {:else}
 	<div class="marquee-outer" aria-label={content}>
 		<div
-			class="marquee-track"
+			class="marquee-track hero"
 			style="--duration: {duration}s; --gap: {gap};"
 		>
 			<!-- Two copies for seamless loop -->
-			<span class="marquee-content" aria-hidden="true">{content}</span>
-			<span class="marquee-content" aria-hidden="true">{content}</span>
+			<h1 class="marquee-content" aria-hidden="true">{content}</h1>
+			<h1 class="marquee-content" aria-hidden="true">{content}</h1>
 		</div>
 	</div>
 {/if}

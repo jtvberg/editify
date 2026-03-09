@@ -27,7 +27,7 @@
 	</section>
 
 	<section class="marquee-section">
-		<Marquee ref="portfolio.marquee" duration={30} gap="6rem" />
+		<Marquee ref="portfolio.marquee" duration={10} gap="6rem" />
 	</section>
 </main>
 <Footer />

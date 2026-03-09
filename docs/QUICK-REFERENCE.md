@@ -228,6 +228,40 @@ Edit once, updates everywhere!
 - Confirm `sql/supabase-rls-policies.sql` was run
 - Check for 403 Forbidden errors
 
+## 📜 Marquee
+
+A single-field CMS-editable scrolling text banner. Drop it directly into any page route:
+
+```svelte
+<script>
+	import { Marquee } from '$lib';
+</script>
+
+<!-- Defaults: 20s duration, 4rem gap -->
+<Marquee ref="home.marquee" />
+
+<!-- Custom speed and gap -->
+<Marquee ref="home.marquee" duration={35} gap="6rem" />
+
+<!-- Custom default value (shown until content is saved) -->
+<Marquee ref="home.marquee" defaultValue="Welcome to our site · " />
+```
+
+**Props:**
+
+| Prop           | Type     | Default                       | Description                                       |
+| -------------- | -------- | ----------------------------- | ------------------------------------------------- |
+| `ref`          | `string` | required                      | CMS ref key — must be unique                      |
+| `defaultValue` | `string` | `'Your marquee text here...'` | Shown until content is saved                      |
+| `duration`     | `number` | `20`                          | Scroll duration in seconds (higher = slower)      |
+| `gap`          | `string` | `'4rem'`                      | Space between the two text copies (any CSS value) |
+
+**Notes:**
+
+- No `cms:sync` needed — the row is created automatically on first load via `ensureContent`
+- In **edit mode** the scroll stops and a static inline text field appears
+- Content saves through the standard CMS overlay (click the field, edit, Save)
+
 ## 🎠 Carousel / Repeatable Content
 
 ### Carousel (page-level container)

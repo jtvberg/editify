@@ -38,6 +38,10 @@ The codebase implements:
 - ✅ RepeatableContainer with dynamic component rendering
 - ✅ New CMS entries hydrated into store immediately on add (no page refresh needed)
 
+### Standalone Components
+
+- ✅ Marquee — infinite scrolling text banner with CMS-editable content
+
 ### Architecture
 
 - ✅ Content stored once in `cms_content`
@@ -151,6 +155,7 @@ home.testimonials (parent_ref for quotes, used inside Carousel)
 - `src/lib/components/repeatable/Quote.svelte` - Quote/testimonial component (complete)
 - `src/lib/components/repeatable/Section.svelte` - Section component (complete)
 - `src/lib/components/Carousel.svelte` - Page-level carousel container (complete)
+- `src/lib/components/Marquee.svelte` - Infinite scrolling text banner (complete)
 
 ### Scripts
 
@@ -284,6 +289,14 @@ When testing the implementation:
 - [ ] Dot indicators reflect current slide
 - [ ] Auto-play toggle starts/pauses rotation
 - [ ] New Quote items are immediately editable (no page refresh needed)
+
+### Marquee
+
+- [ ] Place `<Marquee ref="home.marquee" />` on a page
+- [ ] In view mode: text scrolls right to left continuously
+- [ ] In edit mode: scroll stops, inline text field appears
+- [ ] Click field → edit in overlay → Save persists to database
+- [ ] Default value shows until first save
 
 ## Known Issues
 
