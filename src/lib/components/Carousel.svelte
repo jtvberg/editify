@@ -20,10 +20,11 @@
 	let Component = $derived(componentMap[type]);
 	let items = $derived($repeatableStore[ref] || []);
 	let currentIndex = $state(0);
+	let direction = $state<'next' | 'prev'>('next'); // drives enter animation
+	let animating = $state(false);
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
 	onMount(async () => {
-		// Load items for view mode; RepeatableContainer handles reload in edit mode.
 		await loadRepeatableItems(ref);
 	});
 
@@ -34,43 +35,65 @@
 		}
 	});
 
-	// Auto-rotate
+	// Auto-rotate — re-runs whenever autoRotate/editMode/items change
 	$effect(() => {
 		if (autoRotate && !$editMode && items.length > 1) {
-			intervalId = setInterval(() => {
-				currentIndex = (currentIndex + 1) % items.length;
-			}, autoRotateDelay);
+			startTimer();
 		}
-		return () => {
-			if (intervalId) {
-				clearInterval(intervalId);
-				intervalId = null;
-			}
-		};
+		return stopTimer;
 	});
 
+	function startTimer() {
+		stopTimer();
+		intervalId = setInterval(() => navigate('next'), autoRotateDelay);
+	}
+
+	function stopTimer() {
+		if (intervalId !== null) {
+			clearInterval(intervalId);
+			intervalId = null;
+		}
+	}
+
+	function navigate(dir: 'next' | 'prev', resetTimer = false) {
+		if (animating) return;
+		direction = dir;
+		animating = true;
+		currentIndex =
+			dir === 'next'
+				? (currentIndex + 1) % items.length
+				: (currentIndex - 1 + items.length) % items.length;
+		setTimeout(() => (animating = false), 400);
+		if (resetTimer && autoRotate) startTimer();
+	}
+
 	function prev() {
-		currentIndex = (currentIndex - 1 + items.length) % items.length;
+		navigate('prev', true);
 	}
 
 	function next() {
-		currentIndex = (currentIndex + 1) % items.length;
+		navigate('next', true);
 	}
 
 	function goTo(index: number) {
+		if (index === currentIndex) return;
+		navigate(index > currentIndex ? 'next' : 'prev', true);
+		// override the index set by navigate since we want a specific one
 		currentIndex = index;
 	}
 </script>
 
 <div class="carousel">
 	{#if $editMode}
-		<!-- Edit mode: RepeatableContainer provides identical controls to other repeatable types -->
 		<RepeatableContainer {ref} {type} />
 	{:else}
-		<!-- View mode: carousel display -->
 		{#if items.length > 0 && Component}
 			<div class="carousel-track">
-				<Component item={items[currentIndex]} />
+				{#key currentIndex}
+					<div class="slide" class:slide-next={direction === 'next'} class:slide-prev={direction === 'prev'}>
+						<Component item={items[currentIndex]} />
+					</div>
+				{/key}
 			</div>
 
 			{#if items.length > 1}
@@ -98,7 +121,6 @@
 						</svg>
 					</button>
 				</div>
-
 			{/if}
 		{:else}
 			<div class="empty-state">No items yet.</div>
@@ -110,11 +132,38 @@
 	.carousel {
 		position: relative;
 		width: 100%;
+		overflow: hidden;
 	}
 
 	/* ── View mode ── */
 	.carousel-track {
 		width: 100%;
+		position: relative;
+	}
+
+	/* Slide enters from the right when going next, from the left when going prev */
+	.slide {
+		animation-duration: 0.4s;
+		animation-timing-function: ease;
+		animation-fill-mode: both;
+	}
+
+	.slide-next {
+		animation-name: slide-in-right;
+	}
+
+	.slide-prev {
+		animation-name: slide-in-left;
+	}
+
+	@keyframes slide-in-right {
+		from { opacity: 0; transform: translateX(3rem); }
+		to   { opacity: 1; transform: translateX(0); }
+	}
+
+	@keyframes slide-in-left {
+		from { opacity: 0; transform: translateX(-3rem); }
+		to   { opacity: 1; transform: translateX(0); }
 	}
 
 	.carousel-nav {
