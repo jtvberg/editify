@@ -273,14 +273,17 @@ Place a `Carousel` directly in any page route. It handles both view and edit mod
 	import { Carousel } from '$lib';
 </script>
 
-<!-- Default 5 s auto-rotate -->
+<!-- Manual navigation only (default) -->
 <Carousel ref="home.testimonials" type="Quote" />
 
-<!-- Custom auto-rotate speed -->
-<Carousel ref="home.testimonials" type="Quote" autoRotateDelay={4000} />
+<!-- Auto-rotate with default 5s delay -->
+<Carousel ref="home.testimonials" type="Quote" autoRotate />
+
+<!-- Auto-rotate with custom delay -->
+<Carousel ref="home.testimonials" type="Quote" autoRotate autoRotateDelay={4000} />
 ```
 
-In **view mode** the carousel shows one item at a time with prev/next arrows, dot indicators, a slide counter, and a play/pause toggle.
+In **view mode** the carousel shows one item at a time with prev/next arrows and dot indicators.
 
 In **edit mode** it delegates to `RepeatableContainer` so you get the standard add / reorder / delete controls.
 

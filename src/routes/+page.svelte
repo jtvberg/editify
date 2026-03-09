@@ -37,7 +37,7 @@
 	</section>
 
 	<section>
-		<Carousel ref="home.testimonials" type="Quote" />
+		<Carousel ref="home.testimonials" type="Quote" autoRotate={true} autoRotateDelay={5000} />
 	</section>
 
 	<section class="demo">

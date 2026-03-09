@@ -8,16 +8,18 @@
 	interface Props {
 		ref: string;
 		type?: RepeatableComponentType;
+		/** If true, slides advance automatically. Default false (manual nav only). */
+		autoRotate?: boolean;
+		/** Delay between auto-rotations in ms. Only used when autoRotate is true. */
 		autoRotateDelay?: number;
 	}
 
-	let { ref, type = 'Quote', autoRotateDelay = 5000 }: Props = $props();
+	let { ref, type = 'Quote', autoRotate = false, autoRotateDelay = 5000 }: Props = $props();
 
 	const componentMap: Partial<Record<RepeatableComponentType, any>> = { Quote };
 	let Component = $derived(componentMap[type]);
 	let items = $derived($repeatableStore[ref] || []);
 	let currentIndex = $state(0);
-	let autoRotate = $state(false);
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
 	onMount(async () => {
@@ -38,11 +40,6 @@
 			intervalId = setInterval(() => {
 				currentIndex = (currentIndex + 1) % items.length;
 			}, autoRotateDelay);
-		} else {
-			if (intervalId) {
-				clearInterval(intervalId);
-				intervalId = null;
-			}
 		}
 		return () => {
 			if (intervalId) {
@@ -102,28 +99,6 @@
 					</button>
 				</div>
 
-				<div class="carousel-footer">
-					<span class="slide-count">{currentIndex + 1} / {items.length}</span>
-					<button
-						class="autorotate-btn"
-						class:active={autoRotate}
-						onclick={() => (autoRotate = !autoRotate)}
-						title={autoRotate ? 'Pause auto-rotate' : 'Start auto-rotate'}
-					>
-						{#if autoRotate}
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-								<rect x="6" y="4" width="4" height="16" rx="1" />
-								<rect x="14" y="4" width="4" height="16" rx="1" />
-							</svg>
-							Pause
-						{:else}
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-								<polygon points="5 3 19 12 5 21 5 3" />
-							</svg>
-							Auto-play
-						{/if}
-					</button>
-				</div>
 			{/if}
 		{:else}
 			<div class="empty-state">No items yet.</div>
@@ -192,46 +167,6 @@
 		background: var(--color-primary);
 		width: 1.5rem;
 		border-radius: 0.25rem;
-	}
-
-	.carousel-footer {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 1rem;
-		margin-top: 0.75rem;
-	}
-
-	.slide-count {
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-		min-width: 3rem;
-		text-align: center;
-	}
-
-	.autorotate-btn {
-		display: flex;
-		align-items: center;
-		gap: 0.375rem;
-		padding: 0.375rem 0.75rem;
-		border-radius: 9999px;
-		border: 1px solid var(--color-white-10);
-		background: transparent;
-		color: var(--color-text-muted);
-		cursor: pointer;
-		font-size: 0.8rem;
-		transition: all 0.2s;
-	}
-
-	.autorotate-btn:hover {
-		border-color: var(--color-primary);
-		color: var(--color-primary);
-	}
-
-	.autorotate-btn.active {
-		background: var(--color-primary-20);
-		border-color: var(--color-primary);
-		color: var(--color-primary);
 	}
 
 	.empty-state {

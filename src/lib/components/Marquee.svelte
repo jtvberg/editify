@@ -41,8 +41,8 @@
 			style="--duration: {duration}s; --gap: {gap};"
 		>
 			<!-- Two copies for seamless loop -->
-			<h1 class="marquee-content" aria-hidden="true">{content}</h1>
-			<h1 class="marquee-content" aria-hidden="true">{content}</h1>
+			<h1 class="marquee-content">{content}</h1>
+			<h1 class="marquee-content">{content}</h1>
 		</div>
 	</div>
 {/if}
