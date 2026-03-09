@@ -166,7 +166,7 @@
 	.control-btn.remove {
 		background: var(--cms-danger-bg);
         font-size: xx-large;
-        padding-top: 0.3rem;
+        padding-top: 0.4rem;
 	}
 
 	.control-btn.remove:hover:not(:disabled) {

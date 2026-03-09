@@ -57,25 +57,34 @@
 	}
 
 	.quote-text {
-		position: relative;
-		font-size: 1.25rem;
-		font-style: italic;
-		color: var(--color-text-primary);
-		line-height: 1.75;
+		font-size: 2.5rem;
+        font-weight: 600;
+		line-height: 1.1;
+		color: var(--color-primary-text);
+		font-style: normal;
+		opacity: 0.6;
+        width: fit-content;
+        margin: auto;
 	}
 
-	.quote-text::before {
-		content: '\201C';
-		position: absolute;
-		top: -1rem;
-		left: -0.5rem;
-		font-size: 4rem;
+    .quote-text :global(p)::before, .quote-text :global(p)::after {
+		font-size: 3rem;
 		line-height: 1;
 		color: var(--color-primary);
 		font-style: normal;
 		font-family: Georgia, serif;
 		opacity: 0.6;
+    } 
+
+	.quote-text :global(p)::before {
+		content: '\201C';
+        margin-right: 5px;
 	}
+
+    .quote-text :global(p)::after {
+        content: '\201D';
+        margin-left: 5px;
+    }
 
 	.quote-text :global(p) {
 		margin: 0;
