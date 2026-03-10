@@ -67,11 +67,7 @@
 	.quote-item {
 		margin: 0;
 		padding: 2.5rem 3rem;
-		background: var(--gradient-card);
-		backdrop-filter: blur(10px);
 		border-radius: 16px;
-		border: 1px solid var(--color-white-10);
-		box-shadow: 0 8px 32px var(--color-black-50);
 		text-align: center;
 		display: flex;
 		flex-direction: column;
@@ -82,7 +78,6 @@
 		font-size: 2.5rem;
         font-weight: 600;
 		line-height: 1.1;
-		color: var(--color-primary-text);
 		font-style: normal;
 		opacity: 0.6;
         width: fit-content;
@@ -92,9 +87,7 @@
     .quote-text :global(p)::before, .quote-text :global(p)::after {
 		font-size: 3rem;
 		line-height: 1;
-		color: var(--color-primary);
 		font-style: normal;
-		font-family: Georgia, serif;
 		opacity: 0.6;
     } 
 
@@ -117,18 +110,16 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 0.25rem;
+		font-family: Raleway;
 	}
 
 	.quote-author {
-		font-size: 1rem;
-		font-weight: 700;
-		color: var(--color-primary);
+		font-size: 1.5rem;
 		letter-spacing: 0.03em;
 	}
 
 	.quote-role {
-		font-size: 0.875rem;
-		color: var(--color-text-muted);
+		font-size: 1rem;
 		font-style: italic;
 	}
 </style>
