@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { editMode, cmsStore, saveContent, countRefUsage, activeElement } from '$lib/cms';
 	import type { ContentType } from '$lib/types/cms';
 
@@ -20,6 +20,11 @@
 	let content = $state('');
 	let localElement: HTMLElement;
 
+	// After mount, text/html content is managed imperatively to avoid
+	// {#html} reconciliation conflicts with contenteditable
+	let managedByDom = $state(false);
+	let defaultContent = '';
+
 	let objectFit = $derived(
         type === 'image' && content && $cmsStore[ref]?.metadata?.objectFit
             ? $cmsStore[ref].metadata.objectFit
@@ -35,9 +40,50 @@
 		}
 	});
 
-	onMount(() => {
+	// Imperatively sync store → DOM for text/html, avoiding contenteditable conflicts
+	$effect(() => {
+		if (!managedByDom || !localElement || type === 'image') return;
+
+		const storeVal = $cmsStore[ref]?.content;
+		const displayContent = storeVal || defaultContent;
+
+		// Don't update DOM while the element is being actively edited
+		if ($activeElement?.element === localElement) return;
+
+		if (type === 'html') {
+			if (localElement.innerHTML !== displayContent) {
+				localElement.innerHTML = displayContent;
+			}
+		} else if (type === 'text') {
+			if ((localElement.textContent || '') !== displayContent) {
+				localElement.textContent = displayContent;
+			}
+		}
+	});
+
+	onMount(async () => {
 		if (localElement) {
 			element = localElement;
+
+			if (type !== 'image') {
+				// Capture initial content rendered by children/template as fallback default
+				defaultContent = type === 'html'
+					? localElement.innerHTML
+					: (localElement.textContent || '');
+
+				// Switch to imperative mode — Svelte removes children from template
+				managedByDom = true;
+				await tick();
+
+				// Immediately restore content from store or captured default
+				const storeVal = $cmsStore[ref]?.content;
+				const displayContent = storeVal || defaultContent;
+				if (type === 'html') {
+					localElement.innerHTML = displayContent;
+				} else {
+					localElement.textContent = displayContent;
+				}
+			}
 		}
 	});
 
@@ -103,9 +149,7 @@
 	role={$editMode ? (type === 'image' ? 'button' : 'textbox') : undefined}
 	tabindex={$editMode ? 0 : undefined}
 >
-	{#if children}
-		{@render children()}
-	{:else if type === 'image'}
+	{#if type === 'image'}
 		{#if content}
 			<img src={content} alt="" style="object-fit: {computedObjectFit};" />
 		{:else}
@@ -118,10 +162,14 @@
 				<span>Click to upload image</span>
 			</div>
 		{/if}
-	{:else if type === 'html'}
-		{@html content}
-	{:else}
-		{content}
+	{:else if !managedByDom}
+		{#if children}
+			{@render children()}
+		{:else if type === 'html'}
+			{@html content}
+		{:else}
+			{content}
+		{/if}
 	{/if}
 </div>
 

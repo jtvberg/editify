@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CMSContent from '$lib/cms/CMSContent.svelte';
 	import RepeatableContainer from '$lib/cms/RepeatableContainer.svelte';
-	import { cmsStore } from '$lib/cms';
+	import { cmsStore, activeElement } from '$lib/cms';
 	import type { RepeatableItem } from '$lib/types/cms';
 
 	interface Props {
@@ -15,6 +15,28 @@
 	let image = $derived(data.image_ref ? ($cmsStore[data.image_ref]?.content || '') : '');
 	let link = $derived(data.link_ref ? ($cmsStore[data.link_ref]?.content || '') : '');
 	let tagsRef = $derived(`${item.parent_ref}.${item.id}.tags`);
+
+	let frozenTitle = $state('');
+	let frozenDescription = $state('');
+	let frozenLink = $state('');
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.title_ref) {
+			frozenTitle = title;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.description_ref) {
+			frozenDescription = description;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.link_ref) {
+			frozenLink = link;
+		}
+	});
 </script>
 
 <div class="card">
@@ -28,7 +50,7 @@
 		{#if data.title_ref}
 			<h3 class="card-title">
 				<CMSContent ref={data.title_ref} type="text">
-					{title || 'Title'}
+					{frozenTitle || 'Title'}
 				</CMSContent>
 			</h3>
 		{/if}
@@ -36,7 +58,7 @@
 		{#if data.description_ref}
 			<div class="card-description">
 				<CMSContent ref={data.description_ref} type="html">
-					{@html description || '<p>Description</p>'}
+					{@html frozenDescription || '<p>Description</p>'}
 				</CMSContent>
 			</div>
 		{/if}
@@ -44,7 +66,7 @@
 		{#if data.link_ref}
 			<div class="card-link">
 				<CMSContent ref={data.link_ref} type="html">
-					{@html link || '<p>Link</p>'}
+					{@html frozenLink || '<p>Link</p>'}
 				</CMSContent>
 			</div>
 		{/if}

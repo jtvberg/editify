@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CMSContent from '$lib/cms/CMSContent.svelte';
-	import { cmsStore } from '$lib/cms';
+	import { cmsStore, activeElement } from '$lib/cms';
 	import type { RepeatableItem } from '$lib/types/cms';
 
 	interface Props {
@@ -11,13 +11,28 @@
 	let data = $derived(item.data);
 	let title = $derived(data.title_ref ? ($cmsStore[data.title_ref]?.content || '') : '');
 	let description = $derived(data.description_ref ? ($cmsStore[data.description_ref]?.content || '') : '');
+
+	let frozenTitle = $state('');
+	let frozenDescription = $state('');
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.title_ref) {
+			frozenTitle = title;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.description_ref) {
+			frozenDescription = description;
+		}
+	});
 </script>
 
 <div class="section-item">
     {#if data.title_ref}
         <h3 class="section-title">
             <CMSContent ref={data.title_ref} type="text">
-                {title || 'Title'}
+                {frozenTitle || 'Title'}
             </CMSContent>
         </h3>
     {/if}
@@ -25,7 +40,7 @@
     {#if data.description_ref}
         <div class="section-description">
             <CMSContent ref={data.description_ref} type="html">
-                {@html description || '<p>Description</p>'}
+                {@html frozenDescription || '<p>Description</p>'}
             </CMSContent>
         </div>
     {/if}

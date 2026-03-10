@@ -21,6 +21,40 @@
 	let capturedOriginal = false;
 	let selectedObjectFit = $state<'fill' | 'contain' | 'cover' | 'none'>('contain');
 
+	// Reactive overlay position that updates when the active element resizes
+	let overlayY = $state(0);
+	let overlayX = $state(0);
+	let resizeObserver: ResizeObserver | null = null;
+
+	function updateOverlayPosition() {
+		if (!$activeElement) return;
+		const rect = $activeElement.element.getBoundingClientRect();
+		overlayY = rect.bottom + window.scrollY + 8;
+		let x = rect.left;
+		const overlayWidth = 300;
+		if (x + overlayWidth > window.innerWidth) {
+			x = window.innerWidth - overlayWidth - 20;
+		}
+		if (x < 10) x = 10;
+		overlayX = x;
+	}
+
+	$effect(() => {
+		if ($activeElement) {
+			updateOverlayPosition();
+
+			resizeObserver = new ResizeObserver(() => {
+				updateOverlayPosition();
+			});
+			resizeObserver.observe($activeElement.element);
+
+			return () => {
+				resizeObserver?.disconnect();
+				resizeObserver = null;
+			};
+		}
+	});
+
 	$effect(() => {
 		if ($activeElement && $activeElement.type === 'image') {
 			const metadata = $cmsStore[$activeElement.ref]?.metadata;
@@ -154,21 +188,6 @@
 			const success = await saveContent(ref, newContent, metadata);
 			
 			if (success) {
-				const updateData: any = {
-					...($cmsStore[ref] || {}),
-					content: newContent,
-					updated_at: new Date().toISOString()
-				};
-				
-				if (metadata !== undefined) {
-					updateData.metadata = metadata;
-				}
-				
-				cmsStore.update(store => ({
-					...store,
-					[ref]: updateData
-				}));
-
 				closeOverlay();
 			} else {
 				uploadError = 'Failed to save changes';
@@ -614,7 +633,7 @@
 	
 	<div 
 		class="cms-overlay"
-		style="top: {$activeElement.y + 8}px; left: {$activeElement.x}px;"
+		style="top: {overlayY}px; left: {overlayX}px;"
 	>
 		<div class="cms-toolbar">
 			<div class="toolbar-header">

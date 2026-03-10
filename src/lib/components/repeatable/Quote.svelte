@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CMSContent from '$lib/cms/CMSContent.svelte';
-	import { cmsStore } from '$lib/cms';
+	import { cmsStore, activeElement } from '$lib/cms';
 	import type { RepeatableItem } from '$lib/types/cms';
 
 	interface Props {
@@ -12,13 +12,35 @@
 	let quote = $derived(data.quote_ref ? ($cmsStore[data.quote_ref]?.content || '') : '');
 	let author = $derived(data.author_ref ? ($cmsStore[data.author_ref]?.content || '') : '');
 	let role = $derived(data.role_ref ? ($cmsStore[data.role_ref]?.content || '') : '');
+
+	let frozenQuote = $state('');
+	let frozenAuthor = $state('');
+	let frozenRole = $state('');
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.quote_ref) {
+			frozenQuote = quote;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.author_ref) {
+			frozenAuthor = author;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.role_ref) {
+			frozenRole = role;
+		}
+	});
 </script>
 
 <figure class="quote-item">
 	<blockquote class="quote-text">
 		{#if data.quote_ref}
 			<CMSContent ref={data.quote_ref} type="html">
-				{@html quote || '<p>Quote text…</p>'}
+				{@html frozenQuote || '<p>Quote text…</p>'}
 			</CMSContent>
 		{/if}
 	</blockquote>
@@ -27,14 +49,14 @@
 		{#if data.author_ref}
 			<div class="quote-author">
 				<CMSContent ref={data.author_ref} type="text">
-					{author || 'Author name'}
+					{frozenAuthor || 'Author name'}
 				</CMSContent>
 			</div>
 		{/if}
 		{#if data.role_ref}
 			<div class="quote-role">
 				<CMSContent ref={data.role_ref} type="text">
-					{role || 'Title / Role'}
+					{frozenRole || 'Title / Role'}
 				</CMSContent>
 			</div>
 		{/if}

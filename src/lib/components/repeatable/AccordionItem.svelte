@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CMSContent from '$lib/cms/CMSContent.svelte';
-	import { cmsStore } from '$lib/cms';
+	import { cmsStore, activeElement } from '$lib/cms';
 	import type { RepeatableItem } from '$lib/types/cms';
 
 	interface Props {
@@ -11,6 +11,20 @@
 	let data = $derived(item.data);
 	let title = $derived(data.title_ref ? ($cmsStore[data.title_ref]?.content || '') : '');
 	let content = $derived(data.content_ref ? ($cmsStore[data.content_ref]?.content || '') : '');
+	let frozenTitle = $state('');
+	let frozenContent = $state('');
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.title_ref) {
+			frozenTitle = title;
+		}
+	});
+
+	$effect(() => {
+		if (!$activeElement || $activeElement.ref !== data.content_ref) {
+			frozenContent = content;
+		}
+	});
 </script>
 
 <div class="accordion-item-edit">
@@ -18,7 +32,7 @@
 		<div class="field-group">
 			<span class="field-label">Title</span>
 			<CMSContent ref={data.title_ref} type="text">
-				{title || 'Accordion title…'}
+				{frozenTitle || 'Accordion title…'}
 			</CMSContent>
 		</div>
 	{/if}
@@ -26,7 +40,7 @@
 		<div class="field-group">
 			<span class="field-label">Content</span>
 			<CMSContent ref={data.content_ref} type="html">
-				{@html content || '<p>Accordion content…</p>'}
+				{@html frozenContent || '<p>Accordion content…</p>'}
 			</CMSContent>
 		</div>
 	{/if}
