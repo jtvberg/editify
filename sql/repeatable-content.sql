@@ -2,17 +2,18 @@
 -- Run this after supabase-schema.sql
 -- This stores structure/ordering only - actual content lives in cms_content
 -- Component types:
---   Card    - title, description, image, link (+ nested Tags)
---   Section - title, description
---   Tag     - label (nested within Cards)
---   Quote   - quote (html), author (text), role (text)
--- Note: 'Carousel' is a page-level container component, not a repeatable item type.
+--   Card          - title, description, image, link (+ nested Tags)
+--   Section       - title, description
+--   Tag           - label (nested within Cards)
+--   Quote         - quote (html), author (text), role (text)
+--   AccordionItem - title (text), content (html)
+-- Note: 'Carousel' and 'Accordion' are page-level container components, not repeatable item types.
 
 -- Table for repeatable component structure
 CREATE TABLE IF NOT EXISTS content_repeatable (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     parent_ref TEXT NOT NULL,  -- e.g., 'portfolio.projects'
-    component_type TEXT NOT NULL CHECK (component_type IN ('Card', 'Section', 'Tag', 'Quote')),
+    component_type TEXT NOT NULL CHECK (component_type IN ('Card', 'Section', 'Tag', 'Quote', 'AccordionItem')),
     position INTEGER NOT NULL DEFAULT 0,
     -- data contains REFERENCES to cms_content IDs, not actual content
     -- Example: {"title_ref": "portfolio.projects.{uuid}.title", "description_ref": "...", "image_ref": "..."}
@@ -122,6 +123,16 @@ BEGIN
         INSERT INTO cms_content (id, content, type, updated_at)
         VALUES (base_ref || '.label', '', 'text', NOW());
         field_refs := field_refs || jsonb_build_object('label_ref', base_ref || '.label');
+
+    ELSIF NEW.component_type = 'AccordionItem' THEN
+        -- AccordionItem fields: title (text) and content (html)
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.title', '', 'text', NOW());
+        field_refs := field_refs || jsonb_build_object('title_ref', base_ref || '.title');
+
+        INSERT INTO cms_content (id, content, type, updated_at)
+        VALUES (base_ref || '.content', '', 'html', NOW());
+        field_refs := field_refs || jsonb_build_object('content_ref', base_ref || '.content');
     END IF;
     
     -- Update data field with references

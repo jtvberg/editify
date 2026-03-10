@@ -32,7 +32,9 @@ The codebase implements:
 - ✅ Tag component (nested in cards)
 - ✅ Quote component (quote, author, role) — for testimonials
 - ✅ Section component
-- ✅ Carousel container component with left/right navigation and auto-play
+- ✅ AccordionItem component (title, content) — for FAQ / collapsible sections
+- ✅ Carousel container component with left/right navigation and auto-rotate
+- ✅ Accordion container component with expand/collapse sections
 - ✅ Add/remove/reorder controls
 - ✅ Database triggers for auto-create/delete
 - ✅ RepeatableContainer with dynamic component rendering
@@ -80,6 +82,7 @@ The codebase implements:
 - `Section`: Title, description
 - `Tag`: Label field (nested within Cards)
 - `Quote`: Quote text (html), author name, author role/title
+- `AccordionItem`: Title (text), content (html)
 
 ### Carousel (Page-Level Container)
 
@@ -154,7 +157,9 @@ home.testimonials (parent_ref for quotes, used inside Carousel)
 - `src/lib/components/repeatable/Tag.svelte` - Tag component (complete, nested in cards)
 - `src/lib/components/repeatable/Quote.svelte` - Quote/testimonial component (complete)
 - `src/lib/components/repeatable/Section.svelte` - Section component (complete)
+- `src/lib/components/repeatable/AccordionItem.svelte` - Accordion item component (complete)
 - `src/lib/components/Carousel.svelte` - Page-level carousel container (complete)
+- `src/lib/components/Accordion.svelte` - Page-level accordion container (complete)
 - `src/lib/components/Marquee.svelte` - Infinite scrolling text banner (complete)
 
 ### Scripts
@@ -289,6 +294,14 @@ When testing the implementation:
 - [ ] Dot indicators reflect current slide
 - [ ] Auto-play toggle starts/pauses rotation
 - [ ] New Quote items are immediately editable (no page refresh needed)
+
+### Accordion
+
+- [ ] Place `<Accordion ref="faq.items" />` on a page
+- [ ] In edit mode: add/edit/remove/reorder AccordionItem entries
+- [ ] In view mode: click title to expand, only one section open at a time
+- [ ] Chevron animates on expand/collapse
+- [ ] New items are immediately editable (no page refresh needed)
 
 ### Marquee
 

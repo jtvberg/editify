@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cmsStore, cms } from '$lib';
+	import { cmsStore, cms, Accordion } from '$lib';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import defaultMissionImage from '$lib/assets/default_image.jpg';
@@ -44,6 +44,14 @@
 				containerClass="feature-list"
 			/>
 		</div>
+	</section>
+
+	<section>
+		<h2 data-cms-ref="about.faq.title" data-cms-type="text" use:cms>
+			{$cmsStore['about.faq.title']?.content || 'Frequently Asked Questions'}
+		</h2>
+
+		<Accordion ref="about.faq" type="AccordionItem" />
 	</section>
 </main>
 <Footer />

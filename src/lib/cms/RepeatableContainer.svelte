@@ -6,6 +6,7 @@
 	import Section from '$lib/components/repeatable/Section.svelte';
 	import Tag from '$lib/components/repeatable/Tag.svelte';
 	import Quote from '$lib/components/repeatable/Quote.svelte';
+	import AccordionItem from '$lib/components/repeatable/AccordionItem.svelte';
 
 	interface Props {
 		ref: string;
@@ -22,7 +23,8 @@
 		Card,
 		Section,
 		Tag,
-		Quote
+		Quote,
+		AccordionItem
 	};
 	
 	let Component = $derived(componentMap[type]);

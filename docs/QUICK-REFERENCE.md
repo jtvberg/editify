@@ -287,6 +287,22 @@ In **view mode** the carousel shows one item at a time with prev/next arrows and
 
 In **edit mode** it delegates to `RepeatableContainer` so you get the standard add / reorder / delete controls.
 
+### Accordion (page-level container)
+
+Place an `Accordion` directly in any page route. It handles both view and edit mode automatically:
+
+```svelte
+<script>
+	import { Accordion } from '$lib';
+</script>
+
+<Accordion ref="faq.items" />
+```
+
+In **view mode** accordion items display as collapsible sections with a title bar and animated chevron. Only one section can be open at a time — clicking a title opens it and closes any previously open section.
+
+In **edit mode** it delegates to `RepeatableContainer` with `AccordionItem` type so you get the standard add / reorder / delete controls.
+
 ### RepeatableContainer (standalone)
 
 Use this directly when you want a managed list without the carousel UI:
@@ -302,12 +318,13 @@ Use this directly when you want a managed list without the carousel UI:
 
 ### Available Item Types
 
-| Type      | Fields                          | Use for                        |
-| --------- | ------------------------------- | ------------------------------ |
-| `Card`    | title, description, image, link | Feature cards, portfolio items |
-| `Section` | title, description              | Content sections               |
-| `Tag`     | label                           | Tags, badges, categories       |
-| `Quote`   | quote, author, role             | Testimonials, pull quotes      |
+| Type            | Fields                          | Use for                        |
+| --------------- | ------------------------------- | ------------------------------ |
+| `Card`          | title, description, image, link | Feature cards, portfolio items |
+| `Section`       | title, description              | Content sections               |
+| `Tag`           | label                           | Tags, badges, categories       |
+| `Quote`         | quote, author, role             | Testimonials, pull quotes      |
+| `AccordionItem` | title, content                  | FAQ, collapsible sections      |
 
 ### Adding a New Item Type
 

@@ -20,7 +20,7 @@
 	let Component = $derived(componentMap[type]);
 	let items = $derived($repeatableStore[ref] || []);
 	let currentIndex = $state(0);
-	let direction = $state<'next' | 'prev'>('next'); // drives enter animation
+	let direction = $state<'next' | 'prev'>('next');
 	let animating = $state(false);
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 

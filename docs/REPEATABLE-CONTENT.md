@@ -18,8 +18,8 @@ A clean, reference-based repeatable content system for Editify with support for 
 ### 2. TypeScript Types (`src/lib/types/cms.ts`)
 
 ```typescript
-export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote';
-// Note: Carousel is a page-level container, not a repeatable item type
+export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote' | 'AccordionItem';
+// Note: Carousel and Accordion are page-level containers, not repeatable item types
 
 export interface RepeatableItem {
 	id: string;
@@ -91,10 +91,22 @@ Carousel is **not** a repeatable item — it is a standalone page component plac
 <Carousel ref="home.testimonials" type="Quote" />
 ```
 
-- **View mode**: single-item display with prev/next arrows, dot indicators, slide counter, auto-play toggle
+- **View mode**: single-item display with prev/next arrows, dot indicators, slide transition animation
 - **Edit mode**: delegates entirely to `RepeatableContainer` (identical add/remove/reorder UX)
-- Accepts `autoRotateDelay` prop (default 5000ms)
+- Accepts `autoRotate` boolean prop (default `false`) and `autoRotateDelay` (default 5000ms)
 - Currently supports `Quote` as item type; extend `componentMap` for additional types
+
+#### Accordion (`src/lib/components/Accordion.svelte`) — Page-Level Container
+
+Accordion is **not** a repeatable item — it is a standalone page component:
+
+```svelte
+<Accordion ref="faq.items" />
+```
+
+- **View mode**: clickable title headers with expand/collapse animation; only one section open at a time
+- **Edit mode**: delegates to `RepeatableContainer`
+- Default item type is `AccordionItem` (title + content)
 
 ### 5. Portfolio Page Update
 
@@ -243,13 +255,19 @@ END IF;
 Also update the check constraint:
 
 ```sql
-CHECK (component_type IN ('Card', 'Section', 'Tag', 'Quote', 'Testimonial'))
+CHECK (component_type IN ('Card', 'Section', 'Tag', 'Quote', 'AccordionItem', 'Testimonial'))
 ```
 
 2. **Add TypeScript type** in `src/lib/types/cms.ts`:
 
 ```typescript
-export type RepeatableComponentType = 'Card' | 'Section' | 'Tag' | 'Quote' | 'Testimonial';
+export type RepeatableComponentType =
+	| 'Card'
+	| 'Section'
+	| 'Tag'
+	| 'Quote'
+	| 'AccordionItem'
+	| 'Testimonial';
 ```
 
 3. **Create the component** at `src/lib/components/repeatable/Testimonial.svelte`:
@@ -293,7 +311,7 @@ const componentMap = { Card, Section, Tag, Quote, Testimonial };
 
 **SQL:**
 
-- `sql/repeatable-content.sql` — schema + triggers (Card, Section, Tag, Quote)
+- `sql/repeatable-content.sql` — schema + triggers (Card, Section, Tag, Quote, AccordionItem)
 - `sql/repeatable-rls-policies.sql` — RLS policies
 
 **Components:**
@@ -303,7 +321,9 @@ const componentMap = { Card, Section, Tag, Quote, Testimonial };
 - `src/lib/components/repeatable/Tag.svelte` — tag label (nested in cards)
 - `src/lib/components/repeatable/Quote.svelte` — quote, author, role (for testimonials)
 - `src/lib/components/repeatable/Section.svelte` — title, description
+- `src/lib/components/repeatable/AccordionItem.svelte` — title, content (for accordions)
 - `src/lib/components/Carousel.svelte` — page-level carousel container
+- `src/lib/components/Accordion.svelte` — page-level accordion container
 
 **Types:**
 
